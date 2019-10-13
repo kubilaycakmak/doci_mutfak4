@@ -1,0 +1,100 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+void main() => runApp(MaterialApp(
+  home: HomePage(),
+));
+
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String url = 'http://68.183.222.16:8080/api/dociproduct/all';
+  
+  List dataTypes;
+  List dataProducts;
+
+  Future<String> makeRequest() async{
+    var response = await http.get(Uri.encodeFull(url), headers: {
+      "Accept": 'application/json'
+    });
+    var extractData = json.decode(response.body);
+    dataTypes = extractData["types"];
+    dataProducts = extractData["products"];
+    print(extractData['types'][0]['name']);
+    /*print(dataProducts[0][0]['name']);
+    print(dataProducts[0][1]['name']);
+
+    for (var i = 0; i < dataProducts.length; i++) {
+      print('==============');
+      for (var j = 0; j < dataProducts[i].length; j++) {
+        print(dataProducts[i][j]['id']);
+      }
+    }*/
+
+  }
+  @override
+  void initState() { 
+    this.makeRequest();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Menus'),
+      ),
+      body: SizedBox(
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: dataTypes.length,
+          itemBuilder: (BuildContext context, index){
+            return ListTile(
+              title: Text(dataTypes[index]['name']),
+              /*subtitle: ListView.builder(
+                itemCount: dataProducts[index].length,
+                itemBuilder: (BuildContext context, i){
+                  return ListTile(
+                   // title: Text(dataProducts[index][i]['id']),
+                  );
+                },
+              ),*/
+            );
+          },
+        ),
+      )
+    );
+  }
+}
+
+
+class Type{
+  int id;
+  String name;
+}
+
+class DociProductType{
+  int id;
+  String name;
+}
+
+class DociProduct{
+  int id;
+  String name;
+  String description;
+  double price;
+  List<DociProductType> dociProductTypes;
+  bool isValid;
+  DateTime created;
+  DociProduct({this.id, this.name, this.description, this.price, this.dociProductTypes, this.isValid, this.created});
+}
+
+class JsonObj{
+  List<Type> types;
+  List<List<DociProduct>> products;
+}
