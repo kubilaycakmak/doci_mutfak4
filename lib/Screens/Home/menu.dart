@@ -1,9 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:doci_mutfak4/Components/Post.dart';
 import 'dart:async';
 import 'dart:convert';
-
-
+import 'package:http/http.dart' as http;
 
 class Menu extends StatefulWidget {
   Menu({Key key, Future<Post> post}) : super(key: key);
@@ -11,38 +12,63 @@ class Menu extends StatefulWidget {
 }
 class _MenuState extends State<Menu> {
 
-  var cacheddata = new Map<int, Data>();
-  var offsetLoaded = new Map<int, bool>();
-  int _total = 0;
-  List data;
+  String url = 'http://68.183.222.16:8080/api/dociproduct/all';
+  List dataTypes;
+  List dataProducts;
+  var count;
+  Future<String> makeRequest() async{
+    var response = await http.get(Uri.encodeFull(url), headers: {
+      "Accept": 'application/json'
+    });
 
-  @override
+    setState(() {
+      var extractData = json.decode(response.body);
+      dataTypes = extractData["types"];
+      dataProducts = extractData["products"];
+    });
+  }
+    @override
   void initState() { 
-        _getTotal().then((int total){
-          setState(() {
-           _total = total; 
-          });
-        });
-        super.initState();
-      }
-    
+    this.makeRequest();
+  }
+
     
       @override
       Widget build(BuildContext context) {
         
-    
         var listView = ListView.builder(
-          itemCount: _total,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: dataTypes.length,
           itemBuilder: (BuildContext context, int index){
-            Data data = _getData(index);
-            
                     return ListTile(
-                      title: Text(data.value),
+                      title: Text(dataTypes[index]['name'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.w200),textScaleFactor: 1.3,),
+                      subtitle: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: dataProducts[index].length,
+                        itemBuilder: (context, i){
+                          return ListTile(
+                            isThreeLine: false,
+                            dense: true,
+                            title: Text(dataProducts[index][i]['name']),
+                            subtitle: Text(dataProducts[index][i]['description']),
+                            trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
+                            leading: IconButton(
+                              padding: EdgeInsets.all(0),
+                              icon: Icon(Icons.add_box,),
+                              onPressed: null,
+                            ),
+                            onTap: ()=> print(dataProducts[index][i]['name']),
+                          );
+                        },
+                      ),
                     );
                   });
             
                 return Scaffold(
                   appBar: AppBar(
+                    backgroundColor: Colors.deepOrange,
                     title: Text('Doci Mutfak'),
                     leading: IconButton(
                       icon: Icon(Icons.arrow_back_ios),
@@ -58,71 +84,4 @@ class _MenuState extends State<Menu> {
                   body: listView,
                 );
               }
-            
-              Future<List<Data>> _getDatas(int offset, int limit) async{
-                String jsonString  = await _getJson(offset, limit);
-
-                List list = json.decode(jsonString) as List;
-                var datas = new List<Data>();
-                list.forEach((element){
-                  Map map = element as Map;
-                  datas.add(new Data.fromMap(map));
-                });
-                return datas;
-              }
-
-              Future<String> _getJson(int offset, int limit) async{
-                String json = "[";
-                for(int i=offset; i<offset + limit; i++){
-                  String id = i.toString();
-                  String value = "value ($id)";
-                  json +='{ "id":"$id","value":"$value" }';
-                  if(i < offset + limit -1){
-                    json += ",";
-                  }
-                }
-                json += "]";
-                return json;
-              }
-            
-              Data _getData(int index) {
-                Data data = cacheddata[index];
-                if(data == null){
-                  int offset = index ~/ 5 * 5;
-                  if(!offsetLoaded.containsKey(offset)){
-                    offsetLoaded.putIfAbsent(offset, ()=> true);
-                    _getDatas(offset, 5)
-                        .then((List<Data> datas) => _updateDatas(offset, datas));
-                            }
-                            data = Data.loading();
-                          }
-                          return data;
-                        }
-              
-                Future<int> _getTotal() async {
-                  return 1000;
-                }
-          
-            void _updateDatas(int offset, List<Data> datas) {
-              setState(() {
-                for(int i=0; i < datas.length; i++){
-                  cacheddata.putIfAbsent(offset + i, ()=> datas[i]);
-                }
-              });
-              }
-            }
-
-            class Data{
-              String id;
-              String value;
-
-              Data.loading(){
-                value = "Loading...";
-              }
-
-              Data.fromMap(Map map){
-                id = map['id'];
-                value = map['value'];
-              }
-            }
-
+  }
