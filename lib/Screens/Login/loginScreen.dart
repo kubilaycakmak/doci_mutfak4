@@ -1,4 +1,6 @@
+/*
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -7,7 +9,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailEditingController = TextEditingController();
+
+  TextEditingController user=new TextEditingController();
+  TextEditingController pass=new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
              autofocus: true,
              obscureText: false,
              keyboardType: TextInputType.text,
-             controller: emailEditingController,
+             controller: user,
              decoration: InputDecoration(
                hintText: 'Kullanici Adi veya E-Posta',
                labelStyle: TextStyle(
@@ -51,9 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
              autofocus: true,
              obscureText: false,
              keyboardType: TextInputType.text,
-             controller: emailEditingController,
+             controller: pass,
              decoration: InputDecoration(
-               hintText: 'Kullanici Adi veya E-Posta',
+               hintText: 'Sifre',
                labelStyle: TextStyle(
                  color: Colors.black12,
                  fontSize: 16
@@ -88,3 +93,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+*/

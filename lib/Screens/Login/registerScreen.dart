@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepOrange,
         title: Text('Yeni Uye'),
         leading: IconButton(
           onPressed: ()=> Navigator.popAndPushNamed(context, '/splash'),

@@ -7,7 +7,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-    
     TextEditingController emailEditingContrller = TextEditingController();
 
   @override
@@ -19,13 +18,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 50),
+            padding: EdgeInsets.only(top: 180),
           ),
           Center(
             child: Text('Hos Geldiniz', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Colors.white),),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 50, right: 50, top: 50),
+            padding: EdgeInsets.only(left: 35, right: 35, top: 50),
             child: Text('Doci Bosnak Mutfagi mobil uygulamasina hosgelniz. Bu uygulama ile hizli bir sekilde siparisinizi verebilirsiniz.', 
               style: TextStyle(fontSize: 20, color: Colors.white), 
               textAlign: TextAlign.center,),
@@ -37,36 +36,66 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: ButtonBar(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 150),
+                      child: Column(
+                        children: <Widget>[
+                          ButtonBar(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                            ButtonTheme(
+                              child: RaisedButton(
+                                onPressed: () => Navigator.pushReplacementNamed(context, "/register"),
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.00),
+                                ),
+                                color: Colors.deepOrange,
+                                padding: const EdgeInsets.all(0.0),
+                                child: Container(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: const Text(
+                                  'YENI UYE',
+                                  style: TextStyle(fontSize: 20)
+                                ),
+                              ),
+                            ),
+                          ),
+                          ButtonTheme(
+                              child: RaisedButton(
+                                onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.00),
+                                  side: BorderSide(color: Colors.deepOrange)
+                                ),
+                                color: Colors.transparent,
+                                padding: const EdgeInsets.all(0.0),
+                                child: Container(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: const Text(
+                                  'GIRIS YAP',
+                                  style: TextStyle(fontSize: 20)
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                        FlatButton(
+                      onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
+                      textColor: Colors.white,
+                      child: const Text('Daha Sonra ->',style: TextStyle(fontSize: 25)),
+                    ),
+                      ],
+                    )
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          ButtonBar(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ButtonTheme(
-                minWidth: 120,
-                height: 50,
-                child: RaisedButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, "/register"),
-                child: Text('YENI UYE'),
-              ),
-              ),
-              ButtonTheme(
-                minWidth: 120,
-                height: 50,
-                child: RaisedButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
-                child: Text('Giris Yap'),
-              ),
-              ),
-            ],
-          ),
-          FlatButton(
-            onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
-            child: Text('Daha Sonra >', style: TextStyle(color: Colors.white, fontSize: 20),),
-          )
+          
         ],
       ),
       decoration: BoxDecoration(

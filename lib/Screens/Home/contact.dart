@@ -9,6 +9,7 @@ class Contact extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Iletisim & Ulasim'),
+          backgroundColor: Colors.deepOrange,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () => Navigator.pushReplacementNamed(context, '/home'),

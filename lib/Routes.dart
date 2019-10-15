@@ -1,13 +1,13 @@
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Home/shopCart.dart';
-import 'package:doci_mutfak4/Screens/Login/loginScreen.dart';
+import 'package:doci_mutfak4/Screens/Home/shoppingCart.dart';
+import 'package:doci_mutfak4/Screens/Login/json_restful_api.dart';
 import 'package:doci_mutfak4/Screens/Login/registerScreen.dart';
 import 'package:doci_mutfak4/Screens/Home/HomeScreen.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:doci_mutfak4/Components/Post.dart';
+
 class Routes{
   Routes(){
     runApp(MaterialApp(
@@ -54,7 +54,7 @@ class Routes{
 
           case '/login':
           return MyCustomRoute(
-            builder: (_) => LoginScreen(),
+            builder: (_) => LoginWithRestfulApi(),
             settings: settings,
           );
 

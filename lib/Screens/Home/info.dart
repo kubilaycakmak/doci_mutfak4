@@ -14,6 +14,7 @@ class Info extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Hakkimizda'),
+        backgroundColor: Colors.deepOrange,
         leading: IconButton(
           onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
           icon: Icon(Icons.arrow_back_ios),
