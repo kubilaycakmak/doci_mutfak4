@@ -14,6 +14,7 @@ class Menu extends StatefulWidget {
   _MenuState createState() => _MenuState();
 }
 class _MenuState extends State<Menu> with TickerProviderStateMixin{
+  var currentProduct;
   List dataProducts;
   List dataTypes;
   List<Product> product = new List<Product>();
@@ -112,8 +113,11 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
                             color: Colors.deepOrange,
                           ),
                           DialogButton(
-                            child: Text('$_counter' + ' Adet Ekle'),
-                            onPressed: null,
+                            child: Text('$_counter' + ' Adet Ekle', style: TextStyle(color: Colors.white),),
+                            onPressed: (){
+                              currentProduct = dataProducts[index][i]['id'].toString();
+                              print(currentProduct);
+                            },
                             color: Colors.deepOrange,
                           ),
                           DialogButton(
