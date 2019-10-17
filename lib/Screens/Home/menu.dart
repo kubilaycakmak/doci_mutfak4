@@ -27,6 +27,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
   void initState() { 
     this.makeRequest();
   }
+
   void add(){
           setState(() {
         _counter++;
@@ -70,71 +71,84 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
         );
         
   var listView = ListView.builder(
+    
     scrollDirection: Axis.vertical,
     shrinkWrap: true,
     reverse: false,
     itemCount: dataTypes == null ? 0 : dataTypes.length,
     itemBuilder: (BuildContext context, int index){
-      return ListTile(
-        contentPadding: EdgeInsets.all(10),
-        enabled: false,
-        title: Text(dataTypes[index]['name'], style: 
-        TextStyle(
-          fontSize: 15, 
-          fontWeight: FontWeight.w300),
-          textScaleFactor: 1.3,),
-        subtitle: ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(top: 5),
-          itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
-          itemBuilder: (context, i){
-                return ListTile(
-                  title: Text(dataProducts[index][i]['name']),
-                  subtitle: Text(dataProducts[index][i]['description']),
-                  trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
-                  leading: IconButton(
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(Icons.add_box,),
-                    onPressed: null,
-                  ),
-                  onTap: (){
-                    _counter = 1;
-                       return Alert(
-                        context:context, 
-                        title: dataProducts[index][i]['name'],
-                        desc: dataProducts[index][i]['description'],
-                        content: Text(dataProducts[index][i]['price'].toString() + ' TL'),
-                        buttons: [
-                          DialogButton(
-                            child: Text('+'),
-                            onPressed: add,
-                            height: 30,
-                            width: 30,
-                            color: Colors.deepOrange,
-                          ),
-                          DialogButton(
-                            child: Text('$_counter' + ' Adet Ekle', style: TextStyle(color: Colors.white),),
-                            onPressed: (){
-                              currentProduct = dataProducts[index][i]['id'].toString();
-                              print(currentProduct);
-                            },
-                            color: Colors.deepOrange,
-                          ),
-                          DialogButton(
-                            child: Text('-'),
-                            onPressed: minus,
-                            height: 30,
-                            width: 30,
-                            color: Colors.deepOrange,
-                          ),
-                        ]
-                      ).show(); 
-                    }
-                    );
-                  },
-                )
-                
+      if(dataTypes[index]['name'] == null){
+        return Container(
+          child: Center(
+            child: CircularProgressIndicator()
+          ),
+        );
+      }else{
+        return ExpansionTile(
+          title: Text(dataTypes[index]['name'], style: 
+                TextStyle(
+                  fontSize: 20, 
+                  fontWeight: FontWeight.w300),),
+          children: <Widget>[
+            
+            ListView.builder(
+              dragStartBehavior: DragStartBehavior.down,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              reverse: false,
+              itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
+              itemBuilder: (context, i){
+                  return ListTile(
+                    dense: true,
+                    enabled: true,
+                    isThreeLine: false,
+                    title: Text(dataProducts[index][i]['name']),
+                    subtitle: Text(dataProducts[index][i]['description']),
+                    trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
+                    leading: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.add_box,),
+                      onPressed: null,
+                    ),
+                    onTap: (){
+                      _counter = 1;
+                        return Alert(
+                          context:context, 
+                          title: dataProducts[index][i]['name'],
+                          desc: dataProducts[index][i]['description'],
+                          content: Text(dataProducts[index][i]['price'].toString() + ' TL'),
+                          buttons: [
+                            DialogButton(
+                              child: Text('+'),
+                              onPressed: add,
+                              height: 30,
+                              width: 30,
+                              color: Colors.deepOrange,
+                            ),
+                            DialogButton(
+                              child: Text('$_counter' + ' Adet Ekle', style: TextStyle(color: Colors.white),),
+                              onPressed: (){
+                                currentProduct = dataProducts[index][i]['id'].toString();
+                                print(currentProduct);
+                              },
+                              color: Colors.deepOrange,
+                            ),
+                            DialogButton(
+                              child: Text('-'),
+                              onPressed: minus,
+                              height: 30,
+                              width: 30,
+                              color: Colors.deepOrange,
+                            ),
+                              ]
+                            ).show(); 
+                          }
+                        );
+                      },
+                  )
+            ],
                 );
+              }
           },
       );
   return DefaultTabController(
@@ -153,7 +167,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
       controller: tabController,
       children: <Widget>[
         listView,
-        Text('asd')
+        Text('DETAIL PAGE', textAlign: TextAlign.center,),
       ],
     ),
     floatingActionButton: FloatingActionButton(
@@ -164,26 +178,6 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
     ),
     ),
   );
-  }
-}
-
-
-class DetailPage extends StatefulWidget {
-  DetailPage({Key key}) : super(key: key);
-
-  _DetailPageState createState() => _DetailPageState();
-}
-
-class _DetailPageState extends State<DetailPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Urun Detayi'),
-      ),
-      body: Container(
-      ),
-    );
   }
 }
 

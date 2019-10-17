@@ -1,27 +1,39 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:doci_mutfak4/Data/json_user.dart';
-
+import 'json_user.dart';
 
 class LoginWithRestfulApi extends StatefulWidget {
-  LoginWithRestfulApi({Key key}) : super(key: key);
-
+  @override
   _LoginWithRestfulApiState createState() => _LoginWithRestfulApiState();
 }
-
 class _LoginWithRestfulApiState extends State<LoginWithRestfulApi> {
   static var uri = "http://68.183.222.16:8080/api/userAccount/login";
 
-    TextEditingController _emailController = TextEditingController();
-    bool _isLoading = false;
-    TextEditingController _passwordController = TextEditingController();
-    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static BaseOptions options = BaseOptions(
+      baseUrl: uri,
+      responseType: ResponseType.plain,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+      });
 
-    Future<dynamic> _loginUser(String email, String password) async {
+      static Dio dio = Dio(options);
+      
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  TextEditingController _emailController = TextEditingController();
+
+  TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  Future<dynamic> _loginUser(String email, String password) async {
     try {
       Options options = Options(
         contentType: ContentType.parse('application/json'),
@@ -55,52 +67,34 @@ class _LoginWithRestfulApiState extends State<LoginWithRestfulApi> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text('GIRIS YAP'),
-        backgroundColor: Colors.deepOrange,
-        leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pushReplacementNamed(context, "/splash"),
-      ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 30, left: 20,right: 20),
-        child: Center(
+      appBar: AppBar(title: Text("Login using RESTFUL api")),
+      body: Center(
         child: _isLoading
-        ? CircularProgressIndicator()
-        : Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: 'Email',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 12.0, left: 0, right: 0),
-              child: ButtonBar(
-                mainAxisSize: MainAxisSize.min,
+            ? CircularProgressIndicator()
+            : Column(
                 children: <Widget>[
-                  FlatButton(
-                    padding: EdgeInsets.only(right: 20),
-                    child: Text('Sifremi unuttum'),
-                    onPressed: null,
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: 'Email',
+                      ),
+                    ),
                   ),
-                  ButtonTheme(
-                    child: RaisedButton(
-                      onPressed: () async {
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        hintText: 'Password',
+                      ),
+                    ),
+                  ),
+                  RaisedButton(
+                    child: Text("Login"),
+                    color: Colors.red,
+                    onPressed: () async {
                       setState(() => _isLoading = true);
                       var res = await _loginUser(
                           _emailController.text, _passwordController.text);
@@ -118,40 +112,19 @@ class _LoginWithRestfulApiState extends State<LoginWithRestfulApi> {
                         Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text("Wrong email or")));
                       }
-                      },
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.00),
-                        side: BorderSide(color: Colors.deepOrange)
-                      ),
-                      color: Colors.deepOrange,
-                      padding: const EdgeInsets.all(0.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(20.0),
-                        child: const Text(
-                        'GIRIS YAP',
-                        style: TextStyle(fontSize: 20)
-                ),
-              ),
-            ),
-          ),
-                  
+                    },
+                  ),
                 ],
-              )
-            ),
-            
-          ],
-        ),
+              ),
       ),
-      )
     );
   }
 }
+
 class LoginScreen extends StatelessWidget {
   LoginScreen({@required this.user});
 
   final JsonUser user;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
