@@ -7,7 +7,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
-
+List<String> addItem;
+List<AddItemtoShopCart> listItems = new List();
 class Menu extends StatefulWidget {
   Menu({Key key}) : super(key: key);
 
@@ -19,29 +20,14 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
   List dataTypes;
   List<Product> product = new List<Product>();
   TabController tabController;
-  String url = 'http://68.183.222.16:8080/api/dociproduct/all';
-
   int _counter = 1; 
+  
+  String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
     @override
   void initState() { 
     this.makeRequest();
   }
-
-  void add(){
-          setState(() {
-        _counter++;
-      });
-    }
-
-    void minus(){
-      setState(() {
-        if (_counter != 1) {
-          _counter--;
-          print('$_counter');
-        }
-      });
-    }
 
   Future<String> makeRequest() async{
     var response = await http.get(Uri.encodeFull(url), headers: {
@@ -56,6 +42,8 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
 
       @override
       Widget build(BuildContext context) {
+        
+        
         tabController = new TabController(length: 2, vsync: this);
         var tabBarItem = new TabBar(
           tabs: <Widget>[
@@ -98,6 +86,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
               reverse: false,
               itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
               itemBuilder: (context, i){
+                double _countPrice = dataProducts[index][i]['price'];
                   return ListTile(
                     dense: true,
                     enabled: true,
@@ -111,37 +100,59 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
                       onPressed: null,
                     ),
                     onTap: (){
-                      _counter = 1;
                         return Alert(
-                          context:context, 
-                          title: dataProducts[index][i]['name'],
-                          desc: dataProducts[index][i]['description'],
-                          content: Text(dataProducts[index][i]['price'].toString() + ' TL'),
                           buttons: [
                             DialogButton(
                               child: Text('+'),
-                              onPressed: add,
+                              onPressed: (){
+                                setState(() {
+                                 _counter++; 
+                                 _countPrice += (dataProducts[index][i]['price']); 
+                                 print(_counter);
+                                 print(_countPrice);
+                                });
+                              },
                               height: 30,
                               width: 30,
-                              color: Colors.deepOrange,
-                            ),
-                            DialogButton(
-                              child: Text('$_counter' + ' Adet Ekle', style: TextStyle(color: Colors.white),),
-                              onPressed: (){
-                                currentProduct = dataProducts[index][i]['id'].toString();
-                                print(currentProduct);
-                              },
                               color: Colors.deepOrange,
                             ),
                             DialogButton(
                               child: Text('-'),
-                              onPressed: minus,
+                              onPressed: (){
+                                setState(() {
+                                  if(_counter!=1){
+                                    _counter--; 
+                                    _countPrice -= (dataProducts[index][i]['price']); 
+                                  }else{
+                                  _counter = 1;
+                                  }
+                                  print(_counter);
+                                  print(_countPrice);
+                                });
+                              },
                               height: 30,
                               width: 30,
                               color: Colors.deepOrange,
                             ),
-                              ]
-                            ).show(); 
+                            DialogButton(
+                              child: Text("$_counter" + ' Adet Ekle', style: TextStyle(color: Colors.white),),
+                              onPressed: (){
+                                var items = new AddItemtoShopCart(
+                                  id: dataProducts[index][i]["id"],
+                                  name: dataProducts[index][i]["name"],
+                                  price: dataProducts[index][i]["price"]
+                                );
+                                listItems.add(items);
+                                print(listItems[index].name);
+                              },
+                              color: Colors.deepOrange,
+                            ),
+                            
+                              ],
+                          context:context, 
+                          title: dataProducts[index][i]['name'],
+                          desc: dataProducts[index][i]['description'],
+                          content: Text(_countPrice.toString() + ' TL')).show(); 
                           }
                         );
                       },
@@ -178,6 +189,81 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
     ),
     ),
   );
+  }
+}
+
+class AddItemtoShopCart{
+  int id;
+  String name;
+  double price;
+
+  AddItemtoShopCart({@required this.id, @required this.name, @required this.price});
+}
+
+class ShoppingCart extends StatefulWidget {
+  ShoppingCart({Key key}) : super(key: key);
+
+  _ShoppingCartState createState() => _ShoppingCartState();
+}
+
+class _ShoppingCartState extends State<ShoppingCart> {
+  @override
+  Widget build(BuildContext context) {
+    double _count = 0;
+
+      setState(() {
+        for (var item in listItems) {
+          _count = _count + item.price;
+        }
+      });
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sepetim'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: ()=> Navigator.pushReplacementNamed(context, '/home'),
+        ),
+      ),
+      body: Container(
+        child: ListView.builder(
+          itemCount: listItems.length,
+          itemBuilder: (context, index){
+            return ListTile(
+              title: Text(listItems[index].name),
+              onTap: (){
+                setState(() {
+                  listItems.removeAt(index);
+                });
+              },
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: Container(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: ListTile(
+                  title: Text("Tutar: "),
+                  subtitle: Text(_count.toString() + " TL"),
+                ),
+              ),
+              Expanded(
+                child: MaterialButton(
+                  color: Colors.lightBlueAccent,
+                  onPressed: (){},
+                  child: Text('Siparisi ver!',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),
+                  ),
+                ),
+              )
+            ],
+          ),
+      ),
+    );
   }
 }
 

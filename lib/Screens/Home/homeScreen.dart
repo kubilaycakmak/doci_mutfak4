@@ -19,15 +19,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var backgroundImage = new AssetImage('assets/images/yemek.jpg');
-    var image = new Image(image: backgroundImage,fit: BoxFit.cover);
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           IconButton(icon: Icon(Icons.search, color: Colors.white,), onPressed: (){},),
           IconButton(icon: Icon(Icons.shopping_cart, color: Colors.white,), onPressed: (){},),
         ],
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.lightBlueAccent,
         title: Text('Doci Bosnak'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
@@ -36,28 +34,29 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 0),
+        padding: EdgeInsets.only(top: 20),
           child: ListView(
           children: <Widget>[
             Image(
               image: AssetImage(
                 'assets/images/logo.png'
               ),
-              fit: BoxFit.fitHeight,
+              fit: BoxFit.contain,
             ),
-
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+            ),
             InkWell(
               onTap: () => Navigator.pushReplacementNamed(context, '/menu'),
               child: ListTile(
                 title: Text('Menu & Siparis',
                 style: TextStyle(
-                  color: Colors.white, 
+                  color: Colors.black54, 
                   fontWeight: FontWeight.w300,
                   shadows: [
                   Shadow(
-                    blurRadius: 20,
-                    color: Colors.black,
-                    offset: Offset(5.0, 5.0)
+                    blurRadius: 70,
+                    color: Colors.black54,
                   ),
                 ]),textScaleFactor: 1.8),
               ),
@@ -67,11 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) => ShoppingCart()),
               ),
               child: ListTile(
-                title: Text('Sepetim', style: TextStyle(color: Colors.white,fontWeight: FontWeight.w300, shadows: [
+                title: Text('Sepetim', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
                   Shadow(
-                    blurRadius: 20,
-                    color: Colors.black,
-                    offset: Offset(5.0, 5.0)
+                    blurRadius: 70,
+                    color: Colors.black54,
                   )
                 ]),textScaleFactor: 1.8),
               ),
@@ -79,11 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
             InkWell(
               onTap: ()=> Navigator.pushReplacementNamed(context, '/info'),
               child: ListTile(
-                title: Text('Hakkimizda', style: TextStyle(color: Colors.white,fontWeight: FontWeight.w300, shadows: [
+                title: Text('Hakkimizda', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
                   Shadow(
-                    blurRadius: 20,
-                    color: Colors.black,
-                    offset: Offset(5.0, 5.0)
+                    blurRadius: 70,
+                    color: Colors.black54,
                   )
                 ]),textScaleFactor: 1.8),
               ),
@@ -91,11 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
             InkWell(
               onTap: () => Navigator.pushReplacementNamed(context, '/contact'),
               child: ListTile(
-                title: Text('Iletisim & ulasim', style: TextStyle(color: Colors.white,fontWeight: FontWeight.w300, shadows: [
+                title: Text('Iletisim & ulasim', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
                   Shadow(
-                    blurRadius: 20,
-                    color: Colors.black,
-                    offset: Offset(5.0, 5.0)
+                    blurRadius: 70,
+                    color: Colors.black54,
                   )
                 ]),textScaleFactor: 1.8),
               ),
@@ -103,19 +99,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   
           ],
         ),
-        decoration: BoxDecoration(
-              color: Colors.black,
-            image: DecorationImage(
-              image: backgroundImage,
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.dstATop)
-            )
-        ),
       ),
       bottomNavigationBar: new Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: Colors.deepOrange,
-          primaryColor: Colors.deepOrange
+          canvasColor: Colors.lightBlueAccent,
+          primaryColor: Colors.lightBlueAccent
         ),
         child: BottomNavigationBar(
         currentIndex: _cIndex,

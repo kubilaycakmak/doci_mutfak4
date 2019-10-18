@@ -1,8 +1,6 @@
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Home/shoppingCart.dart';
-import 'package:doci_mutfak4/Screens/Login/json_restful_api.dart';
 import 'package:doci_mutfak4/Screens/Login/registerScreen.dart';
 import 'package:doci_mutfak4/Screens/Home/HomeScreen.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
@@ -42,7 +40,7 @@ class Routes{
 
           case '/cart':
           return MyCustomRoute(
-            builder: (_) => ShoppingCart(),
+            builder: (_) => Menu(),
             settings: settings
           );
 
@@ -52,11 +50,11 @@ class Routes{
             settings: settings
           );
 
-          case '/login':
+          /*case '/login':
           return MyCustomRoute(
-            builder: (_) => LoginWithRestfulApi(),
+            builder: (_) => null(),
             settings: settings,
-          );
+          );*/
 
           case '/home':
           return MyCustomRoute(
