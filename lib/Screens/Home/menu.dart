@@ -9,6 +9,17 @@ import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 List<String> addItem;
 List<AddItemtoShopCart> listItems = new List();
+void _showToast(BuildContext context, String desc) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(desc),
+        action: SnackBarAction(
+            label: 'Gizle', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
+  }
+
 class Menu extends StatefulWidget {
   Menu({Key key}) : super(key: key);
 
@@ -73,7 +84,8 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
         );
       }else{
         return ExpansionTile(
-          title: Text(dataTypes[index]['name'], style: 
+          title: Text(dataTypes[index]['name'], 
+          style: 
                 TextStyle(
                   fontSize: 20, 
                   fontWeight: FontWeight.w300),),
@@ -137,17 +149,21 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
                             DialogButton(
                               child: Text("$_counter" + ' Adet Ekle', style: TextStyle(color: Colors.white),),
                               onPressed: (){
-                                var items = new AddItemtoShopCart(
+                                Navigator.of(context).pop();
+                                _showToast(context, "Urun Sepete Eklendi!");
+                                setState(() {
+                                  var items = new AddItemtoShopCart(
                                   id: dataProducts[index][i]["id"],
                                   name: dataProducts[index][i]["name"],
                                   price: dataProducts[index][i]["price"]
                                 );
                                 listItems.add(items);
+                                });
                                 print(listItems[index].name);
+                                
                               },
                               color: Colors.deepOrange,
                             ),
-                            
                               ],
                           context:context, 
                           title: dataProducts[index][i]['name'],
@@ -231,7 +247,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
           itemBuilder: (context, index){
             return ListTile(
               title: Text(listItems[index].name),
-              onTap: (){
+              onLongPress: (){
+                _showToast(context, "Urun Sepetten Cikartildi!");
                 setState(() {
                   listItems.removeAt(index);
                 });
