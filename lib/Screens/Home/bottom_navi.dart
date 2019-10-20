@@ -1,8 +1,10 @@
 import 'package:doci_mutfak4/Screens/Home/info.dart';
+import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
 import 'package:flutter/material.dart';
-
 import 'menu.dart';
+
 int _currentIndex = 3;
 class HomeScreen extends StatefulWidget {
   
@@ -20,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Menu(),
       ShoppingCart(),
       Info(),
-      homeScreen2()
+      Profile()
     ];
 
     return Scaffold(
@@ -45,43 +47,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class homeScreen2 extends StatelessWidget {
-  const homeScreen2({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profilim'),
-        backgroundColor: Colors.lightBlueAccent,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: EdgeInsets.only(top: 0),
-          child: ListView(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.only(bottom: 20),
-                color: Colors.lightBlueAccent,
-            ),
-            Container(
-              child: CircleAvatar(
-                radius: 70,
-                backgroundColor: Colors.black38,
-                child: Text('A')
-              ),
-              color: Colors.black45,
-            ),
-            Center(
-              child: Column(
-                children: <Widget>[
-                ],
-              ),
-            ),
-          ],
-        ),
-      )
-    );
-  }
-}

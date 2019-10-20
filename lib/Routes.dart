@@ -1,8 +1,8 @@
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
+import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Login/registerScreen.dart';
-import 'package:doci_mutfak4/Screens/Home/HomeScreen.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 
