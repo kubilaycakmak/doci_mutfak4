@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-
     
     final List<Widget> _children = [
       Menu(),
@@ -40,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TitledNavigationBarItem(title: 'Mutfak', icon: Icons.fastfood),
             TitledNavigationBarItem(title: 'Sepetim', icon: Icons.shopping_cart),
             TitledNavigationBarItem(title: 'Hakkimizda\n & Iletisim', icon: Icons.info_outline),
-            TitledNavigationBarItem(title: 'Profilim', icon: Icons.person_outline),
+            TitledNavigationBarItem(title: inside == false ? 'Profilim' : 'Giris Yap\n & Kayit Ol', icon: Icons.person_outline),
         ],
       )
     );

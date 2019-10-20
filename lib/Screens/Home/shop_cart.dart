@@ -1,6 +1,7 @@
-import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
+import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 
 void _showToast(BuildContext context, String desc) {
@@ -92,7 +93,42 @@ class _ShoppingCartState extends State<ShoppingCart> {
               Expanded(
                 child: MaterialButton(
                   color: Colors.lightBlueAccent,
-                  onPressed: (){},
+                  onPressed: (){
+                    if (inside == false) {
+                      print('Siparis verildi');
+                      return Alert(
+                        style: alertStyle,
+                        context:context, 
+                        type: AlertType.success,
+                        title: 'Siparisi Basariyla verdin!',
+                        desc: 'Siparisini kaydedebilir, bir sonraki siparisi daha hizli verebilirsin!',
+                        buttons: [
+                          DialogButton(
+                            onPressed: null,
+                            child: Text('Kaydet'),
+                          ),
+                          DialogButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Tamam'),
+                          ),
+                        ],
+                      ).show(); 
+                    } else {
+                      return Alert(
+                        style: alertStyle,
+                        context:context, 
+                        type: AlertType.warning,
+                        desc: 'Siparis vermek icin sag alt menuden giris veya kayit olman gerekli!',
+                        title: '',
+                        buttons: [
+                          DialogButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                          ),
+                        ]
+                      ).show(); 
+                    }
+                  },
                   child: Text('Siparisi ver!',
                   style: TextStyle(
                     color: Colors.white
@@ -106,3 +142,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
     );
   }
 }
+var alertStyle = AlertStyle(
+  animationType: AnimationType.grow,
+  isCloseButton: true,
+  isOverlayTapDismiss: true,
+  descStyle: TextStyle(fontWeight: FontWeight.w400),
+      animationDuration: Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+        side: BorderSide(
+          color: Colors.lightBlueAccent,
+        ),
+      ),
+      titleStyle: TextStyle(
+        color: Colors.black,
+      ),
+);

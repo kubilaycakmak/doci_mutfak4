@@ -1,8 +1,9 @@
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Login/registerScreen.dart';
+import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class Routes{
 
           case '/register':
           return MyCustomRoute(
-            builder: (_) => RegisterScreen(),
+            builder: (_) => LoginAndRegister(),
             settings: settings
           );
 
@@ -50,11 +51,17 @@ class Routes{
             settings: settings
           );
 
-          /*case '/login':
+          case '/login':
           return MyCustomRoute(
-            builder: (_) => null(),
+            builder: (_) => LoginAndRegister(),
             settings: settings,
-          );*/
+          );
+
+          case '/profile':
+          return MyCustomRoute(
+            builder: (_) => Profile(),
+            settings: settings,
+          );
 
           case '/home':
           return MyCustomRoute(

@@ -10,28 +10,27 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 List<String> addItem;
 List<AddItemtoShopCart> listItems = new List();
-
+Timer _timer;
 List<AddItemtoShopCart> getList(){
   return listItems;
 }
-
 List<Types> types = new List();
 int _counter = 1; 
 void _showToast(BuildContext context, String desc) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        content: Text(desc),
-        action: SnackBarAction(
-            label: 'Gizle', onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );
-  }
+  final scaffold = Scaffold.of(context);
+  scaffold.showSnackBar(
+    SnackBar(
+      content: Text(desc),
+      action: SnackBarAction(
+          label: 'Gizle', onPressed: scaffold.hideCurrentSnackBar),
+    ),
+  );
+}
 
 class Menu extends StatefulWidget {
   Menu({Key key}) : super(key: key);
 
-  _MenuState createState() => _MenuState();
+_MenuState createState() => _MenuState();
 }
 class _MenuState extends State<Menu> with TickerProviderStateMixin{
   var currentProduct;
@@ -40,10 +39,10 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
   var dataType;
   List dataTypes;
   TabController tabController;
-   var _extractData;
+  var _extractData;
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
-    @override
+  @override
   void initState() { 
     this.makeRequest();
   }
@@ -52,12 +51,12 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
     var response = await http.get(Uri.encodeFull(url), headers: {
       "Accept": 'application/json'
     });
-    setState(() {
-      _extractData = json.decode(response.body);
-    });
+    _timer = new Timer(Duration(milliseconds: 100), (){
+      setState(() {
+            _extractData = json.decode(response.body);
+          });
       dataTypes = _extractData["types"];
       dataProducts = _extractData["products"];
-
       for (var i = 0; i < dataTypes.length; i++) {
         dataType = new Types(
           id: dataTypes[i]['id'],
@@ -65,51 +64,47 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
         );
         types.add(dataType);
       }
+    });
+    
   }
-      @override
-      Widget build(BuildContext context) {
-        tabController = new TabController(length: 2, vsync: this);
-        var tabBarItem = new TabBar(
-          tabs: <Widget>[
-            Tab(
-              child: Text('Menuler'),
-            ),
-            Tab(
-              child: Text('Detaylar'),
-            )
-          ],
-          controller: tabController,
-          indicatorColor: Colors.white,
-        );
-  var listView = ListView.builder(
-    scrollDirection: Axis.vertical,
-    shrinkWrap: true,
-    reverse: false,
-    itemCount: dataTypes == null ? 0 : dataTypes.length,
-    itemBuilder: (BuildContext context, int index){
-      if(dataTypes[index]['name'] == null){
-        return Container(
-          child: Center(
-            child: CircularProgressIndicator()
-          ),
-        );
-      }else{
-        return ExpansionTile(
-          title: Text(types[index].name, 
-          style: 
-                TextStyle(
-                  fontSize: 20, 
-                  fontWeight: FontWeight.w300),),
-          children: <Widget>[
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(2),
-              dragStartBehavior: DragStartBehavior.down,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              reverse: false,
-              itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
-              itemBuilder: (context, i){
+  @override
+  Widget build(BuildContext context) {
+    tabController = new TabController(length: 2, vsync: this);
+    var tabBarItem = new TabBar(
+      tabs: <Widget>[
+        Tab(
+          child: Text('Menuler'),
+        ),
+        Tab(
+          child: Text('Detaylar'),
+        )
+      ],
+      controller: tabController,
+      indicatorColor: Colors.white,
+    );
+      var listView = ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      reverse: false,
+      itemCount: dataTypes == null ? 0 : dataTypes.length,
+      itemBuilder: (BuildContext context, int index){
+          return ExpansionTile(
+            title: Text(types[index].name, 
+            style: 
+                  TextStyle(
+                    fontSize: 20, 
+                    fontWeight: FontWeight.w300),),
+            children: <Widget>[
+
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(2),
+                dragStartBehavior: DragStartBehavior.down,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                reverse: false,
+                itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
+                itemBuilder: (context, i){
                 double _countPrice = dataProducts[index][i]['price'];
                 void _increase(){
                   setState(() {
@@ -132,111 +127,105 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
                     print(_countPrice);
                   });
                 }
-                    return ListTile(
-                      title: Text(dataProducts[index][i]['name']),
-                      subtitle: Text(dataProducts[index][i]['description']),
-                      trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
-                      leading: IconButton(
-                        padding: EdgeInsets.all(00),
-                        icon: Icon(Icons.add_shopping_cart, size: 45,),
-                        onPressed: (){
-                          _showToast(context, "Urun Sepete Eklendi!");
-                                  setState(() {
-                                    var items = new AddItemtoShopCart(
-                                    id: dataProducts[index][i]["id"],
-                                    name: dataProducts[index][i]["name"],
-                                    price: dataProducts[index][i]["price"],
-                                    itemCount: 1,
-                                  );
-                                  listItems.add(items);
-                                  });
-                                  print(listItems[index].name);
-                        },
-                      ),
-                      onTap: (){
-                            _counter = 1;
-                            return Alert(
-                              style: alertStyle,
-                              buttons: [
-                                DialogButton(
-                                  child: Text('+', 
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white
-                                  ),),
-                                  onPressed: _increase,
-                                  color: Colors.lightBlueAccent,
-                                ),
-                                DialogButton(
-                                  child: Text("$_counter" + ' Adet Ekle', style: TextStyle(color: Colors.white),),
-                                  onPressed: (){
-                                    Navigator.of(context).pop();
-                                    _showToast(context, "Urun Sepete Eklendi!");
-                                    setState(() {
-                                      var items = new AddItemtoShopCart(
-                                      id: dataProducts[index][i]["id"],
-                                      name: dataProducts[index][i]["name"],
-                                      price: dataProducts[index][i]["price"],
-                                      itemCount: _counter
-                                    );
-                                    listItems.add(items);
-                                    });
-                                    print(listItems[index].itemCount);
-                                  },
-                                  color: Colors.lightBlueAccent,
-                                ),
-                                DialogButton(
-                                  child: Text('-',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.white
-                                  ),),
-                                  onPressed: _decrease,
-                                  color: Colors.lightBlueAccent,
-                                ),
-                                  ],
-                              context:context, 
-                              title: dataProducts[index][i]['name'],
-                              desc: dataProducts[index][i]['description'],
-                              content: Text(_countPrice.toString() + ' TL'),
-                              type: AlertType.none,
-                              ).show(); 
-                            }
-                          );
-                        },
-                      )
-                    ],
-                  );
-                }
-            },
-       );
-      return DefaultTabController(
-        length: 2,
-        child: Scaffold(
+                return ListTile(
+                  title: Text(dataProducts[index][i]['name']),
+                  subtitle: Text(dataProducts[index][i]['description']),
+                  trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
+                  leading: IconButton(
+                    padding: EdgeInsets.all(00),
+                    icon: Icon(Icons.add_shopping_cart, size: 45,),
+                    onPressed: (){
+                      _showToast(context, "Urun Sepete Eklendi!");
+                              setState(() {
+                                var items = new AddItemtoShopCart(
+                                id: dataProducts[index][i]["id"],
+                                name: dataProducts[index][i]["name"],
+                                price: dataProducts[index][i]["price"],
+                                itemCount: 1,
+                              );
+                              listItems.add(items);
+                              });
+                              print(listItems[index].name);
+                    },
+                  ),
+                  onTap: (){
+                    _counter = 1;
+                    return Alert(
+                      style: alertStyle,
+                      buttons: [
+                        DialogButton(
+                          child: Text('+', 
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white
+                            ),
+                          ),
+                          onPressed: _increase,
+                          color: Colors.lightBlueAccent,
+                          ),
+                          DialogButton(
+                            child: Text("$_counter" + ' Adet Ekle', style: TextStyle(color: Colors.white),),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              _showToast(context, "Urun Sepete Eklendi!");
+                              setState(() {
+                                var items = new AddItemtoShopCart(
+                                id: dataProducts[index][i]["id"],
+                                name: dataProducts[index][i]["name"],
+                                price: dataProducts[index][i]["price"],
+                                itemCount: _counter
+                              );
+                              listItems.add(items);
+                              });
+                              print(listItems[index].itemCount);
+                            },
+                            color: Colors.lightBlueAccent,
+                          ),
+                          DialogButton(
+                            child: Text('-',
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.white
+                            ),),
+                            onPressed: _decrease,
+                            color: Colors.lightBlueAccent,
+                          ),
+                        ],
+                        context:context, 
+                        title: dataProducts[index][i]['name'],
+                        desc: dataProducts[index][i]['description'],
+                        content: Text(_countPrice.toString() + ' TL'),
+                        type: AlertType.none,
+                        ).show(); 
+                      }
+                    );
+                  },
+                )
+              ],
+            );
 
-        appBar: AppBar(
-          bottom: tabBarItem,
-          backgroundColor: Colors.lightBlueAccent,
-          title: Text('Mutfak'),
-          centerTitle: true,
-        ),
-        body: TabBarView(
-          controller: tabController,
-          children: <Widget>[
-            listView,
-            Text('DETAIL PAGE', textAlign: TextAlign.center,),
-          ],
-        ),
-        ),
-      );
-      }
-    }
-
-
-
-
-
-
+      },
+  );
+  return DefaultTabController(
+    length: 2,
+    child: Scaffold(
+    appBar: AppBar(
+      bottom: tabBarItem,
+      backgroundColor: Colors.lightBlueAccent,
+      title: Text('Mutfak'),
+      centerTitle: true,
+    ),
+    body: TabBarView(
+      controller: tabController,
+      children: <Widget>[
+        listView,
+        Text('DETAIL PAGE', textAlign: TextAlign.center,),
+      ],
+      ),
+    ),
+  );
+}
+}
 var alertStyle = AlertStyle(
   animationType: AnimationType.grow,
   isCloseButton: true,
@@ -252,4 +241,15 @@ var alertStyle = AlertStyle(
       titleStyle: TextStyle(
         color: Colors.black,
       ),
+);
+
+var _loading = Center(
+  child: SizedBox(
+    height: 50.0,
+    width: 50.0,
+    child: new CircularProgressIndicator(
+      value: null,
+      strokeWidth: 7.0,
+    ),
+  )
 );
