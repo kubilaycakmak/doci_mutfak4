@@ -1,134 +1,87 @@
-import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Home/shoppingCart.dart';
+import 'package:doci_mutfak4/Screens/Home/info.dart';
+import 'package:titled_navigation_bar/titled_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
+import 'menu.dart';
+int _currentIndex = 3;
 class HomeScreen extends StatefulWidget {
+  
   HomeScreen({Key key}) : super(key: key);
 
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _cIndex = 0;
+  @override
+  Widget build(BuildContext context) {
 
-  void _incrementTab(index) {
-    setState(() {
-      _cIndex = index;
-    });
+    
+    final List<Widget> _children = [
+      Menu(),
+      ShoppingCart(),
+      Info(),
+      homeScreen2()
+    ];
+
+    return Scaffold(
+      body: _children[_currentIndex],
+      bottomNavigationBar: TitledBottomNavigationBar(
+        inactiveStripColor: Colors.transparent,
+        
+        currentIndex: _currentIndex,
+        onTap: (index){
+          setState(() {
+             _currentIndex = index;
+          });
+        },
+        items: [
+            TitledNavigationBarItem(title: 'Mutfak', icon: Icons.fastfood),
+            TitledNavigationBarItem(title: 'Sepetim', icon: Icons.shopping_cart),
+            TitledNavigationBarItem(title: 'Hakkimizda\n & Iletisim', icon: Icons.info_outline),
+            TitledNavigationBarItem(title: 'Profilim', icon: Icons.person_outline),
+        ],
+      )
+    );
   }
+}
+
+class homeScreen2 extends StatelessWidget {
+  const homeScreen2({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.search, color: Colors.white,), onPressed: (){},),
-          IconButton(icon: Icon(Icons.shopping_cart, color: Colors.white,), onPressed: (){},),
-        ],
+        title: Text('Profilim'),
         backgroundColor: Colors.lightBlueAccent,
-        title: Text('Doci Bosnak'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: ()=> Navigator.pushReplacementNamed(context, '/splash'),
-        ),
+        elevation: 0,
         centerTitle: true,
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 20),
+        padding: EdgeInsets.only(top: 0),
           child: ListView(
           children: <Widget>[
-            Image(
-              image: AssetImage(
-                'assets/images/logo.png'
+            Container(
+                padding: EdgeInsets.only(bottom: 20),
+                color: Colors.lightBlueAccent,
+            ),
+            Container(
+              child: CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.black38,
+                child: Text('A')
               ),
-              fit: BoxFit.contain,
+              color: Colors.black45,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-            ),
-            InkWell(
-              onTap: () => Navigator.pushReplacementNamed(context, '/menu'),
-              child: ListTile(
-                title: Text('Menu & Siparis',
-                style: TextStyle(
-                  color: Colors.black54, 
-                  fontWeight: FontWeight.w300,
-                  shadows: [
-                  Shadow(
-                    blurRadius: 70,
-                    color: Colors.black54,
-                  ),
-                ]),textScaleFactor: 1.8),
+            Center(
+              child: Column(
+                children: <Widget>[
+                ],
               ),
             ),
-            InkWell(
-              onTap: ()=> Navigator.push(context, MaterialPageRoute(
-                builder: (context) => ShoppingCart()),
-              ),
-              child: ListTile(
-                title: Text('Sepetim', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
-                  Shadow(
-                    blurRadius: 70,
-                    color: Colors.black54,
-                  )
-                ]),textScaleFactor: 1.8),
-              ),
-            ),
-            InkWell(
-              onTap: ()=> Navigator.pushReplacementNamed(context, '/info'),
-              child: ListTile(
-                title: Text('Hakkimizda', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
-                  Shadow(
-                    blurRadius: 70,
-                    color: Colors.black54,
-                  )
-                ]),textScaleFactor: 1.8),
-              ),
-            ),
-            InkWell(
-              onTap: () => Navigator.pushReplacementNamed(context, '/contact'),
-              child: ListTile(
-                title: Text('Iletisim & ulasim', style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w300, shadows: [
-                  Shadow(
-                    blurRadius: 70,
-                    color: Colors.black54,
-                  )
-                ]),textScaleFactor: 1.8),
-              ),
-            ),
-                  
           ],
         ),
-      ),
-      bottomNavigationBar: new Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: Colors.lightBlueAccent,
-          primaryColor: Colors.lightBlueAccent
-        ),
-        child: BottomNavigationBar(
-        currentIndex: _cIndex,
-        
-        type: BottomNavigationBarType.shifting ,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.white,),
-            title: new Text('Giris Yap / Yeni Uye')
-
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, color: Colors.white,),
-            title: new Text('Ayarlar')
-          ),
-        ],
-        onTap: (index){
-            _incrementTab(index);
-            if(index == 0){
-              Navigator.pushReplacementNamed(context, '/login');
-            }else{
-              Navigator.pushReplacementNamed(context, '/register');
-            }
-        },
-        )),
+      )
     );
   }
 }
