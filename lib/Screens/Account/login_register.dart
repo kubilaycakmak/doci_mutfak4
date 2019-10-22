@@ -1,14 +1,82 @@
-import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
+import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
 TabController tabController;
+var authKey;
+String key;
+int statusCode;
+var user;
+List<User> userInformations = new List();
+List<User> getList(){
+  return userInformations;
+}
+final _usernameController = TextEditingController();
+final _passwordController = TextEditingController();
 class LoginAndRegister extends StatefulWidget {
   @override
   _LoginAndRegisterState createState() => _LoginAndRegisterState();
 }
 
 class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProviderStateMixin {
+  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself'; 
+  
+  Future<http.Response> postRequest() async{
+    Map data = {
+      'username': _usernameController.text,
+      'password': _passwordController.text
+    };
+    var body = json.encode(data);
+
+    var response = await http.post(loginCheckUrl,
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: body
+    );
+    setState(() {
+      authKey = json.decode(response.body);
+    });
+    key = authKey["authorization"];
+    if(key!=''){
+      inside = false;
+      Navigator.of(context).pushReplacementNamed('/home');
+      postItself();
+    }else{
+      inside = true;
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+    return response;
+    
+  }
+
+  Future<http.Response> postItself() async{
+
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+        "authorization": key,
+      });
+    setState(() {
+     user = json.decode(response.body);
+    });
+    var userInfo = new User(
+        id: user["value"]["id"],
+        name: user["value"]["name"],
+        lastname: user["value"]["lastname"],
+        phoneNumber: user["value"]["phoneNumber"],
+        address: user["value"]["address"],
+        created: user["value"]["created"]
+        );
+        userInformations.add(userInfo); 
+        print(userInformations[0].name);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     tabController = new TabController(length: 2, vsync: this);
@@ -51,6 +119,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        controller: _usernameController,
                         decoration: InputDecoration(
                           labelText: "Kullanici Adi veya E-Posta",
                           fillColor: Colors.white,
@@ -62,7 +131,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                         validator: (val){
                           if (val.length == 0) {
-                            return "E-posta veya Kullanici adi bos olamaz!";
                           }
                           else{
                             return null;
@@ -74,6 +142,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: "Sifre",
                           fillColor: Colors.white,
@@ -101,9 +170,8 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         leading: FlatButton(onPressed: (){}, child: Text('Sifremi Unuttum!'),),
                         trailing: MaterialButton(
                           onPressed: (){
-                            inside = false;
-                            Navigator.of(context).pushReplacementNamed('/home');
-                            print('asd');
+                              postRequest();
+                            
                         }, child: Text('Giris Yap'),color: Colors.lightBlueAccent,),
                       )
                     ],

@@ -7,6 +7,8 @@ import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 
+import 'Profile/update.dart';
+
 class Routes{
   Routes(){
     runApp(MaterialApp(
@@ -66,6 +68,12 @@ class Routes{
           case '/home':
           return MyCustomRoute(
             builder: (_) => HomeScreen(),
+            settings: settings,
+          );
+
+          case '/update':
+          return MyCustomRoute(
+            builder: (_) => Update(),
             settings: settings,
           );
         }

@@ -1,3 +1,4 @@
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +95,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 child: MaterialButton(
                   color: Colors.lightBlueAccent,
                   onPressed: (){
+                    print(key);
                     if (inside == false) {
                       print('Siparis verildi');
                       return Alert(

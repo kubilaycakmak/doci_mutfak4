@@ -1,4 +1,5 @@
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:flutter/material.dart';
 var backgroundImage = new AssetImage('assets/images/me.jpg');
 var image = new Image(image: backgroundImage);
@@ -21,7 +22,7 @@ class Profile extends StatelessWidget {
           children: <Widget>[
             FlatButton(
               onPressed: (){
-                print('asd');
+                print(key);
               },
               child: CircleAvatar(
                 child: ClipOval(
@@ -32,13 +33,15 @@ class Profile extends StatelessWidget {
             ),
             Center(
               heightFactor: 3,
-              child: Text('Kubilay Cakmak', style: TextStyle(fontSize: 20),),
+              child: Text("Hosgeldiniz", style: TextStyle(fontSize: 20),),
             ),
             ListTile(
               title: Text('Bilgilerimi Guncelle'),
               subtitle: Text('Sifre - Adres - Telefon numarasi'),
               leading: Icon(Icons.update),
-              onTap: null,
+              onTap: (){
+                Navigator.of(context).pushReplacementNamed('/update');
+              },
             ),
             ListTile(
               title: Text('Eski Siparislerim'),
