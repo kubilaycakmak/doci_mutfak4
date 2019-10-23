@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 TabController tabController;
 var authKey;
@@ -16,8 +16,19 @@ List<User> userInformations = new List();
 List<User> getList(){
   return userInformations;
 }
+List questions;
 final _usernameController = TextEditingController();
 final _passwordController = TextEditingController();
+String dropdownValue = 'One';
+final _username = TextEditingController();
+final _password = TextEditingController();
+final _name = TextEditingController();
+final _lastname = TextEditingController();
+final _phoneNumber = TextEditingController();
+final _address = TextEditingController();
+final _securityQuestion = TextEditingController();
+final _answer = TextEditingController();
+
 class LoginAndRegister extends StatefulWidget {
   @override
   _LoginAndRegisterState createState() => _LoginAndRegisterState();
@@ -26,7 +37,9 @@ class LoginAndRegister extends StatefulWidget {
 class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProviderStateMixin {
   final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself'; 
-  
+  final String securityQuestions = 'http://68.183.222.16:8080/api/securityQuestion/all';
+  final String registerCheck = 'http://68.183.222.16:8080/api/userAccount/create';
+
   Future<http.Response> postRequest() async{
     Map data = {
       'username': _usernameController.text,
@@ -50,10 +63,62 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       postItself();
     }else{
       inside = true;
-      Navigator.of(context).pushReplacementNamed('/home');
+      Alert(
+        context:context, 
+        title: 'Kullanici adi veya Sifreniz yanlistir',
+        desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
+        buttons: [
+          DialogButton(
+            onPressed: null,
+            child: Text('Sifremi unuttum'),
+          ),
+          DialogButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Tamam'),
+          ),
+        ],
+      ).show(); 
     }
     return response;
+  }
+
+    Future<String> getQuestions() async{
+    var response = await http.get(Uri.encodeFull(securityQuestions), headers: {
+      "Accept": 'application/json'
+    });
+      setState(() {
+      var _extractData = json.decode(response.body);
+      questions = _extractData;
+    });
     
+  }
+
+  Future<http.Response> postRegisterRequest() async{
+    Map data = 
+      {
+        "username": _username,
+        "password": _password,
+        "user": {
+        "name": _name,
+            "lastname": _lastname,
+            "phoneNumber": _phoneNumber,
+            "address": _address
+        },
+        "securityQuestion": {
+          "id": 1
+        },
+        "answer": _answer
+    };
+
+    var body = json.encode(data);
+    var response = await http.post(registerCheck,
+      headers: {
+        "Content-Type":"application/json"
+      },
+      body: body
+    );
+      print('${response.statusCode}');
+      return response;
   }
 
   Future<http.Response> postItself() async{
@@ -171,7 +236,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         trailing: MaterialButton(
                           onPressed: (){
                               postRequest();
-                            
                         }, child: Text('Giris Yap'),color: Colors.lightBlueAccent,),
                       )
                     ],
@@ -201,8 +265,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        controller: _username,
                         decoration: InputDecoration(
-                          labelText: "E-Posta",
+                          labelText: "Kullanici adi",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -224,6 +289,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _password,
                         decoration: InputDecoration(
                           labelText: "Sifre",
                           fillColor: Colors.white,
@@ -247,8 +313,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _name,
                         decoration: InputDecoration(
-                          labelText: "Sifre Tekrar",
+                          labelText: "Ad",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -270,8 +337,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _lastname,
                         decoration: InputDecoration(
-                          labelText: "Ad",
+                          labelText: "Soyad",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -293,8 +361,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _phoneNumber,
                         decoration: InputDecoration(
-                          labelText: "Soyad",
+                          labelText: "Telefon numarasi",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -316,8 +385,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                       ),
                       TextFormField(
+                        controller: _address,
                         decoration: InputDecoration(
-                          labelText: "Dogum Tarihi",
+                          labelText: "Siparis Adresi",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -338,10 +408,37 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                           fontFamily: "Poppins",
                         ),
                       ),
+                      DropdownButton<String>(
+                        value: dropdownValue,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(
+                          color: Colors.deepPurple
+                        ),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                          });
+                        },
+                        items: <String>['One', 'Two', 'Free', 'Four']
+                          .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          })
+                          .toList(),
+                      ),
                       TextFormField(
+                        controller: _answer,
                         maxLength: null,
                         decoration: InputDecoration(
-                          labelText: "Adres",
+                          labelText: "Cevap",
                           fillColor: Colors.white,
                           border: UnderlineInputBorder(
                             borderSide: BorderSide(
@@ -376,7 +473,9 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         subtitle: Text('Kullanici Sozlesmesini ve Gizlilik Politikasini okudum ve kabul ediyorum.'),
                       ),
                       ListTile(
-                        title: MaterialButton(onPressed: (){print('Giris yapildi');}, child: Text('Yeni Uye'),color: Colors.lightBlueAccent,),
+                        title: MaterialButton(onPressed: (){
+                          postRegisterRequest();
+                          }, child: Text('Yeni Uye'),color: Colors.lightBlueAccent,),
                       ),
               ],
             ),

@@ -1,4 +1,7 @@
+import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:flutter/material.dart';
+
+import 'Account/login_register.dart';
 
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
@@ -45,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 150),
-                      child: Column(
+                      child: key == null ? Column(
                         children: <Widget>[
                           ButtonBar(
                             mainAxisSize: MainAxisSize.min,
@@ -96,6 +99,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                       ],
                     )
+                    :
+                    Container(
+                      child: FlatButton(
+                        onPressed: (){
+                          Navigator.of(context).pushReplacementNamed('/home');
+                        },
+                        child: Text('${userInformations[0].name}' + ' olarak devam et', 
+                        style: TextStyle(
+                          color: Colors.white
+                        ),),
+                      ),
+                    ),
                     ),
                   ],
                 ),

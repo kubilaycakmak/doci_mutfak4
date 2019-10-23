@@ -68,10 +68,18 @@ class Profile extends StatelessWidget {
               onTap: null,
             ),
             ListTile(
+              title: Text('Basa don'),
+              subtitle: Text('Uygulama Hakkinda'),
+              leading: Icon(Icons.info),
+              onTap: () => Navigator.of(context).pushReplacementNamed('/splash'),
+            ),
+            ListTile(
               title: Text('Cikis Yap'),
               leading: Icon(Icons.close),
               onTap: (){
                 inside = true;
+                print(key);
+                key = null;
                 Navigator.of(context).pushReplacementNamed('/home');
               },
             ),

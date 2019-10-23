@@ -156,7 +156,6 @@ class _UpdateState extends State<Update> {
                         contentPadding: EdgeInsets.only(top: 20),
                         trailing: MaterialButton(
                           onPressed: (){
-                            
                         }, child: Text('Guncelle'),color: Colors.lightBlueAccent,),
                       )
                     ],
