@@ -38,11 +38,37 @@ String currentQuest;
 int statusValidator;
 bool lock;
 List num;
+
 String validateUsername(String value){
   Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
   RegExp regex = new RegExp(pattern);
   if(!regex.hasMatch(value))
     return 'Kullanici ismini duzeltiniz!';
+  else
+    return null;
+}
+
+String validatePassword(String value){
+  Pattern pattern = r'^[a-zA-Z0-9._-]{5,15}$';
+  RegExp regex = new RegExp(pattern);
+  if(!regex.hasMatch(value))
+    return 'Sifrenizi duzeltiniz';
+  else
+    return null;
+}
+String validateAnswer(String value){
+ Pattern pattern = r'^[a-zA-Z0-9.-]{2,15}$';
+ RegExp regex = new RegExp(pattern);
+ if(!regex.hasMatch(value))
+   return 'Cevabinizi duzeltiniz';
+ else
+   return null;
+}
+String validatePhoneNumber(String value){
+  Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
+  RegExp regexPhone = new RegExp(cellphone);
+  if(!regexPhone.hasMatch(value))
+    return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
   else
     return null;
 }
@@ -227,14 +253,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             ),
                           ),
                         ),
-                        validator: (val){
-                          if (val.length == 0) {
-                            return "E-posta veya Kullanici adi bos olamaz!";
-                          }
-                          else{
-                            return null;
-                          }
-                        },
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                           fontFamily: "Poppins",
@@ -310,14 +328,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               ),
                             ),
                           ),
-                          validator: (val){
-                            if (val.length == 0) {
-                              return "Lutfen sifrenizi giriniz!";
-                            }
-                            else{
-                              return null;
-                            }
-                          },
+                          validator: validatePassword,
                           keyboardType: TextInputType.text,
                           style: TextStyle(
                             fontFamily: "Poppins",
@@ -371,14 +382,17 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             fontFamily: "Poppins",
                           ),
                         ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                        ),
+                        ListTile(
+                          enabled: false,
+                          leading: Icon(Icons.info_outline),
+                          subtitle: Text('Telefon numarasi alan kodu ve 0 icermemelidir!', style: TextStyle(fontSize: 12.5),),
+                        ),
                         TextFormField(
                           controller: _phoneNumber,
-                          validator: (value){
-                            if(value.isEmpty){
-                              return 'Lutfen telefon numarasini giriniz!';
-                            }
-                            return null;
-                          },
+                          validator: validatePhoneNumber,
                           decoration: InputDecoration(
                             labelText: "* Telefon numarasi",
                             fillColor: Colors.white,
@@ -424,6 +438,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                     setState(() {
                                       currentQuest = questions[index]['question'].toString();
                                       setQuestion = questions[index]['id'];
+
                                     });
                                   },
                                 );
@@ -443,14 +458,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               ),
                             ),
                           ),
-                          validator: (val){
-                            if (val.length == 0) {
-                              return "Lutfen bir cevap giriniz!";
-                            }
-                            else{
-                              return null;
-                            }
-                          },
+                          validator: validateAnswer,
                           keyboardType: TextInputType.multiline,
                           style: TextStyle(
                             fontFamily: "Poppins",
@@ -480,6 +488,21 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                           }*/
                             if (_formKey.currentState.validate()) {
                               _formKey.currentState.save();
+                              Alert(
+                                context:context,
+                                type: AlertType.success,
+                                title: 'Basariyla kayit oldun!',
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                                    child: Text('Giris sayfasina git'),
+                                  ),
+                                  DialogButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: Text('Tamam'),
+                                  ),
+                                ],
+                              ).show();
                             } else {
                               setState(() {
                                 _validate = true;

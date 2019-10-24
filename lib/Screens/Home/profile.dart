@@ -26,7 +26,7 @@ class Profile extends StatelessWidget {
               },
               child: CircleAvatar(
                 child: ClipOval(
-                  child: image,
+                  child: null,
                 ),
                 radius: 80,
               ),
