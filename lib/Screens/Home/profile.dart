@@ -1,14 +1,45 @@
-import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
+import 'dart:async';
+import 'dart:convert';
+import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/material.dart';
-var backgroundImage = new AssetImage('assets/images/me.jpg');
-var image = new Image(image: backgroundImage);
+import 'package:http/http.dart' as http;
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 bool inside = true;
-class Profile extends StatelessWidget {
+
+class Profile extends StatefulWidget {
   const Profile({Key key}) : super(key: key);
 
   @override
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile>{
+
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+
+  Future<http.Response> postItself() async{
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": key,
+    });
+    setState(() {
+      user = json.decode(response.body);
+    });
+    var userInfo = new User(
+        id: user["value"]["id"],
+        name: user["value"]["name"],
+        lastname: user["value"]["lastname"],
+        phoneNumber: user["value"]["phoneNumber"],
+        address: user["value"]["address"],
+        created: user["value"]["created"]
+    );
+    userInformations.clear();
+    userInformations.add(userInfo);
+    return response;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    postItself();
     return Scaffold(
       appBar: AppBar(
         title: inside == false ? Text('Profilim') : Text('GIRIS YAP / YENI UYE'),
@@ -33,7 +64,7 @@ class Profile extends StatelessWidget {
             ),
             Center(
               heightFactor: 3,
-              child: Text("Hosgeldiniz", style: TextStyle(fontSize: 20),),
+              child: Text("Hosgeldiniz " + userInformations[0].name, style: TextStyle(fontSize: 20),),
             ),
             ListTile(
               title: Text('Bilgilerimi Guncelle'),

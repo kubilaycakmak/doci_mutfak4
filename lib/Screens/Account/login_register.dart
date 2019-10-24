@@ -1,5 +1,3 @@
-import 'dart:ui' as prefix0;
-
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 TabController tabController;
-final _formKey = GlobalKey<FormState>();
+final _formKey = new GlobalKey<FormState>();
 bool _validate = false;
 String username;
 var authKey;
@@ -33,11 +31,19 @@ final _phoneNumber = TextEditingController();
 final _address = TextEditingController();
 final _securityQuestion = TextEditingController();
 final _answer = TextEditingController();
+
 int setQuestion;
 String currentQuest;
 int statusValidator;
 bool lock;
 List num;
+
+class Helper{
+  static Helper _instance;
+  factory Helper() => _instance ??= new Helper._();
+
+  Helper._();
+}
 
 String validateUsername(String value){
   Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
@@ -80,10 +86,10 @@ class LoginAndRegister extends StatefulWidget {
 
 class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProviderStateMixin {
   final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself'; 
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final String securityQuestions = 'http://68.183.222.16:8080/api/securityQuestion/all';
   final String registerCheck = 'http://68.183.222.16:8080/api/userAccount/create';
-
+  Helper helper = new Helper();
   Future<http.Response> postRequest() async{
     Map data = {
       'username': _usernameController.text,
@@ -134,6 +140,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       questions = _extractData;
       print(questions[0]['question']);
       print(questions.length);
+      return questions.toString();
   }
 
 
@@ -166,7 +173,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   }
 
   Future<http.Response> postItself() async{
-
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
         "authorization": key,
       });
@@ -181,9 +187,11 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
         address: user["value"]["address"],
         created: user["value"]["created"]
         );
-        userInformations.add(userInfo); 
-        print(userInformations[0].name);
+        userInformations.add(userInfo);
+
+        return response;
   }
+
   @override
   Widget build(BuildContext context) {
     getQuestions();
