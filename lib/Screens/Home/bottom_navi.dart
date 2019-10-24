@@ -2,6 +2,7 @@ import 'package:doci_mutfak4/Screens/Home/info.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:titled_navigation_bar/titled_navigation_bar.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:flutter/material.dart';
 import 'menu.dart';
 
@@ -16,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    
     final List<Widget> _children = [
       Menu(),
       ShoppingCart(),
@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         onTap: (index){
           setState(() {
+
              _currentIndex = index;
           });
         },

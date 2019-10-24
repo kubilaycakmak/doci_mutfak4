@@ -6,8 +6,7 @@ import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
-
-import 'Profile/update.dart';
+import 'Screens/Profile/update.dart';
 
 class Routes{
   Routes(){
