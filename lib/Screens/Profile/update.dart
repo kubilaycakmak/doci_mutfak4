@@ -19,8 +19,8 @@ class Update extends StatefulWidget {
 class _UpdateState extends State<Update> {
 
   var name = TextEditingController(text: userInformations[0].name);
-  var lastname = TextEditingController(text: userInformations[0].lastname);
-  var phonenumber = TextEditingController(text: userInformations[0].phoneNumber);
+  var lastName = TextEditingController(text: userInformations[0].lastname);
+  var phoneNumber = TextEditingController(text: userInformations[0].phoneNumber);
   var address = TextEditingController(text: userInformations[0].address);
   final String updateUrl = 'http://68.183.222.16:8080/api/user/update';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
@@ -60,8 +60,8 @@ class _UpdateState extends State<Update> {
     Map data =
     {
       "name": name.text,
-      "lastname": lastname.text,
-      "phoneNumber": phonenumber.text,
+      "lastname": lastName.text,
+      "phoneNumber": phoneNumber.text,
       "address": address.text
     };
 
@@ -75,9 +75,6 @@ class _UpdateState extends State<Update> {
     );
 
     statusValidatorUpdate = response.statusCode.toString();
-    print(key);
-    print(statusValidatorUpdate);
-
     return response;
   }
 
@@ -85,6 +82,7 @@ class _UpdateState extends State<Update> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightBlueAccent,
         title: Text('Bilgileri Guncelle'),
         centerTitle: true,
         leading: IconButton(
@@ -124,7 +122,7 @@ class _UpdateState extends State<Update> {
                     TextFormField(
                       onChanged: (val){
                       },
-                      controller: lastname,
+                      controller: lastName,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
@@ -140,7 +138,7 @@ class _UpdateState extends State<Update> {
                     ),
 
                     TextFormField(
-                      controller: phonenumber,
+                      controller: phoneNumber,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
@@ -177,7 +175,6 @@ class _UpdateState extends State<Update> {
                       contentPadding: EdgeInsets.only(top: 20),
                       trailing: MaterialButton(
                         onPressed: (){
-                          postUpdate();
                           if (statusValidatorUpdate == '201') {
                             Alert(
                               context:context,
@@ -198,6 +195,7 @@ class _UpdateState extends State<Update> {
                               validate = false;
                             });
                           }
+                          postUpdate();
                         }, child: Text('Guncelle'),color: Colors.lightBlueAccent,),
                     )
                   ],

@@ -1,6 +1,10 @@
+import 'package:doci_mutfak4/Model/data.dart';
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
+import 'package:doci_mutfak4/Model/item_to_cart.dart' as prefix0;
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/types.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
@@ -8,16 +12,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 List<String> addItem;
+bool switches = false;
 List<AddItemtoShopCart> listItems = new List();
 List<AddItemtoShopCart> getList(){
   return listItems;
 }
 int _counter = 1;
-int currentType;
-int currentProduct;
-
-Types currentTypes;
-Products currentProducts;
+var itemOfProducts;
 
 void _showToast(BuildContext context, String desc) {
   final scaffold = Scaffold.of(context);
@@ -36,25 +37,21 @@ class Menu extends StatefulWidget {
 
 _MenuState createState() => _MenuState();
 }
-class _MenuState extends State<Menu>{
+class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
+
   List dataProducts;
   var quantity = 1 ;
   TabController tabController;
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
-  @override
-  void initState() { 
-    super.initState();
-    this.makeRequest();
-  }
-
+  // ignore: missing_return
   Future<String> makeRequest() async{
     var response = await http.get(Uri.encodeFull(url), headers: {
       "Accept": 'application/json'
     });
     if(response.statusCode == 200){
-        final items = json.decode(response.body);
-        dataProducts = items["products"];
+      final items = json.decode(response.body);
+      dataProducts = items["products"];
     }
   }
 
@@ -64,6 +61,7 @@ class _MenuState extends State<Menu>{
     });
     if(response.statusCode == 200){
       final items = json.decode(response.body);
+      print(items['products']);
       List<Types> listOfTypes = items["types"].map<Types>((json){
         return Types.fromJson(json);
       }).toList();
@@ -71,6 +69,28 @@ class _MenuState extends State<Menu>{
     }else{
       throw Exception('Failed to get Types');
     }
+  }
+
+  /*Future<List<Products>> _fetchProducts() async{
+    var response = await http.get(Uri.encodeFull(url), headers: {
+      "Accept": 'application/json'
+    });
+    if(response.statusCode == 200){
+      final items = json.decode(response.body);
+
+      List<Types> listOfTypes = items["types"].map<Types>((json){
+        return Types.fromJson(json);
+      }).toList();
+      return listOfTypes;
+    }else{
+      throw Exception('Failed to get Types');
+    }
+  }*/
+
+  @override
+  // ignore: must_call_super
+  void initState() {
+    this.makeRequest();
   }
 
   @override
@@ -85,7 +105,7 @@ class _MenuState extends State<Menu>{
         body: FutureBuilder<List<Types>>(
           future: _fetchTypes(),
           builder: (BuildContext context, AsyncSnapshot<List<Types>> snapshot){
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData) return Container(child: CircularProgressIndicator(), alignment: Alignment.center);
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index){
@@ -96,12 +116,56 @@ class _MenuState extends State<Menu>{
                       physics: NeverScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      reverse: false,
-                      itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
+                      itemCount: dataProducts[index].length == null ? 19 : dataProducts[index].length,
                       itemBuilder: (context, i){
+                        makeRequest();
+                        if(dataProducts[index].length == null) return CircularProgressIndicator();
+                        double _countPrice = dataProducts[index][i]['price'];
                         return ListTile(
                           title: Text(dataProducts[index][i]['name']),
-                          subtitle: Text(dataProducts[index][i]['description']),
+                          subtitle: switches == false ? Text(dataProducts[index][i]['description']) :
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              CupertinoButton(
+                                child: Icon(Icons.add),
+                                onPressed: (){
+                                  setState(() {
+                                    _counter++;
+                                    _countPrice += (dataProducts[index][i]['price']);
+                                    print(_countPrice);
+                                  });
+                                },
+                              ),
+                              CupertinoButton(
+                                child: Text(_counter.toString()),
+                                onPressed: (){
+                                    _showToast(context, "$_counter adet ürün sepete eklenmiştir!");
+                                    setState(() {
+                                      switches = false;
+                                      var items = new AddItemtoShopCart(
+                                        id: dataProducts[index][i]["id"],
+                                        name: dataProducts[index][i]["name"],
+                                        price: dataProducts[index][i]["price"],
+                                        itemCount: _counter,
+                                      );
+                                      listItems.add(items);
+
+                                    });
+                                },
+                              ),
+                              CupertinoButton(
+                                child: Icon(Icons.remove),
+                                onPressed: (){
+                                  setState(() {
+                                    if(_counter == 1) _counter=1;
+                                    else _counter--;
+                                    print(_counter);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                           trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -127,7 +191,11 @@ class _MenuState extends State<Menu>{
                                 },
                               ),
                             onTap: (){
-                              return showDialog(
+                            setState(() {
+                              switches = true;
+                            });
+
+                            /*return showDialog(
                                 context: context,
                                 builder: (context)=>AlertDialog(
                                   title: Text(dataProducts[index][i]['name'], textAlign: TextAlign.center,),
@@ -162,7 +230,7 @@ class _MenuState extends State<Menu>{
                                         )
                                       ],
                                 )
-                              );
+                              );*/
                             },
                         );
                       },
@@ -176,3 +244,21 @@ class _MenuState extends State<Menu>{
       );
     }
   }
+class DetailPage extends StatefulWidget {
+  @override
+  _DetailPageState createState() => _DetailPageState();
+}
+class _DetailPageState extends State<DetailPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ürün Detayı'),
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: null,),
+      ),
+      body: Container(
+
+      ),
+    );
+  }
+}

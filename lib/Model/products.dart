@@ -4,6 +4,7 @@ class Products{
   String desc;
   double priceWithoutNoDiscount;
   double price;
+  List dociProductTypes;
   bool isValid;
   String created;
 
@@ -13,6 +14,7 @@ class Products{
     this.desc,
     this.priceWithoutNoDiscount,
     this.price,
+    this.dociProductTypes,
     this.isValid,
     this.created
   });
@@ -24,6 +26,7 @@ class Products{
       desc: json['description'],
       priceWithoutNoDiscount: json['priceWithoutNoDiscount'],
       price: json['price'],
+      dociProductTypes: json['dociProductTypes'] as List,
       isValid: json['isValid'],
       created: json['created']
     );
