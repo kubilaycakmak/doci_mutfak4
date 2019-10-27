@@ -1,8 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 bool inside = true;
 
@@ -17,13 +13,11 @@ class _ProfileState extends State<Profile>{
 
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
 
-  Future<http.Response> postItself() async{
+  /*Future<http.Response> postItself() async{
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": key,
     });
-    setState(() {
       user = json.decode(response.body);
-    });
     var userInfo = new User(
         id: user["value"]["id"],
         name: user["value"]["name"],
@@ -35,11 +29,11 @@ class _ProfileState extends State<Profile>{
     userInformations.clear();
     userInformations.add(userInfo);
     return response;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    postItself();
+    //postItself();
     return Scaffold(
       appBar: AppBar(
         title: inside == false ? Text('Profilim') : Text('GIRIS YAP / YENI UYE'),
@@ -64,7 +58,7 @@ class _ProfileState extends State<Profile>{
             ),
             Center(
               heightFactor: 3,
-              child: Text("Hosgeldiniz " + userInformations[0].name, style: TextStyle(fontSize: 20),),
+              child: Text("Hosgeldiniz ", style: TextStyle(fontSize: 20),),
             ),
             ListTile(
               title: Text('Bilgilerimi Guncelle'),

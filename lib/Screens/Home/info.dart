@@ -5,7 +5,6 @@ class Info extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _durum = 'Kapali';
     var _now = new DateTime.now();
     var _startTime = 09.00;
     var _endTime = 23.00;

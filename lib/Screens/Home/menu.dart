@@ -1,49 +1,50 @@
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
+import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/types.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 List<String> addItem;
 List<AddItemtoShopCart> listItems = new List();
-Timer _timer;
 List<AddItemtoShopCart> getList(){
   return listItems;
 }
-List<Types> types = new List();
-int _counter = 1; 
+int _counter = 1;
+int currentType;
+int currentProduct;
+
+Types currentTypes;
+Products currentProducts;
+
 void _showToast(BuildContext context, String desc) {
   final scaffold = Scaffold.of(context);
   scaffold.showSnackBar(
     SnackBar(
-      content: Text(desc),
-      action: SnackBarAction(
-          label: 'Gizle', onPressed: scaffold.hideCurrentSnackBar),
+      elevation: 0,
+      backgroundColor: Colors.lightBlueAccent,
+      content: Text(desc, style: TextStyle(fontStyle: FontStyle.normal, fontSize: 20, fontWeight: FontWeight.w500),),
     ),
   );
 }
+
 
 class Menu extends StatefulWidget {
   Menu({Key key}) : super(key: key);
 
 _MenuState createState() => _MenuState();
 }
-class _MenuState extends State<Menu> with TickerProviderStateMixin{
-  var currentProduct;
+class _MenuState extends State<Menu>{
   List dataProducts;
-  var dataProduct;
-  var dataType;
-  List dataTypes;
+  var quantity = 1 ;
   TabController tabController;
-  var _extractData;
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
   @override
   void initState() { 
+    super.initState();
     this.makeRequest();
   }
 
@@ -51,205 +52,127 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin{
     var response = await http.get(Uri.encodeFull(url), headers: {
       "Accept": 'application/json'
     });
-    _timer = new Timer(Duration(milliseconds: 100), (){
-      setState(() {
-            _extractData = json.decode(response.body);
-          });
-      dataTypes = _extractData["types"];
-      dataProducts = _extractData["products"];
-      for (var i = 0; i < dataTypes.length; i++) {
-        dataType = new Types(
-          id: dataTypes[i]['id'],
-          name: dataTypes[i]['name']
-        );
-        types.add(dataType);
-      }
-    });
-    
+    if(response.statusCode == 200){
+        final items = json.decode(response.body);
+        dataProducts = items["products"];
+    }
   }
+
+  Future<List<Types>> _fetchTypes() async{
+    var response = await http.get(Uri.encodeFull(url), headers: {
+      "Accept": 'application/json'
+    });
+    if(response.statusCode == 200){
+      final items = json.decode(response.body);
+      List<Types> listOfTypes = items["types"].map<Types>((json){
+        return Types.fromJson(json);
+      }).toList();
+      return listOfTypes;
+    }else{
+      throw Exception('Failed to get Types');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    tabController = new TabController(length: 2, vsync: this);
-    var tabBarItem = new TabBar(
-      tabs: <Widget>[
-        Tab(
-          child: Text('Menuler'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Menü'),
+        centerTitle: true,
+        backgroundColor: Colors.lightBlueAccent,
+        elevation: 0,
         ),
-        Tab(
-          child: Text('Detaylar'),
-        )
-      ],
-      controller: tabController,
-      indicatorColor: Colors.white,
-    );
-      var listView = ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      reverse: false,
-      itemCount: dataTypes == null ? 0 : dataTypes.length,
-      itemBuilder: (BuildContext context, int index){
-          return ExpansionTile(
-            title: Text(types[index].name, 
-            style: 
-                  TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.w300),),
-            children: <Widget>[
-
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.all(2),
-                dragStartBehavior: DragStartBehavior.down,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                reverse: false,
-                itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
-                itemBuilder: (context, i){
-                double _countPrice = dataProducts[index][i]['price'];
-                void _increase(){
-                  setState(() {
-                    _counter++;
-                    _countPrice += dataProducts[index][i]['price'];
-                    print(_counter);
-                    print(_countPrice);
-                  });
-                }
-                void _decrease(){
-                  setState(() {
-                    if(_counter!=1){
-                      _countPrice -= (dataProducts[index][i]['price']); 
-                      _counter--; 
-                      
-                    }else{
-                    _counter = 1;
-                    }
-                    print(_counter);
-                    print(_countPrice);
-                  });
-                }
-                return ListTile(
-                  title: Text(dataProducts[index][i]['name']),
-                  subtitle: Text(dataProducts[index][i]['description']),
-                  trailing: Text(dataProducts[index][i]['price'].toString() + ' TL'),
-                  leading: IconButton(
-                    padding: EdgeInsets.all(00),
-                    icon: Icon(Icons.add_shopping_cart, size: 45,),
-                    onPressed: (){
-                      _showToast(context, "Urun Sepete Eklendi!");
-                              setState(() {
-                                var items = new AddItemtoShopCart(
-                                id: dataProducts[index][i]["id"],
-                                name: dataProducts[index][i]["name"],
-                                price: dataProducts[index][i]["price"],
-                                itemCount: 1,
-                              );
-                              listItems.add(items);
-                              });
-                              print(listItems[index].name);
-                    },
-                  ),
-                  onTap: (){
-                    _counter = 1;
-                    return Alert(
-                      style: alertStyle,
-                      buttons: [
-                        DialogButton(
-                          child: Text('+', 
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white
-                            ),
+        body: FutureBuilder<List<Types>>(
+          future: _fetchTypes(),
+          builder: (BuildContext context, AsyncSnapshot<List<Types>> snapshot){
+            if (!snapshot.hasData) return CircularProgressIndicator();
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index){
+                return ExpansionTile(
+                  title: Text(snapshot.data[index].name),
+                  children: <Widget>[
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      reverse: false,
+                      itemCount: dataProducts[index] == null ? 0 : dataProducts[index].length,
+                      itemBuilder: (context, i){
+                        return ListTile(
+                          title: Text(dataProducts[index][i]['name']),
+                          subtitle: Text(dataProducts[index][i]['description']),
+                          trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                              dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') :
+                              Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() + ' TL', style: TextStyle(fontSize: 16,decoration: TextDecoration.lineThrough ,fontWeight: FontWeight.w400),),
+                              Text('  '),
+                              Text(dataProducts[index][i]['price'].toInt().toString() + ' TL', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                            ],
                           ),
-                          onPressed: _increase,
-                          color: Colors.lightBlueAccent,
-                          ),
-                          DialogButton(
-                            child: Text("$_counter" + ' Adet Ekle', style: TextStyle(color: Colors.white),),
+                          leading: IconButton(
+                            icon: Icon(Icons.add_circle_outline, size: 29,),
                             onPressed: (){
-                              Navigator.of(context).pop();
-                              _showToast(context, "Urun Sepete Eklendi!");
-                              setState(() {
-                                var items = new AddItemtoShopCart(
-                                id: dataProducts[index][i]["id"],
-                                name: dataProducts[index][i]["name"],
-                                price: dataProducts[index][i]["price"],
-                                itemCount: _counter
+                              _showToast(context, "Ürün sepete eklenmiştir!");
+                                  setState(() {
+                                    var items = new AddItemtoShopCart(
+                                    id: dataProducts[index][i]["id"],
+                                    name: dataProducts[index][i]["name"],
+                                    price: dataProducts[index][i]["price"],
+                                    itemCount: 1,
+                                  );
+                                    listItems.add(items);
+                                  });
+                                },
+                              ),
+                            onTap: (){
+                              return showDialog(
+                                context: context,
+                                builder: (context)=>AlertDialog(
+                                  title: Text(dataProducts[index][i]['name'], textAlign: TextAlign.center,),
+                                    content: ListTile(
+                                      title: Text(dataProducts[index][i]['description'], style: TextStyle(fontSize: 13),),
+                                      subtitle: Text(dataProducts[index][i]['price'].toInt().toString() + ' TL', textAlign: TextAlign.center, style: TextStyle(fontSize: 20),),
+                                    ),
+                                    elevation: 20,
+                                  actions: <Widget>[
+                                        FlatButton(
+                                          onPressed: (){
+                                            setState(() {
+                                             _counter++; 
+                                             print(_counter);
+                                            });
+                                          },
+                                          child: Icon(Icons.add),
+                                        ),
+                                        FlatButton(
+                                          onPressed: null,
+                                          child: Text(_counter.toString() + 'Sepete Ekle'),
+                                        ),
+                                        FlatButton(
+                                          onPressed: (){
+                                            setState(() {
+                                             if(_counter == 1) _counter=1;
+                                             else _counter--;
+                                             print(_counter);
+                                            });
+                                          },
+                                          child: Icon(Icons.remove),
+                                        )
+                                      ],
+                                )
                               );
-                              listItems.add(items);
-                              });
-                              print(listItems[index].itemCount);
                             },
-                            color: Colors.lightBlueAccent,
-                          ),
-                          DialogButton(
-                            child: Text('-',
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.white
-                            ),),
-                            onPressed: _decrease,
-                            color: Colors.lightBlueAccent,
-                          ),
-                        ],
-                        context:context, 
-                        title: dataProducts[index][i]['name'],
-                        desc: dataProducts[index][i]['description'],
-                        content: Text(_countPrice.toString() + ' TL'),
-                        type: AlertType.none,
-                        ).show(); 
-                      }
-                    );
-                  },
-                )
-              ],
+                        );
+                      },
+                    )
+                  ],
+                );
+              },
             );
-
-      },
-  );
-  return DefaultTabController(
-    length: 2,
-    child: Scaffold(
-    appBar: AppBar(
-      bottom: tabBarItem,
-      backgroundColor: Colors.lightBlueAccent,
-      title: Text('Mutfak'),
-      centerTitle: true,
-    ),
-    body: TabBarView(
-      controller: tabController,
-      children: <Widget>[
-        listView,
-        Text('DETAIL PAGE', textAlign: TextAlign.center,),
-      ],
-      ),
-    ),
-  );
-}
-}
-var alertStyle = AlertStyle(
-  animationType: AnimationType.grow,
-  isCloseButton: true,
-  isOverlayTapDismiss: true,
-  descStyle: TextStyle(fontWeight: FontWeight.bold),
-      animationDuration: Duration(milliseconds: 400),
-      alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-        side: BorderSide(
-          color: Colors.lightBlueAccent,
-        ),
-      ),
-      titleStyle: TextStyle(
-        color: Colors.black,
-      ),
-);
-
-var _loading = Center(
-  child: SizedBox(
-    height: 50.0,
-    width: 50.0,
-    child: new CircularProgressIndicator(
-      value: null,
-      strokeWidth: 7.0,
-    ),
-  )
-);
+          },
+        )
+      );
+    }
+  }

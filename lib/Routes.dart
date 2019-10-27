@@ -28,6 +28,7 @@ class Routes{
             builder: (_) => Info(),
             settings: settings
           );
+
           case '/menu':
           return MyCustomRoute(
             builder: (_) => Menu(),
@@ -76,8 +77,10 @@ class Routes{
             settings: settings,
           );
         }
+        return null;
       },
     ));
+    
   }
 }
 

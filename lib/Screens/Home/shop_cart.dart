@@ -1,20 +1,11 @@
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 
-void _showToast(BuildContext context, String desc) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        content: Text(desc),
-        action: SnackBarAction(
-            label: 'Gizle', onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );
-  }
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key key}) : super(key: key);
 
@@ -45,28 +36,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
             return Column(
               children: <Widget>[
                 ListTile(
+                  contentPadding: EdgeInsets.only(top: 10, left: 30, right: 30),
                   title: Text(listItems[index].itemCount.toString() + ' x ' + listItems[index].name),
-                  subtitle: Text('Urunu sepetten cikartmak icin basili tutunuz!'),
-                  trailing: Text(((listItems[index].price)*(listItems[index].itemCount)).toInt().toString() + ' TL'),
-                  onLongPress: (){
-                    _showToast(context, "Urun Sepetten Cikartildi!");
-                    setState(() {
-                      listItems.removeAt(index);
-                    });
-                  },
-                ),
-                ButtonBar(
+                  subtitle: Container(
+                    child: ButtonBar(
+                    mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    RaisedButton(
-                      child: Text("+"),
+                    CupertinoButton(
+                      child: Icon(Icons.add, size: 20),
                       onPressed: (){
                         setState(() {
                           listItems[index].itemCount++; 
                         });
                       },
                 ),
-                    RaisedButton(
-                      child: Text("-"),
+                    CupertinoButton(
+                      child: Icon(Icons.remove, size: 20,),
                         onPressed: (){
                         setState(() {
                           if (listItems[index].itemCount != 1) {
@@ -75,8 +60,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         });
                       },
                     ),
+                    CupertinoButton(
+                      child: Icon(Icons.delete, size: 20,),
+                        onPressed: (){
+                        setState(() {
+                            listItems[index].itemCount = 0; 
+                            listItems.removeAt(index);
+                        });
+                      },
+                    ),
                   ],
-                )
+                ),
+                  ),
+                trailing: Text(((listItems[index].price)*(listItems[index].itemCount)).toInt().toString() + ' TL'),
+                ),
               ],
             );
           },
@@ -84,15 +81,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
       ),
       bottomNavigationBar: Container(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Expanded(
                 child: ListTile(
-                  title: Text("Tutar: "),
-                  subtitle: Text(_count.toString() + " TL"),
+                  leading: Icon(Icons.shopping_basket),
+                  title: Text("Tutar: ", style: TextStyle(fontSize: 20),),
+                  subtitle: Text(_count.toInt().toString() + " TL", style: TextStyle(fontSize: 30),),
                 ),
               ),
               Expanded(
-                child: MaterialButton(
+                child: CupertinoButton(
+                  borderRadius: BorderRadius.circular(0),
+                  pressedOpacity: 0.2,
                   color: Colors.lightBlueAccent,
                   onPressed: (){
                     print(key);
@@ -131,11 +132,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       ).show(); 
                     }
                   },
-                  child: Text('Siparisi ver!',
+                  child: Text('Sepeti Onayla',
                   style: TextStyle(
+                    fontWeight: FontWeight.w500,
                     color: Colors.white
                   ),
                   ),
+                  padding: EdgeInsets.all(25),
                 ),
               )
             ],

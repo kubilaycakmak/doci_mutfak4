@@ -1,7 +1,4 @@
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:flutter/material.dart';
-
-import 'Account/login_register.dart';
 
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
@@ -25,17 +22,18 @@ class _SplashScreenState extends State<SplashScreen> {
             padding: EdgeInsets.only(top: 180),
           ),
           Center(
-            child: Text('Hos Geldiniz', 
+            child: Text('Hoş Geldiniz', 
             style:TextStyle(
-              fontSize: 30, 
-              fontWeight: FontWeight.w700, 
+              fontSize: 35, 
+              fontWeight: FontWeight.w400, 
               color: Colors.white
               ),
               ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 35, right: 35, top: 50),
-            child: Text('Doci Bosnak Mutfagi mobil uygulamasina hosgelniz. Bu uygulama ile hizli bir sekilde siparisinizi verebilirsiniz.', 
+            child: Text('Doci Boşnak Mutfağını kullandığınız için teşekkür ederiz.' +  
+            '\n Bu uygulamayı kullanarak siparişinizi daha hızlı verebilir, Eski siparişlerinizi görebilirsiniz.', 
               style: TextStyle(fontSize: 20, color: Colors.white), 
               textAlign: TextAlign.center,),
           ),
@@ -47,8 +45,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 150),
-                      child: key == null ? Column(
+                      padding: EdgeInsets.only(top: 100),
+                      child: Column(
                         children: <Widget>[
                           ButtonBar(
                             mainAxisSize: MainAxisSize.min,
@@ -58,15 +56,14 @@ class _SplashScreenState extends State<SplashScreen> {
                                 onPressed: () => Navigator.pushReplacementNamed(context, "/register"),
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.00),
+                                  borderRadius: BorderRadius.circular(10.00),
                                 ),
                                 color: Colors.lightBlueAccent,
-                                padding: const EdgeInsets.all(0.0),
                                 child: Container(
-                                  padding: const EdgeInsets.all(20.0),
+                                  padding: const EdgeInsets.all(15.0),
                                   child: const Text(
-                                  'YENI UYE',
-                                  style: TextStyle(fontSize: 20)
+                                  'YENİ ÜYE',
+                                  style: TextStyle(fontSize: 15)
                                 ),
                               ),
                             ),
@@ -76,16 +73,15 @@ class _SplashScreenState extends State<SplashScreen> {
                                 onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.00),
+                                  borderRadius: BorderRadius.circular(10.00),
                                   side: BorderSide(color: Colors.lightBlueAccent)
                                 ),
                                 color: Colors.transparent,
-                                padding: const EdgeInsets.all(0.0),
                                 child: Container(
-                                  padding: const EdgeInsets.all(20.0),
+                                  padding: const EdgeInsets.all(15.0),
                                   child: const Text(
-                                  'GIRIS YAP',
-                                  style: TextStyle(fontSize: 20)
+                                  'GİRİŞ YAP',
+                                  style: TextStyle(fontSize: 15)
                                 ),
                               ),
                             ),
@@ -95,22 +91,10 @@ class _SplashScreenState extends State<SplashScreen> {
                         FlatButton(
                       onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
                       textColor: Colors.white,
-                      child: const Text('Daha Sonra',style: TextStyle(fontSize: 25)),
+                      child: const Text('Misafir olarak devam et',style: TextStyle(fontSize: 25)),
                     ),
                       ],
                     )
-                    :
-                    Container(
-                      child: FlatButton(
-                        onPressed: (){
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        },
-                        child: Text('${userInformations[0].name}' + ' olarak devam et', 
-                        style: TextStyle(
-                          color: Colors.white
-                        ),),
-                      ),
-                    ),
                     ),
                   ],
                 ),
@@ -121,14 +105,14 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
       decoration: BoxDecoration(
-              color: Colors.black,
+            color: Colors.lightBlue,
             image: DecorationImage(
-              image: backgroundImage,
-              alignment: Alignment.topCenter,
-              repeat: ImageRepeat.repeat,
-              fit: BoxFit.scaleDown,
-              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop)
-            )
+            image: backgroundImage,
+            alignment: Alignment.topCenter,
+            repeat: ImageRepeat.repeat,
+            fit: BoxFit.scaleDown,
+            colorFilter: ColorFilter.mode(Colors.black54.withOpacity(0.1), BlendMode.dstATop)
+          )
         ),
       ),
     );
