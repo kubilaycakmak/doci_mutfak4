@@ -4,6 +4,7 @@ import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:doci_mutfak4/Screens/Profile/change_pass.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'Screens/Profile/update.dart';
@@ -28,6 +29,18 @@ class Routes{
             builder: (_) => Info(),
             settings: settings
           );
+
+          case '/forget':
+            return MyCustomRoute(
+                builder: (_) => ForgetPassword(),
+                settings: settings
+            );
+
+          case '/change':
+            return MyCustomRoute(
+                builder: (_) => ChangePassword(),
+                settings: settings
+            );
 
           case '/menu':
           return MyCustomRoute(

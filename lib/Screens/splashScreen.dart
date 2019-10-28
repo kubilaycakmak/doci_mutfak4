@@ -1,7 +1,12 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
+
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key key}) : super(key: key);
 
@@ -9,11 +14,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-    TextEditingController emailEditingContrller = TextEditingController();
+  bool internet = true;
+  TextEditingController emailEditingContrller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: Container(
         child: Column(
@@ -53,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
                             children: <Widget>[
                             ButtonTheme(
                               child: RaisedButton(
-                                onPressed: () => Navigator.pushReplacementNamed(context, "/register"),
+                                onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/register"),
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.00),
@@ -70,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           ),
                           ButtonTheme(
                               child: RaisedButton(
-                                onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
+                                onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/login"),
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.00),
@@ -89,10 +94,10 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                         FlatButton(
-                      onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
-                      textColor: Colors.white,
-                      child: const Text('Misafir olarak devam et',style: TextStyle(fontSize: 25)),
-                    ),
+                          onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/home"),
+                          textColor: Colors.white,
+                          child: const Text('Misafir olarak devam et',style: TextStyle(fontSize: 25)),
+                        ),
                       ],
                     )
                     ),
@@ -101,7 +106,6 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
-          
         ],
       ),
       decoration: BoxDecoration(
@@ -117,4 +121,26 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+  _checkInternetConnectivity() async{
+    var result = await Connectivity().checkConnectivity();
+    if(result == ConnectivityResult.none){
+      internet = false;
+       return Alert(
+          context:context,
+          type: AlertType.error,
+          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+              'bağlantısı gereklidir.',
+          title: '',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ]
+      ).show();
+    }
+    internet = true;
+  }
+
+
 }

@@ -16,13 +16,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
     double _count = 0;
-
+    double sideLength = 50;
       setState(() {
         for (var item in listItems) {
           _count = _count + item.price * item.itemCount;
         }
       });
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Sepetim'),
@@ -36,41 +35,46 @@ class _ShoppingCartState extends State<ShoppingCart> {
             return Column(
               children: <Widget>[
                 ListTile(
-                  contentPadding: EdgeInsets.only(top: 10, left: 30, right: 30),
-                  title: Text(listItems[index].itemCount.toString() + ' x ' + listItems[index].name),
-                  subtitle: Container(
-                    child: ButtonBar(
-                    mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    CupertinoButton(
-                      child: Icon(Icons.add, size: 20),
-                      onPressed: (){
+                  leading: InkWell(
+                    child: Icon(Icons.delete_outline, size: 40, color: Colors.black,),
+                      onTap: (){
                         setState(() {
-                          listItems[index].itemCount++; 
-                        });
-                      },
-                ),
-                    CupertinoButton(
-                      child: Icon(Icons.remove, size: 20,),
-                        onPressed: (){
-                        setState(() {
-                          if (listItems[index].itemCount != 1) {
-                            listItems[index].itemCount--; 
-                          }
-                        });
-                      },
-                    ),
-                    CupertinoButton(
-                      child: Icon(Icons.delete, size: 20,),
-                        onPressed: (){
-                        setState(() {
-                            listItems[index].itemCount = 0; 
+                            listItems[index].itemCount = 0;
                             listItems.removeAt(index);
                         });
                       },
+                  ),
+                  title: Text(listItems[index].itemCount.toString() + ' x ' + listItems[index].name,
+                    style: TextStyle(
+                      fontSize: 20
                     ),
-                  ],
-                ),
+                  ),
+                  subtitle: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        InkWell(
+                          child: Icon(Icons.add, size: 30,),
+                          onTap: (){
+                            setState(() {
+                              listItems[index].itemCount++;
+                            });
+                          },
+                        ),
+                        SizedBox(width: 10,),
+                        InkWell(
+                          child: Icon(Icons.remove, size: 30,),
+                          onTap: (){
+                            setState(() {
+                              if (listItems[index].itemCount != 1) {
+                                listItems[index].itemCount--;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 trailing: Text(((listItems[index].price)*(listItems[index].itemCount)).toInt().toString() + ' TL'),
                 ),

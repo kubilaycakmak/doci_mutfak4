@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,20 +15,13 @@ String username;
 var authKey;
 String key;
 int statusCode;
+bool internet = true;
 var user;
 List<User> userInformations = new List();
 List<User> getList(){
   return userInformations;
 }
-final _usernameController = TextEditingController();
-final _passwordController = TextEditingController();
-final _username = TextEditingController();
-final _password = TextEditingController();
-final _name = TextEditingController();
-final _lastname = TextEditingController();
-final _phoneNumber = TextEditingController();
-final _address = TextEditingController();
-final _answer = TextEditingController();
+var statusForgetPass;
 int setQuestion;
 String currentQuest;
 int statusValidator;
@@ -79,6 +73,17 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final String securityQuestions = 'http://68.183.222.16:8080/api/securityQuestion/all';
   final String registerCheck = 'http://68.183.222.16:8080/api/userAccount/create';
+  final String changePass = 'http://68.183.222.16:8080/api/userAccount/changePassword ';
+  final String sendOrder = 'http://68.183.222.16:8080/api/order/create';
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _username = TextEditingController();
+  final _password = TextEditingController();
+  final _name = TextEditingController();
+  final _lastname = TextEditingController();
+  final _phoneNumber = TextEditingController();
+  final _address = TextEditingController();
+  final _answer = TextEditingController();
 
   Future<http.Response> postRequest() async{
     Map data = {
@@ -97,27 +102,30 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       authKey = json.decode(response.body);
     });
     key = authKey["authorization"];
-    if(key!=''){
-      inside = false;
-      Navigator.of(context).pushReplacementNamed('/home');
-      postItself();
-    }else{
-      inside = true;
-      Alert(
-        context:context, 
-        title: 'Kullanici adi veya Sifreniz yanlistir',
-        desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
-        buttons: [
-          DialogButton(
-            onPressed: null,
-            child: Text('Sifremi unuttum'),
-          ),
-          DialogButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Tamam'),
-          ),
-        ],
-      ).show(); 
+    print(statusCode);
+    if(response.statusCode == 200) {
+      if (key != '') {
+        inside = false;
+        Navigator.of(context).pushReplacementNamed('/home');
+        postItself();
+      }else{
+        inside = true;
+        Alert(
+          context:context,
+          title: 'Kullanici adi veya Sifreniz yanlistir',
+          desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
+          buttons: [
+            DialogButton(
+              onPressed: null,
+              child: Text('Sifremi unuttum'),
+            ),
+            DialogButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Tamam'),
+            ),
+          ],
+        ).show();
+      }
     }
     return response;
   }
@@ -157,7 +165,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   }
 
   Future<http.Response> postRegisterRequest() async{
-    Map data = 
+    Map data =
       {
         "username": _username.text,
         "password": _password.text,
@@ -277,9 +285,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.only(top: 20),
-                          leading: FlatButton(onPressed: (){}, child: Text('Şifremi unuttum', style: TextStyle(decoration: TextDecoration.underline),),),
+                          leading: FlatButton(
+                            onPressed: ()=> Navigator.of(context).pushReplacementNamed('/forget'),
+                            child: Text('Şifremi unuttum', style: TextStyle(decoration: TextDecoration.underline),),),
                           trailing: MaterialButton(
                             onPressed: (){
+                              internet == false ? _checkInternetConnectivity() :
                                 postRequest();
                           }, child: Text('Giriş Yap', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
                         )
@@ -534,6 +545,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       ),
     );
   }
+  _checkInternetConnectivity() async{
+    var result = await Connectivity().checkConnectivity();
+    if(result == ConnectivityResult.none){
+      internet = false;
+      return Alert(
+          context:context,
+          type: AlertType.error,
+          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+              'bağlantısı gereklidir.',
+          title: '',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ]
+      ).show();
+    }
+    internet = true;
+  }
 }
 class Questions{
   int id;
@@ -548,3 +579,109 @@ class Questions{
     );
   }
 }
+
+class ForgetPassword extends StatefulWidget {
+  @override
+  _ForgetPasswordState createState() => _ForgetPasswordState();
+}
+
+class _ForgetPasswordState extends State<ForgetPassword> {
+  final _forgetUsername = TextEditingController();
+  final _forgetAnswer = TextEditingController();
+  var newPass;
+
+  Future<http.Response> forgetPassRequest() async{
+    var response = await http.put(Uri.encodeFull(
+        'http://68.183.222.16:8080/api/userAccount/resetPassword/?username='
+            '${_forgetUsername.text}&securityQuestionAnswer=${_forgetAnswer.text}'));
+    setState(() {
+      user = json.decode(response.body);
+    });
+    newPass = user['password'];
+    if(response.statusCode == 201){
+      return showDialog(
+          context: context,
+          builder: (context)=>AlertDialog(
+            title: SelectableText(
+
+                'Yeni Şifreniz: \n\n$newPass'
+            ),
+            content: Text('Üstüne basılı tutarak kopyalayabilirsiniz'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                child: Text('Giriş Sayfası'),
+              ),
+            ],
+          )
+      );
+    }
+    return response;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlueAccent,
+        title: Text('Şifremi unuttum'),
+        centerTitle: true,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),),
+      ),
+      body: Container(
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(25),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: _forgetUsername,
+                    decoration: InputDecoration(
+                      labelText: "Kullanici Adi",
+                      fillColor: Colors.white,
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.lightBlueAccent
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _forgetAnswer,
+                    decoration: InputDecoration(
+                      labelText: "Güvenlik sorusu cevabınız",
+                      fillColor: Colors.white,
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.lightBlueAccent
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.only(top: 20),
+                    trailing: MaterialButton(
+                      // ignore: missing_return
+                      onPressed: (){
+                        forgetPassRequest();
+                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

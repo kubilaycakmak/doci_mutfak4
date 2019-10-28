@@ -4,12 +4,15 @@ class AddItemtoShopCart{
   int id;
   String name;
   double price;
+  int quantity;
   int itemCount;
+
 
   AddItemtoShopCart({
     @required this.id, 
-    @required this.name, 
+    @required this.name,
     @required this.price,
+    this.quantity,
     this.itemCount
     });
 }
@@ -28,4 +31,8 @@ double get price{
 
 int get itemCount{
   return itemCount;
+}
+
+int get quantity{
+  return quantity;
 }
