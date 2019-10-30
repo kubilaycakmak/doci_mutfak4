@@ -74,7 +74,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     }
   }
 
-  // ignore: missing_return
   Future<String> _fetchProduct() async {
     var response = await http
         .get(Uri.encodeFull(url), headers: {"Accept": 'application/json'});
@@ -112,46 +111,53 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             return ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
-                return ExpansionTile(
-                  title: Text(snapshot.data[index].name),
-                  children: <Widget>[
-                    FutureBuilder<String>(
-                        future: _fetchProduct(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<String> snapshotProducts) {
-                          if (!snapshotProducts.hasData)
-                            return Container(
-                                child: CircularProgressIndicator(),
-                                alignment: Alignment.center);
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            itemCount: dataProducts[index].length,
-                            itemBuilder: (BuildContext context, int i) {
-                              return ListTile(
-                                  title: Text(dataProducts[index][i]['name']),
-                                  subtitle: switches == false ? Text(dataProducts[index][i]['description'])
-                                      :
-                                  currentSelected.toString() == dataProducts[index][i].toString()
-                                      ?
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                        IconButton(
-                                          color: Colors.lightBlueAccent,
-                                            icon: Icon(Icons.add),
-                                            onPressed: () {
+                return Card(
+                  child: ExpansionTile(
+                    title: Text(snapshot.data[index].name),
+                    children: <Widget>[
+                      FutureBuilder<String>(
+                          future: _fetchProduct(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String> snapshotProducts) {
+                            if (!snapshotProducts.hasData)
+                              return Container(
+                                  child: CircularProgressIndicator(),
+                                  alignment: Alignment.center);
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              itemCount: dataProducts[index].length,
+                              itemBuilder: (BuildContext context, int i) {
+                                return Card(
+                                  child: ListTile(
+                                    // ignore: unrelated_type_equality_checks
+                                      title: Text(dataProducts[index][i]['name'].toString()),
+                                      subtitle:
+                                      dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                      switches == false ? Text(dataProducts[index][i]['description'])
+                                          :
+                                      currentSelected.toString() == dataProducts[index][i].toString()
+                                          ?
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          InkWell(
+                                            child: Icon(Icons.add),
+                                            onTap: () {
                                               setState(() {
                                                 _counter++;
                                               });
                                             },
                                           ),
-                                      MaterialButton(
-                                        child: Text(_counter.toString() + ' Adet', style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white
-                                        ),),
+                                          MaterialButton(
+                                            elevation: 0,
+                                            height: 10,
+                                            minWidth: 20,
+                                            child: Text(_counter.toString() + ' Adet', style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white
+                                            ),),
                                             onPressed: () {
                                               _showToast(context,
                                                   "$_counter adet ürün sepete eklenmiştir!");
@@ -166,13 +172,12 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                                 listItems.add(items);
                                               });
                                             },
-                                        color: Colors.lightBlueAccent,
+                                            color: Colors.lightBlueAccent,
                                           ),
 
-                                      IconButton(
-                                        color: Colors.lightBlueAccent,
-                                        icon: Icon(Icons.remove),
-                                            onPressed: () {
+                                          InkWell(
+                                            child: Icon(Icons.remove),
+                                            onTap: () {
                                               setState(() {
                                                 if (_counter == 1)
                                                   _counter = 1;
@@ -182,53 +187,61 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                               });
                                             },
                                           )
-                                    ],
-                                  ) : Text(dataProducts[index][i]['description']),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') : Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() + ' TL',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                      Text('  '),
-                                      Text(dataProducts[index][i]["price"].toInt().toString()+ ' TL',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500),
+                                        ],
+                                      ) : Text(dataProducts[index][i]['description']) : Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white),), color: Colors.red, elevation: 0, margin: EdgeInsets.all(20),),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') : Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() + ' TL',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration
+                                                    .lineThrough,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                          Text('  '),
+                                          Text(dataProducts[index][i]["price"].toInt().toString()+ ' TL',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  leading: IconButton(
-                                    color: Colors.lightBlueAccent,
-                                    icon: Icon(
-                                      Icons.add_circle_outline,
-                                      size: 29,
-                                    ),
-                                    onPressed: () {
-                                      _showToast(
-                                          context, "Ürün sepete eklenmiştir!");
-                                      setState(() {
-                                        var items = new AddItemtoShopCart(
-                                          id: dataProducts[index][i]["id"],
-                                          name: dataProducts[index][i]["name"],
-                                          price: dataProducts[index][i]["price"],
-                                          itemCount: quantity,
-                                          quantity: quantity,
-                                        );
-                                        listItems.add(items);
-                                      });
-                                    },
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      _counter = 1;
-                                      switchCounter++;
-                                      currentSelected = dataProducts[index][i];
-                                      switches = true;
+                                      leading: IconButton(
+                                        color: Colors.lightBlueAccent,
+                                        icon: Icon(
+                                          Icons.add_circle_outline,
+                                          size: 29,
+                                        ),
+                                        onPressed: () {
+                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                          _showToast(
+                                              context, "Ürün sepete eklenmiştir!") :
+                                          _showToast(
+                                              context, "Hata, Ürün stoklarımızda bulunamadı!");
+
+                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                          setState(() {
+                                            var items = new AddItemtoShopCart(
+                                              id: dataProducts[index][i]["id"],
+                                              name: dataProducts[index][i]["name"],
+                                              price: dataProducts[index][i]["price"],
+                                              itemCount: quantity,
+                                              quantity: quantity,
+                                            );
+                                            listItems.add(items);
+                                          }) :
+                                          setState(() {
+                                            print('stok yok');
+                                          });
+                                        },
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _counter = 1;
+                                          switchCounter++;
+                                          currentSelected = dataProducts[index][i];
+                                          switches = true;
 //                                      print(currentSelected);
 //                                      if(switchCounter == 1){
 //                                        print('asd');
@@ -239,13 +252,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 //
 //                                        switchCounter = 0;
 //                                      }
-                        });
-                      });
-                    },
-                  );
-                }),
-              ],
-            );
+                                        });
+                                      }),
+                                );
+                              },
+                            );
+                          }),
+                    ],
+                  ),
+                );
           },
         );
       },

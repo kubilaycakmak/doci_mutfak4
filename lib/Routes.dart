@@ -4,6 +4,7 @@ import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:doci_mutfak4/Screens/Profile/change_pass.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
@@ -56,9 +57,15 @@ class Routes{
 
           case '/cart':
           return MyCustomRoute(
-            builder: (_) => Menu(),
-            settings: settings
+              builder: (_) => ShoppingCart(),
+              settings: settings
           );
+
+          case '/endcart':
+            return MyCustomRoute(
+                builder: (_) => EndOfTheShoppingCart(),
+                settings: settings
+            );
 
           case '/splash':
           return MyCustomRoute(

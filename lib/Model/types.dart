@@ -1,4 +1,5 @@
 class Types{
+
   int id;
   String name;
 

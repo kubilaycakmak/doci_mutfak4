@@ -33,6 +33,7 @@ dependencies:
   curved_navigation_bar: ^0.1.2
   bottom_navy_bar: 5.2.0
   connectivity: ^0.3.2
+  numberpicker: 1.1.0
 
 dev_dependencies:
   flutter_test:

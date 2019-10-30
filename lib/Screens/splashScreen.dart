@@ -15,10 +15,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool internet = true;
-  TextEditingController emailEditingContrller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    _checkInternetConnectivity();
     return Scaffold(
       body: Container(
         child: Column(
