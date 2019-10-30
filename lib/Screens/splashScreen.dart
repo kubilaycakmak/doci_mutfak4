@@ -1,6 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -58,7 +58,10 @@ class _SplashScreenState extends State<SplashScreen> {
                             children: <Widget>[
                             ButtonTheme(
                               child: RaisedButton(
-                                onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/register"),
+                                  onPressed: () {
+                                    internet == false ? _checkInternetConnectivity() :
+                                    Navigator.of(context).pushReplacementNamed("/register");
+                                  },
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.00),
@@ -75,7 +78,10 @@ class _SplashScreenState extends State<SplashScreen> {
                           ),
                           ButtonTheme(
                               child: RaisedButton(
-                                onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/login"),
+                                onPressed: () {
+                                  internet == false ? _checkInternetConnectivity() :
+                                  Navigator.of(context).pushReplacementNamed("/login");
+                                },
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.00),
@@ -94,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                         FlatButton(
-                          onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.pushReplacementNamed(context, "/home"),
+                          onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
                           textColor: Colors.white,
                           child: const Text('Misafir olarak devam et',style: TextStyle(fontSize: 25)),
                         ),

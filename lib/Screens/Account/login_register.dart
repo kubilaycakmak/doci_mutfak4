@@ -68,6 +68,7 @@ class LoginAndRegister extends StatefulWidget {
 }
 
 class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProviderStateMixin {
+
   Questions currentQuestion;
   final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';

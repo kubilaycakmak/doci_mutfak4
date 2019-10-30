@@ -1,4 +1,5 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,8 @@ import 'menu.dart';
 
 int _currentIndex = 1;
 class HomeScreen extends StatefulWidget {
-  
-  HomeScreen({Key key}) : super(key: key);
 
+  HomeScreen({Key key}) : super(key: key);
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           items: [
               BottomNavyBarItem(icon: Icon(Icons.person_outline), title:inside == false ? Text('Profilim') : Text('Giriş Yap \nKayıt Ol'), activeColor: Colors.white),
               BottomNavyBarItem(icon: Icon(Icons.fastfood,), title: Text('Menü'), activeColor: Colors.white),
-              BottomNavyBarItem(icon: Icon(Icons.info_outline,), title: Text('Siparişlerim'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(Icons.reorder,), title: Text('Siparişlerim'), activeColor: Colors.white),
               BottomNavyBarItem(icon: Icon(Icons.shopping_cart,), title: Text('Sepetim'), activeColor: Colors.white),
           ],
         )

@@ -124,6 +124,26 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 ),
                               )
                           );
+                          Alert(
+                            style: alertStyle,
+                            title: '',
+                            buttons: [
+                              DialogButton(
+                                onPressed: () => Navigator.pop(context,false),
+                                child: Text('Tamam'),
+                              ),
+                              DialogButton(
+                                onPressed: () => Navigator.pop(context,false),
+                                child: Text('Tamam'),
+                              ),
+                              DialogButton(
+                                onPressed: () => Navigator.pop(context,false),
+                                child: Text('Tamam'),
+                              ),
+                            ],
+                            context: context,
+                          ).show();
+
                         });
                       },
                     ),
@@ -155,69 +175,61 @@ class _ShoppingCartState extends State<ShoppingCart> {
                            listItems.length != 0 ?
                            Navigator.of(context).pushReplacementNamed('/endcart')
                                :
-                           showDialog(
-                               context: context,
-                               builder: (context)=>AlertDialog(
-                                 title: Text('Sepet Boş'),
-                                 content: Text('Boş sepet onaylanamaz'),
-                                 actions: <Widget>[
-                                   FlatButton(
-                                     onPressed: ()=> Navigator.pop(context,false),
-                                     child: Text('Tamam'),
-                                   ),
-                                 ],
-                               )
-                           );
+                           Alert(
+                             style: alertStyle,
+                             title: 'Sepet Boş',
+                             desc: 'Boş sepet onaylanamaz',
+                             buttons: [
+                               DialogButton(
+                                 onPressed: () => Navigator.pop(context,false),
+                                 child: Text('Tamam'),
+                               ),
+                             ], context: context,
+                           ).show();
                          }
                          else{
-                           return showDialog(
-                               context: context,
-                               builder: (context)=>AlertDialog(
-                                 title: Text('Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.'),
-                                 actions: <Widget>[
-                                   FlatButton(
-                                     onPressed: ()=> Navigator.pop(context,false),
-                                     child: Text('Tamam'),
-                                   ),
-                                 ],
-                               )
-                           );
+                           return Alert(
+                             style: alertStyle,
+                             title: 'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
+                             buttons: [
+                               DialogButton(
+                                 onPressed: () => Navigator.pop(context,false),
+                                 child: Text('Tamam'),
+                               ),
+                             ], context: context,
+                           ).show();
                          }
                         }else{
-                          return showDialog(
-                              context: context,
-                              builder: (context)=>AlertDialog(
-                                title: Text('Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.'),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    onPressed: ()=> Navigator.pop(context,false),
-                                    child: Text('Tamam'),
-                                  ),
-                                  FlatButton(
-                                    onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                    child: Text('Üye girişi'),
-                                  )
-                                ],
-                              )
-                          );
+                          return Alert(
+                            style: alertStyle,
+                            title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                            buttons: [
+                              DialogButton(
+                                onPressed: () => Navigator.pop(context,false),
+                                child: Text('Tamam'),
+                              ),
+                              DialogButton(
+                                onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                                child: Text('Üye girişi'),
+                              ),
+                            ], context: context,
+                          ).show();
                         }
                       }else{
-                        return showDialog(
-                            context: context,
-                            builder: (context)=>AlertDialog(
-                              title: Text('Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.'),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: ()=> Navigator.pop(context,false),
+                          return Alert(
+                            style: alertStyle,
+                              title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                              buttons: [
+                                DialogButton(
+                                  onPressed: () => Navigator.pop(context,false),
                                   child: Text('Tamam'),
                                 ),
-                                FlatButton(
+                                DialogButton(
                                   onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
                                   child: Text('Üye girişi'),
-                                )
-                              ],
-                            )
-                        );
+                                ),
+                              ], context: context,
+                            ).show();
                       }
                   },
                   child: Text('Sepeti Onayla',
@@ -234,12 +246,29 @@ class _ShoppingCartState extends State<ShoppingCart> {
       ),
     );
   }
+  var alertStyle = AlertStyle(
+    animationType: AnimationType.fromTop,
+    isCloseButton: false,
+    isOverlayTapDismiss: false,
+    backgroundColor: Colors.white,
+    animationDuration: Duration(milliseconds: 400),
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(0.0),
+      side: BorderSide(
+        color: Colors.grey,
+      ),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.black,
+    ),
+  );
   _checkInternetConnectivity() async{
     var result = await Connectivity().checkConnectivity();
     if(result == ConnectivityResult.none){
       internet = false;
       return Alert(
           context:context,
+          style: alertStyle,
           type: AlertType.error,
           desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
               'bağlantısı gereklidir.',
@@ -255,22 +284,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
     internet = true;
   }
 }
-var alertStyle = AlertStyle(
-  animationType: AnimationType.grow,
-  isCloseButton: true,
-  isOverlayTapDismiss: true,
-  descStyle: TextStyle(fontWeight: FontWeight.w400),
-      animationDuration: Duration(milliseconds: 400),
-      alertBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-        side: BorderSide(
-          color: Colors.lightBlueAccent,
-        ),
-      ),
-      titleStyle: TextStyle(
-        color: Colors.black,
-      ),
-);
 
 class EndOfTheShoppingCart extends StatefulWidget {
   @override
@@ -281,9 +294,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final _addressController = new TextEditingController(text: userInformations[0].address);
   final _phoneController = new TextEditingController(text: userInformations[0].phoneNumber);
-
-
-
 
   @override
   Widget build(BuildContext context) {
