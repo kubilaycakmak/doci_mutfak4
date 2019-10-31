@@ -137,7 +137,7 @@ class _LastOrdersState extends State<LastOrders> {
                                            Text(orderCount[index]['products'][i]['dociProduct']['name'].toString()),
                                          ],
                                        ),
-                                       trailing: Text(orderCount[index]['products'][i]['dociProduct']['price'].toInt().toString() + ' TL'),
+                                       trailing: Text((orderCount[index]['products'][i]['dociProduct']['price']*orderCount[index]['products'][i]['quantity']).toInt().toString() + ' TL'),
                                      ),
                                    );
                                  },
