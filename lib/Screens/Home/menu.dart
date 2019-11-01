@@ -1,15 +1,29 @@
-import 'dart:ui' as prefix0;
-
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/types.dart';
+import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:rflutter_alert/rflutter_alert.dart';
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double blockSizeHorizontal;
+  static double blockSizeVertical;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    blockSizeHorizontal = screenWidth / 100;
+    blockSizeVertical = screenHeight / 100;
+  }
+}
 
 var currentSelected;
 List<String> addItem;
@@ -18,7 +32,7 @@ List<AddItemtoShopCart> listItems = new List();
 List<AddItemtoShopCart> getList() {
   return listItems;
 }
-
+final _scaffoldKey = GlobalKey<ScaffoldState>();
 int switchCounter = 0;
 int _counter = 1;
 var itemOfProducts;
@@ -51,6 +65,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   List dataProducts;
   var quantity = 1;
   TabController tabController;
+  var _countOfItem = new TextEditingController(text: _counter.toString());
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
   // ignore: missing_return
@@ -99,9 +114,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    SizeConfig().init(context);
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('Menü'),
           centerTitle: true,
@@ -120,6 +135,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
+                    backgroundColor: Colors.white,
                     title: Text(snapshot.data[index].name),
                     children: <Widget>[
                       FutureBuilder<String>(
@@ -137,12 +153,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemCount: dataProducts[index].length,
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
-                                  child: ListTile(
+                                  child: ExpansionTile(
+                                    onExpansionChanged: (val){
+                                      setState(() {
+                                        currentSelected = dataProducts[index][i];
+                                        _counter = 1;
+                                      });
+                                    },
+                                    backgroundColor: Colors.white,
                                       title: Text(dataProducts[index][i]['name'].toString()),
-                                      subtitle: dataProducts[index][i]['isValid'].toString() == 'true' ?
-                                      Text(dataProducts[index][i]['description'],maxLines: 2,)
-                                       : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
-                                        color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
@@ -154,125 +173,126 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                                       fontWeight:
                                                           FontWeight.w400),),
                                           Text('  '),
-                                          Text(dataProducts[index][i]["price"].toInt().toString() +' TL',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                                          currentSelected.toString() == dataProducts[index][i].toString() ?
+                                          Text((dataProducts[index][i]["price"]*_counter).toInt().toString() +' TL') : Text(dataProducts[index][i]["price"].toInt().toString() +' TL'),
                                         ],
                                       ),
-                                      onTap: () {
-                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                backgroundColor: Colors.black54,
-                                                elevation: 0,
-                                                titlePadding: EdgeInsets.all(0),
-                                                title: Column(
-                                                  children: <Widget>[
-                                                    CupertinoButton(
-                                                      padding: EdgeInsets.all(20),
-                                                      color: Colors.transparent,
-                                                      child: Text('Detay'),
-                                                      onPressed: () {
-                                                        Navigator.pop(context, false);
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) => AlertDialog(
-                                                              backgroundColor: Colors.black54,
-                                                              title: Text(
-                                                                'Adet Giriniz',
-                                                                style: TextStyle(color: Colors.white),
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                              contentTextStyle: TextStyle(
-                                                                color: Colors.white
-                                                              ),
-                                                              contentPadding:
-                                                              EdgeInsets.all(0),
-                                                              elevation: 0,
-                                                              content: Container(
-                                                                  margin: EdgeInsets.only(
-                                                                      left: 100, right: 100),
-                                                                  width: 20,
-                                                                  child: TextFormField(
-                                                                    cursorColor: Colors.white,
-                                                                    keyboardType:
-                                                                    TextInputType.number,
-                                                                    decoration: InputDecoration(
-                                                                      hintText: 'Örn, 5',
-                                                                      hintStyle: TextStyle(
-                                                                        color: Colors.white
-                                                                      ),
-                                                                      focusColor: Colors.white,
-                                                                      hoverColor: Colors.white,
-                                                                      fillColor: Colors.white
-                                                                    ),
-                                                                  )),
-                                                              actions: <Widget>[
-                                                                FlatButton(
-                                                                  child: Text('Tamam',
-                                                                    style: TextStyle(color: Colors.white),),
-                                                                  onPressed: () {
-                                                                    Navigator.pop(
-                                                                        context, false);
-                                                                  },
-                                                                )
-                                                              ],
-                                                            ));
-                                                      },
-                                                    ),
-                                                    CupertinoButton(
-                                                      color: Colors.transparent,
-                                                      child: Text('1 Adet Ekle'),
-                                                      onPressed: () {
-                                                        Alert(
-                                                          type: AlertType.success,
-                                                          title: 'Ürün sepete eklendi',
-                                                          buttons: [
-                                                            DialogButton(
-                                                              onPressed: (){
-                                                                Navigator.pop(context);
-                                                            },
-                                                              child: Text('Tamam',style: TextStyle(color: Colors.white),),
-                                                            ),
-                                                          ],
-                                                          context: context,
-                                                        ).show();
-                                                        dataProducts[index][i]['isValid'].toString() =='true' ?
-                                                        setState(() {
-                                                          var items = new AddItemtoShopCart(
-                                                            id: dataProducts[index][i]["id"],
-                                                            name: dataProducts[index][i]["name"],
-                                                            price: dataProducts[index][i]["price"],
-                                                            itemCount: quantity,
-                                                            quantity: quantity,
-                                                          );
-                                                          listItems.add(items);
-                                                        }): setState(() {
-                                                          print('stok yok');
-                                                        });
-                                                      },
-                                                    ),
-                                                    CupertinoButton(
-                                                      color: Colors.transparent,
-                                                      child: Text('Geri'),
-                                                      onPressed: () =>
-                                                          Navigator.pop(context, false),
-                                                    )
-                                                  ],
-                                                ),
-                                              )) :
-                                        print('asd');
-                                      }),
+                                      children: <Widget>[
+                                        dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                        SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
+                                        : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
+                                          color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            MaterialButton(
+                                              child: Icon(Icons.add_circle, color: Colors.white,),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _counter++;
+                                                });
+                                              },
+                                              minWidth: SizeConfig.blockSizeHorizontal,
+                                              color: Colors.lightBlueAccent,
+                                            ),
+                                            MaterialButton(
+                                              elevation: 2,
+                                              child: Text(_counter.toString() + ' Adet', style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.white
+                                              ),),
+                                              onPressed: () {
+                                                _showToast(context,
+                                                    "$_counter adet ürün sepete eklenmiştir!");
+                                                setState(() {
+                                                  switches = false;
+                                                  var items = new AddItemtoShopCart(
+                                                    id: dataProducts[index][i]["id"],
+                                                    name: dataProducts[index][i]["name"],
+                                                    price: dataProducts[index][i]["price"],
+                                                    itemCount: _counter,
+                                                  );
+                                                  listItems.add(items);
+                                                });
+                                              },
+                                              color: Colors.lightBlueAccent,
+                                            ),
+                                            MaterialButton(
+                                              child: Icon(Icons.remove_circle, color: Colors.white,),
+                                              onPressed: () {
+                                                setState(() {
+                                                  if (_counter == 1)
+                                                    _counter = 1;
+                                                  else
+                                                    _counter--;
+                                                  print(_counter);
+                                                });
+                                              },
+                                              minWidth: SizeConfig.blockSizeHorizontal,
+                                              color: Colors.lightBlueAccent,
+                                            )
+                                          ],
+                                        )
+                                      ],
+//                                      subtitle: dataProducts[index][i]['isValid'].toString() == 'true' ?
+//                                      Text(dataProducts[index][i]['description'],maxLines: 2,)
+//                                       : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
+//                                        color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
+//
+//                                      onTap: () {
+//                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
+//                                          showDialog(
+//                                              context: context,
+//                                              builder: (context) => AlertDialog(
+//                                                backgroundColor: Colors.black54,
+//                                                elevation: 0,
+//                                                titlePadding: EdgeInsets.all(0),
+//                                                title: Column(
+//                                                  children: <Widget>[
+//                                            Container(
+//                                              height: width / 6,
+//                                              child: CupertinoButton(
+//                                                      color: Colors.transparent,
+//                                                      child: Text('1 Adet Ekle',),
+//                                                      onPressed: () {
+//                                                        Navigator.pop(context,true);
+//                                                        dataProducts[index][i]['isValid'].toString() =='true' ?
+//                                                        setState(() {
+//                                                          var items = new AddItemtoShopCart(
+//                                                            id: dataProducts[index][i]["id"],
+//                                                            name: dataProducts[index][i]["name"],
+//                                                            price: dataProducts[index][i]["price"],
+//                                                            itemCount: quantity,
+//                                                            quantity: quantity,
+//                                                          );
+//                                                          listItems.add(items);
+//                                                        }): setState(() {
+//                                                          print('stok yok');
+//                                                        });
+//                                                      },
+//                                                    )),
+//                                                    Divider(color: Colors.white,thickness: 2,),
+//                                                    Container(
+//                                                      height: width / 6,
+//                                                      child: CupertinoButton(
+//                                                        color: Colors.transparent,
+//                                                        child: Text('Geri'),
+//                                                        onPressed: () =>
+//                                                            Navigator.pop(context, false),
+//                                                      ),
+//                                                    )
+//                                                  ],
+//                                                ),
+//                                              )) :
+//                                        print('asd');
+//                                      }
+                                      ),
                                 );
                               },
                             );
                           }),
                     ],
-                  ),
-                );
+                  ));
               },
             );
           },

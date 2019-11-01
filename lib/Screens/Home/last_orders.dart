@@ -67,6 +67,7 @@ class _LastOrdersState extends State<LastOrders> {
     return Container(
        child: Scaffold(
          appBar: AppBar(
+           elevation: 0,
            title: Text('Siparişlerim'),
            centerTitle: true,
            backgroundColor: Colors.lightBlueAccent,

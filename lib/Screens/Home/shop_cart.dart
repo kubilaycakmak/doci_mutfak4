@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Model/payment.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -12,6 +13,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double blockSizeHorizontal;
+  static double blockSizeVertical;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    blockSizeHorizontal = screenWidth / 100;
+    blockSizeVertical = screenHeight / 100;
+  }
+}
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key key}) : super(key: key);
@@ -32,9 +49,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
     _countController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     double _count = 0;
     double sideLength = 50;
     setState(() {
@@ -54,16 +71,17 @@ class _ShoppingCartState extends State<ShoppingCart> {
           itemCount: listItems.length,
           itemBuilder: (context, index) {
             return Dismissible(
-              movementDuration: Duration(seconds: 2),
+              movementDuration: Duration(milliseconds: 10),
               background: Container(
+                alignment: Alignment.center,
                 child: Text(
                   ' Ürün sepetten çıkartıldı. ',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
-                color: Colors.lightBlueAccent,
+                color: Colors.red,
               ),
-              resizeDuration: null,
+              resizeDuration: Duration(milliseconds: 10),
               onDismissed: (DismissDirection direction) {
                 setState(() {
                   listItems[index].itemCount = 0;
@@ -71,7 +89,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 });
               },
               key: new ValueKey(listItems[index]),
-              child: ListTile(
+              child: ExpansionTile(
                 title: Row(
                   children: <Widget>[
                     Text(
@@ -93,77 +111,51 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             .toInt()
                             .toString() +
                         ' TL'),
-                onTap: () {
-                  setState(() {
-                    showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                              backgroundColor: Colors.lightBlueAccent,
-                              elevation: 0,
-                              titlePadding: EdgeInsets.all(0),
-                              title: Column(
-                                children: <Widget>[
-                                  CupertinoButton(
-                                    padding: EdgeInsets.all(20),
-                                    color: Colors.lightBlueAccent,
-                                    child: Text('Adet Güncelle'),
-                                    onPressed: () {
-                                      Navigator.pop(context, false);
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                title: Text(
-                                                  'Adet Giriniz',
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.all(0),
-                                                elevation: 0,
-                                                content: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 100, right: 100),
-                                                    width: 20,
-                                                    child: TextFormField(
-                                                      controller: _countOfIndex,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      decoration:
-                                                          InputDecoration(),
-                                                    )),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                    child: Text('Tamam'),
-                                                    onPressed: () {
-                                                      Navigator.pop(
-                                                          context, false);
-                                                    },
-                                                  )
-                                                ],
-                                              ));
-                                    },
-                                  ),
-                                  CupertinoButton(
-                                    color: Colors.lightBlueAccent,
-                                    child: Text('Sepetten Çıkar'),
-                                    onPressed: () {
-                                      setState(() {
-                                        listItems[index].itemCount = 0;
-                                        listItems.removeAt(index);
-                                        Navigator.pop(context, false);
-                                      });
-                                    },
-                                  ),
-                                  CupertinoButton(
-                                    color: Colors.lightBlueAccent,
-                                    child: Text('Geri'),
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                  )
-                                ],
-                              ),
-                            ));
-                  });
-                },
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    MaterialButton(
+                      elevation: 0,
+                      minWidth: 10,
+                      color: Colors.lightBlueAccent,
+                      onPressed: (){
+                        setState(() {
+                          listItems[index].itemCount = 0;
+                          listItems.removeAt(index);
+                        });
+                      },
+                      child: Icon(Icons.delete, color: Colors.white,),
+                    ),
+                    MaterialButton(
+                      elevation: 0,
+                      minWidth: 10,
+                      color: Colors.lightBlueAccent,
+                      onPressed: (){
+                        setState(() {
+                          listItems[index].itemCount++;
+                        });
+                      },
+                      child: Icon(Icons.add_circle, color: Colors.white,),
+                    ),
+                    MaterialButton(
+                      elevation: 0,
+                      minWidth: 10,
+                      color: Colors.lightBlueAccent,
+                      onPressed: (){
+                        setState(() {
+                          if(listItems[index].itemCount == 1){
+                            listItems[index].itemCount = 1;
+                          }else {
+                            listItems[index].itemCount--;
+                          }
+                        });
+                      },
+                      child: Icon(Icons.remove_circle, color: Colors.white,),
+                    ),
+                  ],
+                )
+              ],
               ),
             );
           },
@@ -178,18 +170,18 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 leading: Icon(Icons.shopping_basket),
                 title: Text(
                   "Tutar: ",
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 15),
                 ),
                 subtitle: Text(
                   _count.toInt().toString() + " TL",
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
             Expanded(
               child: CupertinoButton(
                 borderRadius: BorderRadius.circular(0),
-                pressedOpacity: 0.2,
+                pressedOpacity: 0.8,
                 color: Colors.lightBlueAccent,
                 // ignore: missing_return
                 onPressed: () {
@@ -207,7 +199,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   DialogButton(
                                     onPressed: () =>
                                         Navigator.pop(context, false),
-                                    child: Text('Tamam'),
+                                    child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                   ),
                                 ],
                                 context: context,
@@ -220,7 +212,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                           buttons: [
                             DialogButton(
                               onPressed: () => Navigator.pop(context, false),
-                              child: Text('Tamam'),
+                              child: Text('Tamam', style: TextStyle(color: Colors.white),),
                             ),
                           ],
                           context: context,
@@ -234,12 +226,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         buttons: [
                           DialogButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: Text('Tamam'),
+                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
                           ),
                           DialogButton(
                             onPressed: () => Navigator.of(context)
                                 .pushReplacementNamed('/login'),
-                            child: Text('Üye girişi'),
+                            child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                           ),
                         ],
                         context: context,
@@ -253,12 +245,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       buttons: [
                         DialogButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: Text('Tamam'),
+                          child: Text('Tamam', style: TextStyle(color: Colors.white),),
                         ),
                         DialogButton(
                           onPressed: () => Navigator.of(context)
                               .pushReplacementNamed('/login'),
-                          child: Text('Üye girişi'),
+                          child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                         ),
                       ],
                       context: context,
@@ -332,13 +324,14 @@ class EndOfTheShoppingCart extends StatefulWidget {
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final _addressController =
-      new TextEditingController(text: currentUser.address);
+      new TextEditingController(text: userInformations[0].address);
   final _phoneController =
-      new TextEditingController(text: currentUser.phoneNumber);
+      new TextEditingController(text: userInformations[0].phoneNumber);
   final String orderCreate = 'http://68.183.222.16:8080/api/order/create';
   final String paymentMethodsUrl =
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
+
   Future<http.Response> _sendOrders() async {
     Map data = {
       "products": [
