@@ -1,9 +1,6 @@
-import 'dart:convert';
-
+import 'dart:convert' as JSON;
 import 'package:connectivity/connectivity.dart';
-import 'package:doci_mutfak4/Model/payment.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -313,9 +310,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 }
 
-PaymentMethods currentPayment;
-User currentUser;
 
+User currentUser;
 class EndOfTheShoppingCart extends StatefulWidget {
   @override
   _EndOfTheShoppingCartState createState() => _EndOfTheShoppingCartState();
@@ -332,30 +328,48 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
 
+  int selectedPayment;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedPayment = 0;
+  }
+
+  setSelectedPayment(int val){
+    setState(() {
+      selectedPayment = val;
+    });
+  }
+
   Future<http.Response> _sendOrders() async {
-    Map data = {
-      "products": [
-        for (int i = 0; i < listItems.length; i++)
-          {
-            {
-              "dociProduct": {"id": listItems[i].id},
-              "quantity": listItems[i].quantity,
-            },
-          }
-      ],
-      "note": note.text,
-      "paymentMethod": {
-        "id": currentPayment.id,
+
+    List id = new List();
+    listItems.forEach((f)=> id.add(
+      '{' + '"dociProduct":{"id": ${f.id}},"quantity": ${f.itemCount}}'
+    ));
+
+    Map data ={
+      "products" :
+        id
+      ,
+      "note" : note.text,
+      "paymentMethod" : {
+        "id" : selectedPayment
       }
     };
 
-    var body = jsonEncode(data);
+    var body = JSON.jsonEncode(data);
+    print('======================' + body);
+
     var response = await http.post(orderCreate,
         headers: {
-          "content-Type": "application/json",
+          "Content-Type":'application/json',
+          'Accept': 'application/json',
           "authorization": key,
         },
         body: body);
+    print(response.body);
 
     if (response.statusCode == 201) {
       print('Order sended succusfully');
@@ -364,20 +378,23 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
     }
     return response;
   }
+//  List payment;
 
-  Future<List<PaymentMethods>> _paymentMethods() async {
-    print(listItems.length);
-    var response = await http.get(paymentMethodsUrl);
-    if (response.statusCode == 200) {
-      final items = json.decode(response.body).cast<Map<String, dynamic>>();
-      List<PaymentMethods> listPayments = items.map<PaymentMethods>((json) {
-        return PaymentMethods.fromJson(json);
-      }).toList();
-      return listPayments;
-    } else {
-      throw Exception('Failed to load paymentMethods');
-    }
-  }
+//  Future<List<PaymentMethods>> _paymentMethods() async {
+//    print(listItems.length);
+//    var response = await http.get(paymentMethodsUrl);
+//    if (response.statusCode == 200) {
+//      final items = json.decode(response.body).cast<Map<String, dynamic>>();
+//      payment = items;
+//      List<PaymentMethods> listPayments = items.map<PaymentMethods>((json) {
+//        return PaymentMethods.fromJson(json);
+//      }).toList();
+//      return listPayments;
+//    } else {
+//      throw Exception('Failed to load paymentMethods');
+//    }
+//  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +404,13 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         finalPrice += item.price * item.itemCount;
       }
     });
-    return Scaffold(
+    return WillPopScope(
+      // ignore: missing_return
+      onWillPop: (){
+        Navigator.of(context).pushReplacementNamed('/home');
+        print('aq');
+      },
+      child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.lightBlueAccent,
           title: Text('Siparişi Onayla | Bitir'),
@@ -399,13 +422,14 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 Navigator.of(context).pushReplacementNamed('/home'),
           ),
         ),
+
         body: Container(
-            color: Colors.grey[100],
+            color: Colors.white,
             child: ListView(
               children: <Widget>[
                 Card(
                   margin: EdgeInsets.all(5),
-                  elevation: 3,
+                  elevation: 0.2,
                   child: Container(
                     padding: EdgeInsets.all(10),
                     child: Text(
@@ -419,7 +443,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 ),
                 Card(
                   margin: EdgeInsets.all(5),
-                  elevation: 3,
+                  elevation: 1,
                   child: ListTile(
                       title: Text('Teslimat Adresi'),
                       subtitle: TextFormField(
@@ -429,7 +453,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 ),
                 Card(
                   margin: EdgeInsets.all(5),
-                  elevation: 3,
+                  elevation: 1,
                   child: ListTile(
                       title: Text('Telefon Numarası'),
                       subtitle: TextFormField(
@@ -439,48 +463,37 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 ),
                 Card(
                   margin: EdgeInsets.all(5),
-                  elevation: 3,
-                  child: FutureBuilder<List<PaymentMethods>>(
-                    future: _paymentMethods(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<PaymentMethods>> snapshot) {
-                      if (!snapshot.hasData) return CircularProgressIndicator();
-                      return DropdownButton<PaymentMethods>(
-                        items: snapshot.data
-                            .map((payments) => DropdownMenuItem<PaymentMethods>(
-                                  child: Text(payments.name),
-                                  value: payments,
-                                ))
-                            .toList(),
-                        onChanged: (PaymentMethods paymentMethods) {
-                          setState(() {
-                            currentPayment = paymentMethods;
-                            print(currentPayment.name);
-                          });
-                        },
-                        hint: Text('Lütfen bir'),
-                        isDense: false,
-                        underline: Container(),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  child: Card(
-                    margin: EdgeInsets.all(5),
-                    elevation: 3,
-                    child: currentPayment != null
-                        ? Text(
-                            currentPayment.name,
-                            style: TextStyle(fontSize: 20),
-                            textAlign: TextAlign.center,
-                          )
-                        : Text('Soru yok'),
+                  elevation: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                          RadioListTile(
+                            title: Text('Nakit'),
+                            value: 0,
+                            groupValue: selectedPayment,
+                            activeColor: Colors.lightBlueAccent,
+                            onChanged: setSelectedPayment,
+                          ),
+                          RadioListTile(
+                            title: Text('Kredi Karti'),
+                            value: 1,
+                            groupValue: selectedPayment,
+                            activeColor: Colors.lightBlueAccent,
+                            onChanged: setSelectedPayment,
+                          ),
+                          RadioListTile(
+                            title: Text('Sodexo'),
+                            value: 2,
+                            groupValue: selectedPayment,
+                            activeColor: Colors.lightBlueAccent,
+                            onChanged: setSelectedPayment,
+                          ),
+                    ],
                   ),
                 ),
                 Card(
                   margin: EdgeInsets.all(5),
-                  elevation: 3,
+                  elevation: 1,
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -511,7 +524,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                   ),
                 ),
                 Card(
-                  elevation: 3,
+                  elevation: 1,
                   margin: EdgeInsets.all(5),
                   child: Container(
                     padding: EdgeInsets.all(20),
@@ -519,13 +532,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                       'Tutar : ' + finalPrice.toInt().toString() + ' TL',
                       style: TextStyle(
                         fontSize: 20,
-                        letterSpacing: 1.2,
                       ),
                     ),
                   ),
                 ),
                 Card(
-                  elevation: 3,
+                  elevation: 1,
                   margin: EdgeInsets.all(5),
                   child: TextFormField(
                     controller: note,
@@ -551,83 +563,84 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           color: Colors.lightBlueAccent,
           // ignore: missing_return
           onPressed: () {
-            if (key != '') {
-              if (inside == false) {
-                if (internet == true) {
-                  listItems.length != 0
-                      ? _sendOrders()
-                      : showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text('Sepet Boş'),
-                                content: Text('Boş sepet onaylanamaz'),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                    child: Text('Tamam'),
-                                  ),
-                                ],
-                              ));
-                } else {
-                  return Alert(
-                    title: 'İnternet Hatası',
-                    desc:
-                        'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
-                    buttons: [
-                      DialogButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text('Tamam'),
-                      ),
-                    ],
-                    context: context,
-                  ).show();
-                }
-              } else {
-                return Alert(
-                  title: 'Kullanıcı bulunamadı',
-                  desc:
-                      'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                  buttons: [
-                    DialogButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text('Tamam'),
-                    ),
-                    DialogButton(
-                      onPressed: () =>
-                          Navigator.of(context).pushReplacementNamed('/login'),
-                      child: Text('Üye girişi'),
-                    ),
-                  ],
-                  context: context,
-                ).show();
-              }
-            } else {
-              return Alert(
-                title: 'Kullanıcı bulunamadı',
-                desc:
-                    'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                buttons: [
-                  DialogButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text('Tamam'),
-                  ),
-                  DialogButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushReplacementNamed('/login'),
-                    child: Text('Üye girişi'),
-                  ),
-                ],
-                context: context,
-              ).show();
-            }
+              _sendOrders();
+//            if (key != '') {
+//              if (inside == false) {
+//                if (internet == true) {
+//                  listItems.length != 0
+//                      ? _sendOrders()
+//                      : showDialog(
+//                          context: context,
+//                          builder: (context) => AlertDialog(
+//                                title: Text('Sepet Boş'),
+//                                content: Text('Boş sepet onaylanamaz'),
+//                                actions: <Widget>[
+//                                  FlatButton(
+//                                    onPressed: () =>
+//                                        Navigator.pop(context, false),
+//                                    child: Text('Tamam'),
+//                                  ),
+//                                ],
+//                              ));
+//                } else {
+//                  return Alert(
+//                    title: 'İnternet Hatası',
+//                    desc:
+//                        'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
+//                    buttons: [
+//                      DialogButton(
+//                        onPressed: () => Navigator.pop(context, false),
+//                        child: Text('Tamam'),
+//                      ),
+//                    ],
+//                    context: context,
+//                  ).show();
+//                }
+//              } else {
+//                return Alert(
+//                  title: 'Kullanıcı bulunamadı',
+//                  desc:
+//                      'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+//                  buttons: [
+//                    DialogButton(
+//                      onPressed: () => Navigator.pop(context, false),
+//                      child: Text('Tamam'),
+//                    ),
+//                    DialogButton(
+//                      onPressed: () =>
+//                          Navigator.of(context).pushReplacementNamed('/login'),
+//                      child: Text('Üye girişi'),
+//                    ),
+//                  ],
+//                  context: context,
+//                ).show();
+//              }
+//            } else {
+//              return Alert(
+//                title: 'Kullanıcı bulunamadı',
+//                desc:
+//                    'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+//                buttons: [
+//                  DialogButton(
+//                    onPressed: () => Navigator.pop(context, false),
+//                    child: Text('Tamam'),
+//                  ),
+//                  DialogButton(
+//                    onPressed: () =>
+//                        Navigator.of(context).pushReplacementNamed('/login'),
+//                    child: Text('Üye girişi'),
+//                  ),
+//                ],
+//                context: context,
+//              ).show();
+//            }
           },
           child: Text(
             'Siparişi Tamamla',
             style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
           ),
           padding: EdgeInsets.all(25),
-        ));
+        )));
   }
 }
 

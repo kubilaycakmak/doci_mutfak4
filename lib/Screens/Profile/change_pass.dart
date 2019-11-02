@@ -47,7 +47,13 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return WillPopScope(
+      // ignore: missing_return
+        onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/home');
+          print('aq');
+        },
+      child: Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: Text('Şifre Yenileme'),
@@ -114,6 +120,6 @@ class _ChangePasswordState extends State<ChangePassword> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

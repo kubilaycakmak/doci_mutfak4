@@ -1,7 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
-import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -100,7 +99,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
       'password': _passwordController.text
     };
     var body = json.encode(data);
-
+    print('======================' + body);
     var response = await http.post(loginCheckUrl,
         headers: {"Content-Type": "application/json"}, body: body);
     setState(() {
@@ -552,7 +551,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                             });
                           }
                         },
-                        child: Text('Yeni Üye'),
+                        child: Text('Yeni Üye', style: TextStyle(color: Colors.white),),
                         color: Colors.lightBlueAccent,
                       ),
                     ),

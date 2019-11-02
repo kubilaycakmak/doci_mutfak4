@@ -1,7 +1,6 @@
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/types.dart';
-import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -112,6 +111,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     this.makeRequest();
   }
 
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -135,6 +135,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
+                    onExpansionChanged: (val){
+                        setState(() {
+                        });
+                    },
                     backgroundColor: Colors.white,
                     title: Text(snapshot.data[index].name),
                     children: <Widget>[
@@ -153,139 +157,93 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemCount: dataProducts[index].length,
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
-                                  child: ExpansionTile(
-                                    onExpansionChanged: (val){
-                                      setState(() {
-                                        currentSelected = dataProducts[index][i];
-                                        _counter = 1;
-                                      });
-                                    },
-                                    backgroundColor: Colors.white,
-                                      title: Text(dataProducts[index][i]['name'].toString()),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' '): Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() +' TL',
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      decoration: TextDecoration
-                                                          .lineThrough,
-                                                      fontWeight:
-                                                          FontWeight.w400),),
-                                          Text('  '),
-                                          currentSelected.toString() == dataProducts[index][i].toString() ?
-                                          Text((dataProducts[index][i]["price"]*_counter).toInt().toString() +' TL') : Text(dataProducts[index][i]["price"].toInt().toString() +' TL'),
-                                        ],
-                                      ),
-                                      children: <Widget>[
-                                        dataProducts[index][i]['isValid'].toString() == 'true' ?
-                                        SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
-                                        : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
-                                          color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
-                                        Row(
+                                  child:  ExpansionTile(
+                                        onExpansionChanged: (val){
+                                          setState(() {
+                                            currentSelected = dataProducts[index][i];
+                                            _counter = 1;
+                                          });
+                                        },
+                                        backgroundColor: Colors.white,
+                                        title: Text(dataProducts[index][i]['name'].toString()),
+                                        trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
-                                            MaterialButton(
-                                              child: Icon(Icons.add_circle, color: Colors.white,),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _counter++;
-                                                });
-                                              },
-                                              minWidth: SizeConfig.blockSizeHorizontal,
-                                              color: Colors.lightBlueAccent,
-                                            ),
-                                            MaterialButton(
-                                              elevation: 2,
-                                              child: Text(_counter.toString() + ' Adet', style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.white
-                                              ),),
-                                              onPressed: () {
-                                                _showToast(context,
-                                                    "$_counter adet ürün sepete eklenmiştir!");
-                                                setState(() {
-                                                  switches = false;
-                                                  var items = new AddItemtoShopCart(
-                                                    id: dataProducts[index][i]["id"],
-                                                    name: dataProducts[index][i]["name"],
-                                                    price: dataProducts[index][i]["price"],
-                                                    itemCount: _counter,
-                                                  );
-                                                  listItems.add(items);
-                                                });
-                                              },
-                                              color: Colors.lightBlueAccent,
-                                            ),
-                                            MaterialButton(
-                                              child: Icon(Icons.remove_circle, color: Colors.white,),
-                                              onPressed: () {
-                                                setState(() {
-                                                  if (_counter == 1)
-                                                    _counter = 1;
-                                                  else
-                                                    _counter--;
-                                                  print(_counter);
-                                                });
-                                              },
-                                              minWidth: SizeConfig.blockSizeHorizontal,
-                                              color: Colors.lightBlueAccent,
-                                            )
+                                            currentSelected.toString() == dataProducts[index][i].toString() ?
+                                            dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') : Text((dataProducts[index][i]['priceWithoutNoDiscount']*_counter).toInt().toString() +' TL',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontWeight:
+                                                  FontWeight.w400),) : dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') :  Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() +' TL',style: TextStyle(
+                                                fontSize: 13,
+                                                decoration: TextDecoration
+                                                    .lineThrough,
+                                                fontWeight:
+                                                FontWeight.w400),),
+                                            Text('  '),
+                                            currentSelected.toString() == dataProducts[index][i].toString() ?
+                                            Text((dataProducts[index][i]["price"]*_counter).toInt().toString() +' TL') : Text(dataProducts[index][i]["price"].toInt().toString() +' TL'),
                                           ],
-                                        )
-                                      ],
-//                                      subtitle: dataProducts[index][i]['isValid'].toString() == 'true' ?
-//                                      Text(dataProducts[index][i]['description'],maxLines: 2,)
-//                                       : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
-//                                        color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
-//
-//                                      onTap: () {
-//                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
-//                                          showDialog(
-//                                              context: context,
-//                                              builder: (context) => AlertDialog(
-//                                                backgroundColor: Colors.black54,
-//                                                elevation: 0,
-//                                                titlePadding: EdgeInsets.all(0),
-//                                                title: Column(
-//                                                  children: <Widget>[
-//                                            Container(
-//                                              height: width / 6,
-//                                              child: CupertinoButton(
-//                                                      color: Colors.transparent,
-//                                                      child: Text('1 Adet Ekle',),
-//                                                      onPressed: () {
-//                                                        Navigator.pop(context,true);
-//                                                        dataProducts[index][i]['isValid'].toString() =='true' ?
-//                                                        setState(() {
-//                                                          var items = new AddItemtoShopCart(
-//                                                            id: dataProducts[index][i]["id"],
-//                                                            name: dataProducts[index][i]["name"],
-//                                                            price: dataProducts[index][i]["price"],
-//                                                            itemCount: quantity,
-//                                                            quantity: quantity,
-//                                                          );
-//                                                          listItems.add(items);
-//                                                        }): setState(() {
-//                                                          print('stok yok');
-//                                                        });
-//                                                      },
-//                                                    )),
-//                                                    Divider(color: Colors.white,thickness: 2,),
-//                                                    Container(
-//                                                      height: width / 6,
-//                                                      child: CupertinoButton(
-//                                                        color: Colors.transparent,
-//                                                        child: Text('Geri'),
-//                                                        onPressed: () =>
-//                                                            Navigator.pop(context, false),
-//                                                      ),
-//                                                    )
-//                                                  ],
-//                                                ),
-//                                              )) :
-//                                        print('asd');
-//                                      }
+                                        ),
+                                        children: <Widget>[
+                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                          SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
+                                              : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
+                                            color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              MaterialButton(
+                                                child: Icon(Icons.add_circle, color: Colors.white,),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _counter++;
+                                                  });
+                                                },
+                                                minWidth: SizeConfig.blockSizeHorizontal,
+                                                color: Colors.lightBlueAccent,
+                                              ),
+                                              MaterialButton(
+                                                elevation: 2,
+                                                child: Text(_counter.toString() + ' Adet', style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white
+                                                ),),
+                                                onPressed: () {
+                                                  _showToast(context,
+                                                      "$_counter adet ürün sepete eklenmiştir!");
+                                                  setState(() {
+                                                    switches = false;
+                                                    var items = new AddItemtoShopCart(
+                                                      id: dataProducts[index][i]["id"],
+                                                      name: dataProducts[index][i]["name"],
+                                                      price: dataProducts[index][i]["price"],
+                                                      itemCount: _counter,
+                                                    );
+                                                    listItems.add(items);
+                                                  });
+                                                },
+                                                color: Colors.lightBlueAccent,
+                                              ),
+                                              MaterialButton(
+                                                child: Icon(Icons.remove_circle, color: Colors.white,),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (_counter == 1)
+                                                      _counter = 1;
+                                                    else
+                                                      _counter--;
+                                                    print(_counter);
+                                                  });
+                                                },
+                                                minWidth: SizeConfig.blockSizeHorizontal,
+                                                color: Colors.lightBlueAccent,
+                                              )
+                                            ],
+                                          )
+                                        ],
                                       ),
                                 );
                               },
@@ -298,4 +256,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           },
         ));
   }
+}
+class Item {
+  final String displayName;
+  bool selected;
+
+  Item(this.displayName, this.selected);
 }
