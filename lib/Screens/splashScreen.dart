@@ -43,9 +43,9 @@ class _SplashScreenState extends State<SplashScreen> {
         children: <Widget>[
           Center(
             heightFactor: SizeConfig.blockSizeVertical*0.90,
-            child: Text('Hoş Geldiniz', 
+            child: Text('Hoş Geldiniz',
             style:TextStyle(
-              fontSize: 35, 
+              fontSize: 35,
               fontWeight: FontWeight.w800,
               color: Colors.white
               ),
@@ -53,9 +53,9 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
           SizedBox(height: SizeConfig.blockSizeVertical*2,),
           Padding(padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical, horizontal: SizeConfig.blockSizeHorizontal*5),
-            child: Text('Doci Boşnak Mutfağını kullandığınız için teşekkür ederiz.' +  
-            '\n Bu uygulamayı kullanarak siparişinizi daha hızlı verebilir, Eski siparişlerinizi görebilirsiniz.', 
-              style: TextStyle(fontSize: 20, color: Colors.white), 
+            child: Text('Doci Boşnak Mutfağını kullandığınız için teşekkür ederiz.' +
+            '\n Bu uygulamayı kullanarak siparişinizi daha hızlı verebilir, Eski siparişlerinizi görebilirsiniz.',
+              style: TextStyle(fontSize: 20, color: Colors.white),
               textAlign: TextAlign.center,),
           ),
         ],
@@ -113,6 +113,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal*10,),
                 ButtonTheme(
                   height: SizeConfig.blockSizeHorizontal * 20,
                   child: RaisedButton(

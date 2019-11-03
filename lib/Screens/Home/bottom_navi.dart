@@ -1,7 +1,9 @@
+import 'package:animated_splash/animated_splash.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
+import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'last_orders.dart';
 import 'menu.dart';
@@ -68,5 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 
 

@@ -1,3 +1,4 @@
+import 'package:animated_splash/animated_splash.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
@@ -15,7 +16,7 @@ class Routes{
     runApp(MaterialApp(
       title: 'Doci Bosnak Mutfagi',
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: EntryScreen(),
       onGenerateRoute: (RouteSettings settings){
         switch(settings.name){
 
@@ -107,4 +108,33 @@ class Routes{
 class MyCustomRoute<T> extends MaterialPageRoute<T>{
   MyCustomRoute({WidgetBuilder builder, RouteSettings settings})
     : super(builder: builder, settings: settings);
+}
+
+class EntryScreen extends StatelessWidget {
+  Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
+
+  Function duringSplash = () {
+    if (key != null)
+      return 1;
+    else
+      return 2;
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent,
+      body: Container(
+        color: Colors.lightBlueAccent,
+        child: AnimatedSplash(
+          imagePath: 'assets/images/logo.png',
+          home: SplashScreen(),
+          customFunction: duringSplash,
+          duration: 2500,
+          type: AnimatedSplashType.BackgroundProcess,
+          outputAndHome: returnValueAndHomeScreen,
+        ),
+      ),
+    );
+  }
 }

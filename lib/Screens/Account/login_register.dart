@@ -225,7 +225,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
     return DefaultTabController(
       length: 2,
       child: WillPopScope(
-        onWillPop: _onBackPressed,
+        // ignore: missing_return
+        onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/splash');
+        },
         child: Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),

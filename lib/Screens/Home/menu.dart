@@ -23,7 +23,8 @@ class SizeConfig {
     blockSizeVertical = screenHeight / 100;
   }
 }
-
+final GlobalKey expansionTileKey = GlobalKey();
+double previousOffset;
 var currentSelected;
 List<String> addItem;
 bool switches = false;
@@ -36,13 +37,15 @@ int switchCounter = 0;
 int _counter = 1;
 var itemOfProducts;
 Products products;
+bool door = false;
 
 void _showToast(BuildContext context, String desc) {
   final scaffold = Scaffold.of(context);
   scaffold.showSnackBar(
     SnackBar(
       elevation: 0,
-      backgroundColor: Colors.lightBlueAccent,
+      duration: Duration(milliseconds: 200),
+      backgroundColor: Colors.black45,
       content: Text(
         desc,
         style: TextStyle(
@@ -61,11 +64,23 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
+  final ScrollController _scrollController = ScrollController();
   List dataProducts;
   var quantity = 1;
   TabController tabController;
   var _countOfItem = new TextEditingController(text: _counter.toString());
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
+
+  void _scrollToSelectedContent(bool isExpanded, double previousOffset, int index, GlobalKey myKey) {
+    final keyContext = myKey.currentContext;
+
+    if (keyContext != null) {
+      // make sure that your widget is visible
+      final box = keyContext.findRenderObject() as RenderBox;
+      _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7) * index) : previousOffset,
+          duration: Duration(milliseconds: 600), curve: Curves.linear);
+    }
+  }
 
   // ignore: missing_return
   Future<String> makeRequest() async {
@@ -114,6 +129,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
     SizeConfig().init(context);
     return Scaffold(
         key: _scaffoldKey,
@@ -123,7 +139,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           backgroundColor: Colors.lightBlueAccent,
           elevation: 0,
         ),
+        backgroundColor: Colors.white,
         body: FutureBuilder<List<Types>>(
+          key: expansionTileKey,
           future: _fetchTypes(),
           builder: (BuildContext context, AsyncSnapshot<List<Types>> snapshot) {
             if (!snapshot.hasData)
@@ -131,12 +149,16 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   child: CircularProgressIndicator(),
                   alignment: Alignment.center);
             return ListView.builder(
+              controller: _scrollController,
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
+                    initiallyExpanded: false,
                     onExpansionChanged: (val){
                         setState(() {
+                          if (val) previousOffset = _scrollController.offset;
+                          _scrollToSelectedContent(val, previousOffset, index, expansionTileKey);
                         });
                     },
                     backgroundColor: Colors.white,
@@ -194,7 +216,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                             color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
+                                             children : <Widget>[
                                               MaterialButton(
                                                 child: Icon(Icons.add_circle, color: Colors.white,),
                                                 onPressed: () {
@@ -241,7 +263,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                                 minWidth: SizeConfig.blockSizeHorizontal,
                                                 color: Colors.lightBlueAccent,
                                               )
-                                            ],
+                                             ],
                                           )
                                         ],
                                       ),

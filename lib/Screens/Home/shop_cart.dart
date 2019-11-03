@@ -46,6 +46,25 @@ class _ShoppingCartState extends State<ShoppingCart> {
     _countController.dispose();
     super.dispose();
   }
+
+  void _showToast(BuildContext context, String desc) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        elevation: 0,
+        duration: Duration(milliseconds: 200),
+        backgroundColor: Colors.black45,
+        content: Text(
+          desc,
+          style: TextStyle(
+              fontStyle: FontStyle.normal,
+              fontSize: 20,
+              fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -62,6 +81,30 @@ class _ShoppingCartState extends State<ShoppingCart> {
         centerTitle: true,
         backgroundColor: Colors.lightBlueAccent,
         elevation: 0,
+      ),
+      floatingActionButton:SizedBox(
+      height: 50,
+      width: SizeConfig.blockSizeHorizontal*100,
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            FloatingActionButton.extended(
+              backgroundColor: Colors.lightBlueAccent,
+              label: Text('Sepeti Boşalt'),
+              onPressed: (){
+                setState(() {
+                  if(listItems.length != 0){
+                    listItems.clear();
+                    _showToast(context,
+                        "Sepet Boşaltıldı!");
+                  }else{
+                    _showToast(context,
+                        "Sepet zaten boş!");
+                }
+                });
+              },
+            ),
+          ]),
       ),
       body: Container(
         child: ListView.builder(
