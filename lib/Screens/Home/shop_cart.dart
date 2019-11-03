@@ -1,4 +1,5 @@
 import 'dart:convert' as JSON;
+import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
@@ -373,12 +374,31 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
 
+  Future<http.Response> postItself() async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": key,
+    });
+    setState(() {
+      user = json.decode(response.body);
+    });
+    var userInfo = new User(
+        id: user["value"]["id"],
+        name: user["value"]["name"],
+        lastname: user["value"]["lastname"],
+        phoneNumber: user["value"]["phoneNumber"],
+        address: user["value"]["address"],
+        created: user["value"]["created"]);
+    userInformations.add(userInfo);
+    return response;
+  }
+
   int selectedPayment;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    postItself();
     selectedPayment = 1;
   }
 
@@ -418,9 +438,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         body: body);
     print(response.body);
     if (response.statusCode == 201) {
-      setState(() {
         listItems.clear();
-        return Alert(
+         Alert(
           type: AlertType.success,
           title: 'Siparişiniz Verildi',
           desc:
@@ -433,8 +452,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           ],
           context: context,
         ).show();
-
-      });
 
     } else {
       setState(() {

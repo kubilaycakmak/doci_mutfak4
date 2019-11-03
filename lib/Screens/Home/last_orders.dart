@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,9 +8,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:translator/translator.dart';
 
 import 'menu.dart';
-
+List tr = new List();
+final translator = GoogleTranslator();
 var backgroundImage = new AssetImage('assets/images/sepetbos.png');
 var image = new Image(image: backgroundImage);
 
@@ -33,7 +37,6 @@ class _LastOrdersState extends State<LastOrders> {
         });
     if(response.statusCode == 200){
       if(response.body != null){
-        print('basarili');
         final item = json.decode(response.body);
         orderCount = item;
         return orderCount;
@@ -45,22 +48,24 @@ class _LastOrdersState extends State<LastOrders> {
     }
   }
   Future<List> _fetchData1() async {
+    List ad = new List();
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": key,
         });
     if(response.statusCode == 200){
-      print('basarili');
       final item = json.decode(response.body);
       orderCount = item;
       for(var i=0;i<orderCount.length;i++){
         productItems = item[i]['products'];
       }
+
       return productItems;
     }else{
       throw Exception('Failed to get products');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +118,12 @@ class _LastOrdersState extends State<LastOrders> {
                    itemBuilder: (BuildContext context, int index){
                      return Card(
                        child: ExpansionTile(
-                         title: Text(snapshot.data[index]['created'].toString()),
+                         title: Text(snapshot.data[index]['created']
+                             .replaceAll('Nov','Kasım').replaceAll('Oct', 'Ekim').replaceAll('Dec','Aralık').replaceAll('Jan','Ocak')
+                             .replaceAll('Feb','Şubat').replaceAll('Mar', 'Mart').replaceAll('Ap','Nisan').replaceAll('May','Mayıs')
+                             .replaceAll('June','Haziran').replaceAll('July', 'Temmuz').replaceAll('Agu','Ağustos').replaceAll('Sep','Eylül')
+                             .replaceAll('AM','').replaceAll('PM', '')
+                         ),
                          children: <Widget>[
                            FutureBuilder<List>(
                              future: _fetchData1(),
@@ -149,10 +159,11 @@ class _LastOrdersState extends State<LastOrders> {
                              title: Text('Sipariş Notu : '),
                              subtitle: Text(snapshot.data[index]['note'].toString()),
                            ),
+                           snapshot.data[index]['status'] == false ?
                            ListTile(
                              title: Text('Sipariş Tamamlandı mı? : '),
-                             subtitle: snapshot.data[index]['status'] == false ? Text('Hayır') : Text('Evet'),
-                           ),
+                             subtitle: Text('Hayır'),
+                           ) : Text(''),
                            CupertinoButton(
                              onPressed: (){
                                setState(() {

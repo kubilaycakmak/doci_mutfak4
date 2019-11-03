@@ -188,7 +188,8 @@ class _UpdateState extends State<Update> {
                           Alert(
                             context: context,
                             type: AlertType.success,
-                            title: 'Bilgilerin Guncellendi!',
+                            title: 'Bilgilerin Güncellendi!',
+                            desc: 'Bir sonraki girişinde bilgilerin güncellenmiş olacak',
                             buttons: [
                               DialogButton(
                                 onPressed: () {
@@ -198,7 +199,7 @@ class _UpdateState extends State<Update> {
                                   Navigator.of(context)
                                       .pushReplacementNamed('/home');
                                 },
-                                child: Text('Ana Ekrana don'),
+                                child: Text('Ana Ekrana don', style: TextStyle(color: Colors.white),),
                               ),
                             ],
                           ).show();
