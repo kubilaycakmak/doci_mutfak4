@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gson/gson.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -363,342 +365,428 @@ class EndOfTheShoppingCart extends StatefulWidget {
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final _addressController =
-      new TextEditingController(text: userInformations[0].address);
+  new TextEditingController(text: userInformations[0].address);
   final _phoneController =
-      new TextEditingController(text: userInformations[0].phoneNumber);
+  new TextEditingController(text: userInformations[0].phoneNumber);
   final String orderCreate = 'http://68.183.222.16:8080/api/order/create';
   final String paymentMethodsUrl =
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
 
   int selectedPayment;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedPayment = 0;
+    selectedPayment = 1;
   }
 
-  setSelectedPayment(int val){
+  setSelectedPayment(int val) {
     setState(() {
       selectedPayment = val;
     });
   }
 
+
   Future<http.Response> _sendOrders() async {
-
-    List id = new List();
-    listItems.forEach((f)=> id.add(
-      '{' + '"dociProduct":{"id": ${f.id}},"quantity": ${f.itemCount}}'
-    ));
-
-    Map data ={
-      "products" :
-        id
-      ,
-      "note" : note.text,
-      "paymentMethod" : {
-        "id" : selectedPayment
-      }
+    Map payment = {
+      'id': selectedPayment
     };
+    var id;
+    List listId= new List();
+    for(int i=0;i<listItems.length;i++){
+       id = {
+        'dociProduct': {
+          'id': listItems[i].id
+        },
+        'quantity': listItems[i].itemCount
+      };
+       listId.add(id);
+    }
+    Order or = Order(listId, note.text, payment);
 
-    var body = JSON.jsonEncode(data);
-    print('======================' + body);
-
-    var response = await http.post(orderCreate,
+    print(or.toJson());
+    var body = JSON.jsonEncode(or.toJson());
+    print(body);
+    var response = await http.post(Uri.encodeFull(orderCreate),
         headers: {
-          "Content-Type":'application/json',
-          'Accept': 'application/json',
+          "content-type" : "application/json",
+          "accept": "application/json",
           "authorization": key,
         },
         body: body);
     print(response.body);
-
     if (response.statusCode == 201) {
-      print('Order sended succusfully');
+      setState(() {
+        listItems.clear();
+        return Alert(
+          type: AlertType.success,
+          title: 'Siparişiniz Verildi',
+          desc:
+          'Menünüz hazırlanıyor, Bizi seçtiğiniz için teşekkür ederiz!',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ],
+          context: context,
+        ).show();
+
+      });
+
     } else {
+      setState(() {
+        return Alert(
+          type: AlertType.error,
+          title: 'Hata',
+          desc:
+          'Lütfen sipariş verirken boş alanları doğru bir şekilde doldurunuz.',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.pop(context,true),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ],
+          context: context,
+        ).show();
+      });
       throw Exception('Failed to fetch sendOrders');
     }
     return response;
   }
-//  List payment;
 
-//  Future<List<PaymentMethods>> _paymentMethods() async {
-//    print(listItems.length);
-//    var response = await http.get(paymentMethodsUrl);
-//    if (response.statusCode == 200) {
-//      final items = json.decode(response.body).cast<Map<String, dynamic>>();
-//      payment = items;
-//      List<PaymentMethods> listPayments = items.map<PaymentMethods>((json) {
-//        return PaymentMethods.fromJson(json);
-//      }).toList();
-//      return listPayments;
-//    } else {
-//      throw Exception('Failed to load paymentMethods');
-//    }
-//  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    double finalPrice = 0;
-    setState(() {
-      for (var item in listItems) {
-        finalPrice += item.price * item.itemCount;
-      }
-    });
-    return WillPopScope(
-      // ignore: missing_return
-      onWillPop: (){
-        Navigator.of(context).pushReplacementNamed('/home');
-        print('aq');
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.lightBlueAccent,
-          title: Text('Siparişi Onayla | Bitir'),
-          centerTitle: true,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () =>
-                Navigator.of(context).pushReplacementNamed('/home'),
-          ),
-        ),
-
-        body: Container(
-            color: Colors.white,
-            child: ListView(
-              children: <Widget>[
-                Card(
-                  margin: EdgeInsets.all(5),
-                  elevation: 0.2,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Aşağıdaki bilgiler doğru ise değişiklik yapmadan ilerleyiniz.',
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 1.2,
-                          color: Colors.black45),
-                    ),
-                  ),
+    @override
+    Widget build(BuildContext context) {
+      double finalPrice = 0;
+      setState(() {
+        for (var item in listItems) {
+          finalPrice += item.price * item.itemCount;
+        }
+      });
+      return WillPopScope(
+        // ignore: missing_return
+          onWillPop: () {
+            Navigator.of(context).pushReplacementNamed('/home');
+            print('aq');
+          },
+          child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.lightBlueAccent,
+                title: Text('Siparişi Onayla | Bitir'),
+                centerTitle: true,
+                elevation: 0,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () =>
+                      Navigator.of(context).pushReplacementNamed('/home'),
                 ),
-                Card(
-                  margin: EdgeInsets.all(5),
-                  elevation: 1,
-                  child: ListTile(
-                      title: Text('Teslimat Adresi'),
-                      subtitle: TextFormField(
-                        controller: _addressController,
-                        decoration: InputDecoration(),
-                      )),
-                ),
-                Card(
-                  margin: EdgeInsets.all(5),
-                  elevation: 1,
-                  child: ListTile(
-                      title: Text('Telefon Numarası'),
-                      subtitle: TextFormField(
-                        controller: _phoneController,
-                        decoration: InputDecoration(),
-                      )),
-                ),
-                Card(
-                  margin: EdgeInsets.all(5),
-                  elevation: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+              ),
+
+              body: Container(
+                  color: Colors.white,
+                  child: ListView(
                     children: <Widget>[
-                          RadioListTile(
-                            title: Text('Nakit'),
-                            value: 0,
-                            groupValue: selectedPayment,
-                            activeColor: Colors.lightBlueAccent,
-                            onChanged: setSelectedPayment,
-                          ),
-                          RadioListTile(
-                            title: Text('Kredi Karti'),
-                            value: 1,
-                            groupValue: selectedPayment,
-                            activeColor: Colors.lightBlueAccent,
-                            onChanged: setSelectedPayment,
-                          ),
-                          RadioListTile(
-                            title: Text('Sodexo'),
-                            value: 2,
-                            groupValue: selectedPayment,
-                            activeColor: Colors.lightBlueAccent,
-                            onChanged: setSelectedPayment,
-                          ),
-                    ],
-                  ),
-                ),
-                Card(
-                  margin: EdgeInsets.all(5),
-                  elevation: 1,
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: listItems.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          listItems[index].name,
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        trailing: Text(
-                          ((listItems[index].price) *
-                                      (listItems[index].itemCount))
-                                  .toInt()
-                                  .toString() +
-                              ' TL',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        leading: InkWell(
+                      Card(
+                        margin: EdgeInsets.all(5),
+                        elevation: 0.2,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
                           child: Text(
-                            listItems[index].itemCount.toString(),
-                            style: TextStyle(fontSize: 12),
+                            'Aşağıdaki bilgiler doğru ise değişiklik yapmadan ilerleyiniz.',
+                            style: TextStyle(
+                                fontSize: 14,
+                                letterSpacing: 1.2,
+                                color: Colors.black45),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                Card(
-                  elevation: 1,
-                  margin: EdgeInsets.all(5),
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                      'Tutar : ' + finalPrice.toInt().toString() + ' TL',
-                      style: TextStyle(
-                        fontSize: 20,
                       ),
-                    ),
-                  ),
-                ),
-                Card(
-                  elevation: 1,
-                  margin: EdgeInsets.all(5),
-                  child: TextFormField(
-                    controller: note,
-                    decoration: InputDecoration(
-                      labelText: "Mesajınız",
-                      hintMaxLines: 100,
-                      fillColor: Colors.white,
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.lightBlueAccent),
+                      Card(
+                        margin: EdgeInsets.all(5),
+                        elevation: 1,
+                        child: ListTile(
+                            title: Text('Teslimat Adresi'),
+                            subtitle: TextFormField(
+                              controller: _addressController,
+                              decoration: InputDecoration(),
+                            )),
                       ),
+                      Card(
+                        margin: EdgeInsets.all(5),
+                        elevation: 1,
+                        child: ListTile(
+                            title: Text('Telefon Numarası'),
+                            subtitle: TextFormField(
+                              controller: _phoneController,
+                              decoration: InputDecoration(),
+                            )),
+                      ),
+                      Card(
+                        margin: EdgeInsets.all(5),
+                        elevation: 1,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            RadioListTile(
+                              title: Text('Nakit'),
+                              value: 1,
+                              groupValue: selectedPayment,
+                              activeColor: Colors.lightBlueAccent,
+                              onChanged: setSelectedPayment,
+                            ),
+                            RadioListTile(
+                              title: Text('Kredi Karti'),
+                              value: 2,
+                              groupValue: selectedPayment,
+                              activeColor: Colors.lightBlueAccent,
+                              onChanged: setSelectedPayment,
+                            ),
+                            RadioListTile(
+                              title: Text('Sodexo'),
+                              value: 3,
+                              groupValue: selectedPayment,
+                              activeColor: Colors.lightBlueAccent,
+                              onChanged: setSelectedPayment,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Card(
+                        margin: EdgeInsets.all(5),
+                        elevation: 1,
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: listItems.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                listItems[index].name,
+                                style: TextStyle(fontSize: 13),
+                              ),
+                              trailing: Text(
+                                ((listItems[index].price) *
+                                    (listItems[index].itemCount))
+                                    .toInt()
+                                    .toString() +
+                                    ' TL',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              leading: InkWell(
+                                child: Text(
+                                  listItems[index].itemCount.toString(),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Card(
+                        elevation: 1,
+                        margin: EdgeInsets.all(5),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            'Tutar : ' + finalPrice.toInt().toString() + ' TL',
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 1,
+                        margin: EdgeInsets.all(5),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
+                          child: TextFormField(
+                            maxLines: 10,
+                            controller: note,
+                            decoration: InputDecoration(
+                              labelText: "Mesajınız",
+                              hintText: "Boş bırakabilirsiniz",
+                              hintMaxLines: 100,
+                              fillColor: Colors.white,
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors
+                                    .lightBlueAccent),
+                              ),
+                            ),
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+              bottomNavigationBar: CupertinoButton(
+                borderRadius: BorderRadius.circular(0),
+                pressedOpacity: 0.2,
+                color: Colors.lightBlueAccent,
+                // ignore: missing_return
+                onPressed: () {
+            if (key != '') {
+              if (inside == false) {
+                if (internet == true) {
+                  listItems.length != 0
+                      ? _sendOrders()
+                      : showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text('Sepet Boş'),
+                                content: Text('Boş sepet onaylanamaz'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: Text('Tamam'),
+                                  ),
+                                ],
+                              ));
+                } else {
+                  return Alert(
+                    title: 'İnternet Hatası',
+                    desc:
+                        'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
+                    buttons: [
+                      DialogButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text('Tamam'),
+                      ),
+                    ],
+                    context: context,
+                  ).show();
+                }
+              } else {
+                return Alert(
+                  title: 'Kullanıcı bulunamadı',
+                  desc:
+                      'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                  buttons: [
+                    DialogButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text('Tamam'),
                     ),
-                    keyboardType: TextInputType.text,
-                    style: TextStyle(
-                      fontFamily: "Poppins",
+                    DialogButton(
+                      onPressed: () =>
+                          Navigator.of(context).pushReplacementNamed('/login'),
+                      child: Text('Üye girişi'),
                     ),
+                  ],
+                  context: context,
+                ).show();
+              }
+            } else {
+              return Alert(
+                title: 'Kullanıcı bulunamadı',
+                desc:
+                    'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                buttons: [
+                  DialogButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text('Tamam'),
                   ),
+                  DialogButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushReplacementNamed('/login'),
+                    child: Text('Üye girişi'),
+                  ),
+                ],
+                context: context,
+              ).show();
+            }
+                },
+                child: Text(
+                  'Siparişi Tamamla',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500, color: Colors.white),
+                ),
+                padding: EdgeInsets.all(25),
+              )));
+    }
+  }
+//class Products{
+//  int id;
+//  String name;
+//
+//
+//  Products({this.id, this.name});
+//
+//  Map<String, dynamic> toJson() =>
+//      {
+//        '"id"': "\"$id\"",
+//        '"name"': "\"$name\"",
+//      };
+//}
+//class DociProduct{
+//  int id;
+//  int quantity;
+//  DociProduct({this.id, this.quantity});
+//
+//  Map<String, dynamic> toJson() =>
+//      {
+//        '"id"': "\"$id\"",
+//        '"quantity"':"\"$quantity\"",
+//      };
+//}
+////class Quantity{
+////  int quantity;
+////}
+//class PaymentMethod{
+//  String id;
+//  PaymentMethod({this.id});
+//}
+
+//
+//{
+//"products" : [
+//{
+//"dociProduct" : {
+//"id" : 5
+//},
+//"quantity" : 2
+//}
+//],
+//"note" : "Siparis Notu",
+//"paymentMethod" : {
+//"id" : 1
+//}
+//}
+
+  void _addressBottomSheet(context) {
+    showBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                  title: Text('Address'),
                 )
               ],
-            )),
-        bottomNavigationBar: CupertinoButton(
-          borderRadius: BorderRadius.circular(0),
-          pressedOpacity: 0.2,
-          color: Colors.lightBlueAccent,
-          // ignore: missing_return
-          onPressed: () {
-              _sendOrders();
-//            if (key != '') {
-//              if (inside == false) {
-//                if (internet == true) {
-//                  listItems.length != 0
-//                      ? _sendOrders()
-//                      : showDialog(
-//                          context: context,
-//                          builder: (context) => AlertDialog(
-//                                title: Text('Sepet Boş'),
-//                                content: Text('Boş sepet onaylanamaz'),
-//                                actions: <Widget>[
-//                                  FlatButton(
-//                                    onPressed: () =>
-//                                        Navigator.pop(context, false),
-//                                    child: Text('Tamam'),
-//                                  ),
-//                                ],
-//                              ));
-//                } else {
-//                  return Alert(
-//                    title: 'İnternet Hatası',
-//                    desc:
-//                        'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
-//                    buttons: [
-//                      DialogButton(
-//                        onPressed: () => Navigator.pop(context, false),
-//                        child: Text('Tamam'),
-//                      ),
-//                    ],
-//                    context: context,
-//                  ).show();
-//                }
-//              } else {
-//                return Alert(
-//                  title: 'Kullanıcı bulunamadı',
-//                  desc:
-//                      'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-//                  buttons: [
-//                    DialogButton(
-//                      onPressed: () => Navigator.pop(context, false),
-//                      child: Text('Tamam'),
-//                    ),
-//                    DialogButton(
-//                      onPressed: () =>
-//                          Navigator.of(context).pushReplacementNamed('/login'),
-//                      child: Text('Üye girişi'),
-//                    ),
-//                  ],
-//                  context: context,
-//                ).show();
-//              }
-//            } else {
-//              return Alert(
-//                title: 'Kullanıcı bulunamadı',
-//                desc:
-//                    'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-//                buttons: [
-//                  DialogButton(
-//                    onPressed: () => Navigator.pop(context, false),
-//                    child: Text('Tamam'),
-//                  ),
-//                  DialogButton(
-//                    onPressed: () =>
-//                        Navigator.of(context).pushReplacementNamed('/login'),
-//                    child: Text('Üye girişi'),
-//                  ),
-//                ],
-//                context: context,
-//              ).show();
-//            }
-          },
-          child: Text(
-            'Siparişi Tamamla',
-            style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-          ),
-          padding: EdgeInsets.all(25),
-        )));
+            ),
+          );
+        });
   }
-}
 
-void _addressBottomSheet(context) {
-  showBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                title: Text('Address'),
-              )
-            ],
-          ),
-        );
-      });
+
+@JsonSerializable()
+class Order{
+  var product;
+  String note;
+  Map payment;
+
+  Order(this.product, this.note, this.payment);
+
+  Map<String, dynamic> toJson() =>
+      {
+        'products': product,
+        'note': note,
+        'paymentMethod':payment,
+      };
 }

@@ -35,7 +35,7 @@ dependencies:
   connectivity: ^0.3.2
   numberpicker: 1.1.0
   animated_splash: 1.0.0
-
+  gson: ^0.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

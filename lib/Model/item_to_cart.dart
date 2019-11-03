@@ -9,9 +9,9 @@ class AddItemtoShopCart{
 
 
   AddItemtoShopCart({
-    @required this.id, 
-    @required this.name,
-    @required this.price,
+    this.id,
+    this.name,
+    this.price,
     this.quantity,
     this.itemCount
     });

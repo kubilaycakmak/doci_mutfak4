@@ -188,6 +188,33 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                         },
                                         backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),
+                                        leading: InkWell(
+                                          child: Icon(Icons.add_circle_outline),
+                                          highlightColor: Colors.green,
+                                          focusColor: Colors.green,
+                                          onTap: (){
+                                            _showToast(context,
+                                                "Ürün sepete eklenmiştir!");
+                                            setState(() {
+                                              switches = false;
+                                              var same = dataProducts[index][i];
+                                              if(currentSelected == same){
+                                                var items = new AddItemtoShopCart(
+                                                  itemCount: 1,
+                                                );
+                                                listItems.add(items);
+                                              }else{
+                                                var items = new AddItemtoShopCart(
+                                                  id: dataProducts[index][i]["id"],
+                                                  name: dataProducts[index][i]["name"],
+                                                  price: dataProducts[index][i]["price"],
+                                                  itemCount: 1,
+                                                );
+                                                listItems.add(items);
+                                              }
+                                            });
+                                          },
+                                        ),
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
@@ -214,57 +241,58 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
                                               : Container(child: Card(child: Text('Ürün stokta yoktur', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
                                             color: Colors.red, elevation: 10, margin: EdgeInsets.all(5),),),
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                             children : <Widget>[
-                                              MaterialButton(
-                                                child: Icon(Icons.add_circle, color: Colors.white,),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _counter++;
-                                                  });
-                                                },
-                                                minWidth: SizeConfig.blockSizeHorizontal,
-                                                color: Colors.lightBlueAccent,
-                                              ),
-                                              MaterialButton(
-                                                elevation: 2,
-                                                child: Text(_counter.toString() + ' Adet', style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white
-                                                ),),
-                                                onPressed: () {
-                                                  _showToast(context,
-                                                      "$_counter adet ürün sepete eklenmiştir!");
-                                                  setState(() {
-                                                    switches = false;
-                                                    var items = new AddItemtoShopCart(
-                                                      id: dataProducts[index][i]["id"],
-                                                      name: dataProducts[index][i]["name"],
-                                                      price: dataProducts[index][i]["price"],
-                                                      itemCount: _counter,
-                                                    );
-                                                    listItems.add(items);
-                                                  });
-                                                },
-                                                color: Colors.lightBlueAccent,
-                                              ),
-                                              MaterialButton(
-                                                child: Icon(Icons.remove_circle, color: Colors.white,),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    if (_counter == 1)
-                                                      _counter = 1;
-                                                    else
-                                                      _counter--;
-                                                    print(_counter);
-                                                  });
-                                                },
-                                                minWidth: SizeConfig.blockSizeHorizontal,
-                                                color: Colors.lightBlueAccent,
-                                              )
-                                             ],
-                                          )
+                                          SizedBox(height: 20,),
+//                                          Row(
+//                                            mainAxisSize: MainAxisSize.min,
+//                                             children : <Widget>[
+//                                              MaterialButton(
+//                                                child: Icon(Icons.add_circle, color: Colors.white,),
+//                                                onPressed: () {
+//                                                  setState(() {
+//                                                    _counter++;
+//                                                  });
+//                                                },
+//                                                minWidth: SizeConfig.blockSizeHorizontal,
+//                                                color: Colors.lightBlueAccent,
+//                                              ),
+//                                              MaterialButton(
+//                                                elevation: 2,
+//                                                child: Text(_counter.toString() + ' Adet', style: TextStyle(
+//                                                    fontSize: 20,
+//                                                    color: Colors.white
+//                                                ),),
+//                                                onPressed: () {
+//                                                  _showToast(context,
+//                                                      "$_counter adet ürün sepete eklenmiştir!");
+//                                                  setState(() {
+//                                                    switches = false;
+//                                                    var items = new AddItemtoShopCart(
+//                                                      id: dataProducts[index][i]["id"],
+//                                                      name: dataProducts[index][i]["name"],
+//                                                      price: dataProducts[index][i]["price"],
+//                                                      itemCount: _counter,
+//                                                    );
+//                                                    listItems.add(items);
+//                                                  });
+//                                                },
+//                                                color: Colors.lightBlueAccent,
+//                                              ),
+//                                              MaterialButton(
+//                                                child: Icon(Icons.remove_circle, color: Colors.white,),
+//                                                onPressed: () {
+//                                                  setState(() {
+//                                                    if (_counter == 1)
+//                                                      _counter = 1;
+//                                                    else
+//                                                      _counter--;
+//                                                    print(_counter);
+//                                                  });
+//                                                },
+//                                                minWidth: SizeConfig.blockSizeHorizontal,
+//                                                color: Colors.lightBlueAccent,
+//                                              )
+//                                             ],
+//                                          )
                                         ],
                                       ),
                                 );
