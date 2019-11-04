@@ -509,10 +509,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                       title: MaterialButton(
                         onPressed: () {
                           postRegisterRequest();
-                          /*if(statusValidator == 200){
-                              inside = true;
-                              Navigator.of(context).pushReplacementNamed('/login');
-                            }*/
                           if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
                             Alert(

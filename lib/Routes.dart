@@ -9,6 +9,7 @@ import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:doci_mutfak4/Screens/Profile/change_pass.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
+import 'Screens/Home/shop_cart.dart';
 import 'Screens/Profile/update.dart';
 
 class Routes{
