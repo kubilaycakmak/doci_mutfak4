@@ -116,16 +116,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
         inside = true;
         Alert(
           context: context,
-          title: 'Kullanici adi veya Sifreniz yanlistir',
-          desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
+          title: 'Kullanıcı adı ve ya Şifreniz yanlıştır',
+          desc: 'Şifrenizi unuttuysanız, Şifremi unuttum ile sıfırlayabilirsiniz.',
           buttons: [
             DialogButton(
-              onPressed: null,
-              child: Text('Sifremi unuttum'),
-            ),
-            DialogButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam'),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
           ],
         ).show();
@@ -216,6 +212,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: AppBar(
+              elevation: 0,
               bottom: tabBarItem,
               backgroundColor: Colors.lightBlueAccent,
             ),
@@ -233,7 +230,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                           TextFormField(
                             controller: _usernameController,
                             decoration: InputDecoration(
-                              labelText: "Kullanici Adi veya E-Posta",
+                              labelText: "Kullanıcı Adı",
                               fillColor: Colors.white,
                               border: UnderlineInputBorder(
                                 borderSide:
@@ -248,7 +245,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                           TextFormField(
                             controller: _passwordController,
                             decoration: InputDecoration(
-                              labelText: "Sifre",
+                              labelText: "Şifre",
                               fillColor: Colors.white,
                               border: UnderlineInputBorder(
                                 borderSide:
@@ -257,7 +254,8 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                             ),
                             keyboardType: TextInputType.number,
                             style: TextStyle(
-                              fontFamily: "Poppins",
+                              color: Colors.black,
+                              fontFamily: "RobotoMono",
                             ),
                           ),
                           ListTile(
@@ -519,11 +517,11 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                                 DialogButton(
                                   onPressed: () => Navigator.of(context)
                                       .pushReplacementNamed('/login'),
-                                  child: Text('Giriş sayfasına git'),
+                                  child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
                                 ),
                                 DialogButton(
                                   onPressed: () => Navigator.of(context).pop(),
-                                  child: Text('Tamam'),
+                                  child: Text('Tamam',style: TextStyle(color: Colors.white),),
                                 ),
                               ],
                             ).show();

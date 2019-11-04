@@ -191,27 +191,18 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           highlightColor: Colors.green,
                                           focusColor: Colors.green,
                                           onTap: (){
-                                            var currentSelection = dataProducts[index][i]['id'];
-                                            // _showToast(context,
-                                            //     "Ürün sepete eklenmiştir!");
-                                            // setState(() {
-                                            //   switches = false;
-                                            //     var items = new AddItemtoShopCart(
-                                            //       id: dataProducts[index][i]["id"],
-                                            //       name: dataProducts[index][i]["name"],
-                                            //       price: dataProducts[index][i]["price"],
-                                            //       itemCount: 1,
-                                            //     );
-                                            //     listItems.add(items);
-                                            // });
-                                            var item = new AddItemtoShopCart(
-                                              id: dataProducts[index][i]['id'],
-                                              name: 'salatalik',
-                                              price: 10,
-                                              itemCount: 2
-                                            );
-                                            print(item.id == currentSelection);
-
+                                            _showToast(context,
+                                                "Ürün sepete eklenmiştir!");
+                                            setState(() {
+                                              switches = false;
+                                                var items = new AddItemtoShopCart(
+                                                  id: dataProducts[index][i]["id"],
+                                                  name: dataProducts[index][i]["name"],
+                                                  price: dataProducts[index][i]["price"],
+                                                  itemCount: 1,
+                                                );
+                                                listItems.add(items);
+                                            });
                                           },
                                         ),
                                         trailing: Row(

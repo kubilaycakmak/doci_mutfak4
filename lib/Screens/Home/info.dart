@@ -1,26 +1,74 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class Info extends StatelessWidget {
-  const Info({Key key}) : super(key: key);
+import 'package:doci_mutfak4/Screens/Home/last_orders.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class Info extends StatefulWidget {
+  Info({Key key}) : super(key: key);
+
+  @override
+  _InfoState createState() => _InfoState();
+}
+
+class _InfoState extends State<Info> {
+  String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
+  Completer<GoogleMapController> _controller = Completer();
+
+    static final CameraPosition _dociMutfak = CameraPosition(
+      target: LatLng(41.045497, 28.783106),
+      zoom: 2.0);
 
   @override
   Widget build(BuildContext context) {
     var _now = new DateTime.now();
     var _startTime = 09.00;
     var _endTime = 23.00;
-    
 
-    return Scaffold(
+    //AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8
+    return WillPopScope(
+        // ignore: missing_return
+        onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/home');
+          print('aq');
+        },
+      child : Scaffold(
       appBar: AppBar(
-        title: Text('Hakkimizda'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
+        ),
+        title: Text('Hakkımızda'),
+        elevation: 0,
         backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
       ),
       body: Container(
         child: Card(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            verticalDirection: VerticalDirection.down,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Expanded(
+                child: GoogleMap(
+                  mapToolbarEnabled: true,
+                  onTap: (val){
+                    print('maps');
+                  },
+                  scrollGesturesEnabled: true,
+                  tiltGesturesEnabled: true,
+                  rotateGesturesEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomGesturesEnabled: true,
+                  mapType: MapType.normal,
+                  initialCameraPosition: _dociMutfak,
+                  onMapCreated: (GoogleMapController controller){
+                    _controller.complete(controller);
+                  },
+                ),
+              ),
               ListTile(
                 leading: Icon(Icons.timeline),
                 title: Text('Servis Saati'),
@@ -29,14 +77,15 @@ class Info extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.store),
                 title: Text('Durum'),
-                subtitle: _now.hour < _startTime || _now.hour > _endTime ? Text('Kapali', style: TextStyle(color: Colors.green),) : Text('Acik', style: TextStyle(color: Colors.red),),
+                subtitle: _now.hour < _startTime || _now.hour > _endTime ? Text('Kapalı', style: TextStyle(color: Colors.green),) : Text('Açık', style: TextStyle(color: Colors.red),),
               ),
               ListTile(
                 leading: Icon(Icons.timelapse),
-                title: Text('Servis Suresi'),
-                subtitle: Text('45 DK'),
+                title: Text('Servis Süresi'),
+                subtitle: Text('Max. 45 DK'),
               ),
             ],
+            ),
           ),
         ),
       ),

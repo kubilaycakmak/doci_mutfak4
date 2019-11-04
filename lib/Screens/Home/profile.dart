@@ -100,7 +100,8 @@ class _ProfileState extends State<Profile> {
                         title: Text('Hakkımızda'),
                         subtitle: Text('Lokasyonumuz - iletişim bilgileri'),
                         leading: Icon(Icons.info),
-                        onTap: null,
+                        onTap: () => Navigator.of(context)
+                            .pushReplacementNamed('/info'),
                       ),
                       ListTile(
                         title: Text('Çıkış Yap'),

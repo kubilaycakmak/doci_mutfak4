@@ -8,11 +8,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:translator/translator.dart';
 
 import 'menu.dart';
 List tr = new List();
-final translator = GoogleTranslator();
 var backgroundImage = new AssetImage('assets/images/sepetbos.png');
 var image = new Image(image: backgroundImage);
 
