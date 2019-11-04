@@ -187,31 +187,31 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                         backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),
                                         leading: InkWell(
-                                          child: dataProducts[index][i]['isValid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
+                                          child: dataProducts[index][i]['valid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
                                           highlightColor: Colors.green,
                                           focusColor: Colors.green,
                                           onTap: (){
+                                            var currentSelection = dataProducts[index][i]['id'];
+                                            // _showToast(context,
+                                            //     "Ürün sepete eklenmiştir!");
+                                            // setState(() {
+                                            //   switches = false;
+                                            //     var items = new AddItemtoShopCart(
+                                            //       id: dataProducts[index][i]["id"],
+                                            //       name: dataProducts[index][i]["name"],
+                                            //       price: dataProducts[index][i]["price"],
+                                            //       itemCount: 1,
+                                            //     );
+                                            //     listItems.add(items);
+                                            // });
+                                            var item = new AddItemtoShopCart(
+                                              id: dataProducts[index][i]['id'],
+                                              name: 'salatalik',
+                                              price: 10,
+                                              itemCount: 2
+                                            );
+                                            print(item.id == currentSelection);
 
-                                            _showToast(context,
-                                                "Ürün sepete eklenmiştir!");
-                                            setState(() {
-                                              switches = false;
-                                              var same = dataProducts[index][i];
-                                              if(currentSelected == same){
-                                                var items = new AddItemtoShopCart(
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
-                                              }else{
-                                                var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
-                                              }
-                                            });
                                           },
                                         ),
                                         trailing: Row(
@@ -236,7 +236,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           ],
                                         ),
                                         children: <Widget>[
-                                          dataProducts[index][i]['isValid'].toString() == 'true' ?
+                                          dataProducts[index][i]['valid'].toString() == 'true' ?
                                           SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
                                               : Padding(padding: EdgeInsets.all(0),child: Card(child: Text('Bu ürün stokta yok', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
                                             color: Colors.red, elevation: 3, margin: EdgeInsets.all(0),),),

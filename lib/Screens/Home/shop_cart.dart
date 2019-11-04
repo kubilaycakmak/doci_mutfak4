@@ -67,11 +67,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double _count = 0;
-    setState(() {
-      for (var item in listItems) {
-        _count = _count + item.price * item.itemCount;
-      }
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Sepetim'),
@@ -495,6 +490,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         child: ListTile(
                             title: Text('Teslimat Adresi'),
                             subtitle: TextFormField(
+                              maxLines: 3,
                               controller: _addressController,
                               decoration: InputDecoration(),
                             )),
