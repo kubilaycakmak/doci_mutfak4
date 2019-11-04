@@ -48,7 +48,6 @@ class _LastOrdersState extends State<LastOrders> {
     }
   }
   Future<List> _fetchData1() async {
-    List ad = new List();
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": key,

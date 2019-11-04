@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AddItemtoShopCart{
   int id;
   String name;

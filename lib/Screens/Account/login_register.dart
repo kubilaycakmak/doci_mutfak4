@@ -134,23 +134,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
     return response;
   }
 
-  Future<bool> _onBackPressed() {
-    return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text('Uygulamadan çıkmak mı istiyorsunuz?'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text('Evet'),
-                ),
-                FlatButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text('Hayır'),
-                )
-              ],
-            ));
-  }
 
   Future<List<Questions>> _fetchQuestions() async {
     var response = await http.get(securityQuestions);

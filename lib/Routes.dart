@@ -110,7 +110,12 @@ class MyCustomRoute<T> extends MaterialPageRoute<T>{
     : super(builder: builder, settings: settings);
 }
 
-class EntryScreen extends StatelessWidget {
+class EntryScreen extends StatefulWidget {
+  @override
+  _EntryScreenState createState() => _EntryScreenState();
+}
+
+class _EntryScreenState extends State<EntryScreen> {
   Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
 
   Function duringSplash = () {

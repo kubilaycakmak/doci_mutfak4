@@ -1,6 +1,5 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
-import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gson/gson.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -37,15 +35,12 @@ class ShoppingCart extends StatefulWidget {
 }
 
 class _ShoppingCartState extends State<ShoppingCart> {
-  var _countOfIndex = new TextEditingController();
   final _countController = new TextEditingController();
   User user;
-  var _messageController = new TextEditingController();
   bool internet = true;
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _countController.dispose();
     super.dispose();
   }
@@ -72,7 +67,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     double _count = 0;
-    double sideLength = 50;
     setState(() {
       for (var item in listItems) {
         _count = _count + item.price * item.itemCount;
@@ -330,30 +324,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       color: Colors.black,
     ),
   );
-  _checkInternetConnectivity() async {
-    var result = await Connectivity().checkConnectivity();
-    if (result == ConnectivityResult.none) {
-      internet = false;
-      return Alert(
-          context: context,
-          style: alertStyle,
-          type: AlertType.error,
-          desc:
-              'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-              'bağlantısı gereklidir.',
-          title: '',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Tamam',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ]).show();
-    }
-    internet = true;
-  }
+
 }
 
 
@@ -396,7 +367,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     postItself();
     selectedPayment = 1;
@@ -727,70 +697,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
               )));
     }
   }
-//class Products{
-//  int id;
-//  String name;
-//
-//
-//  Products({this.id, this.name});
-//
-//  Map<String, dynamic> toJson() =>
-//      {
-//        '"id"': "\"$id\"",
-//        '"name"': "\"$name\"",
-//      };
-//}
-//class DociProduct{
-//  int id;
-//  int quantity;
-//  DociProduct({this.id, this.quantity});
-//
-//  Map<String, dynamic> toJson() =>
-//      {
-//        '"id"': "\"$id\"",
-//        '"quantity"':"\"$quantity\"",
-//      };
-//}
-////class Quantity{
-////  int quantity;
-////}
-//class PaymentMethod{
-//  String id;
-//  PaymentMethod({this.id});
-//}
-
-//
-//{
-//"products" : [
-//{
-//"dociProduct" : {
-//"id" : 5
-//},
-//"quantity" : 2
-//}
-//],
-//"note" : "Siparis Notu",
-//"paymentMethod" : {
-//"id" : 1
-//}
-//}
-
-  void _addressBottomSheet(context) {
-    showBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                  title: Text('Address'),
-                )
-              ],
-            ),
-          );
-        });
-  }
-
 
 @JsonSerializable()
 class Order{

@@ -46,7 +46,6 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return WillPopScope(
       // ignore: missing_return
         onWillPop: (){

@@ -68,7 +68,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   List dataProducts;
   var quantity = 1;
   TabController tabController;
-  var _countOfItem = new TextEditingController(text: _counter.toString());
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
 
   void _scrollToSelectedContent(bool isExpanded, double previousOffset, int index, GlobalKey myKey) {
@@ -76,7 +75,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
     if (keyContext != null) {
       // make sure that your widget is visible
-      final box = keyContext.findRenderObject() as RenderBox;
       _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7) * index) : previousOffset,
           duration: Duration(milliseconds: 600), curve: Curves.linear);
     }
@@ -257,10 +255,4 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           },
         ));
   }
-}
-class Item {
-  final String displayName;
-  bool selected;
-
-  Item(this.displayName, this.selected);
 }

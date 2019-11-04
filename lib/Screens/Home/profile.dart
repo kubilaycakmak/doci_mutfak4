@@ -1,4 +1,3 @@
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/material.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
@@ -43,15 +42,12 @@ class _ProfileState extends State<Profile> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     this.postItself();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     setState(() {
       postItself();
     });

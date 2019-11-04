@@ -1,5 +1,3 @@
-import 'dart:ui' as prefix0;
-
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
