@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 class Info extends StatefulWidget {
   Info({Key key}) : super(key: key);
 
@@ -12,17 +14,21 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
   Completer<GoogleMapController> _controller = Completer();
-
+  final String isOpen = 'http://68.183.222.16:8080/api/time/isopen';
+  bool isOpened = false;
     static final CameraPosition _dociMutfak = CameraPosition(
       target: LatLng(41.045497, 28.783106),
       zoom: 2.0);
 
+  Future<String> storeOpenorNot() async{
+    var response = await http.get(isOpen);
+    var body = json.decode(response.body);
+    print(body);
+  }
+
   @override
   Widget build(BuildContext context) {
-    var _now = new DateTime.now();
-    var _startTime = 09.00;
-    var _endTime = 23.00;
-
+    print(storeOpenorNot());
     //AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8
     return WillPopScope(
         // ignore: missing_return
@@ -87,7 +93,7 @@ class _InfoState extends State<Info> {
               ListTile(
                 leading: Icon(Icons.store),
                 title: Text('Durum'),
-                subtitle: _now.hour < _startTime || _now.hour > _endTime ? Text('Kapalı', style: TextStyle(color: Colors.green),) : Text('Açık', style: TextStyle(color: Colors.red),),
+                subtitle: Text('asd'),
               ),
               ListTile(
                 leading: Icon(Icons.timelapse),

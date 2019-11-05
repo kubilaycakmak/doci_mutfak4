@@ -1,5 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
+import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -184,6 +185,8 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
     return response;
   }
 
+  bool remember = false;
+
   @override
   Widget build(BuildContext context) {
     tabController = new TabController(length: 2, vsync: this);
@@ -258,9 +261,42 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                               fontFamily: "RobotoMono",
                             ),
                           ),
-                          ListTile(
-                            contentPadding: EdgeInsets.only(top: 20),
-                            leading: FlatButton(
+                          SizedBox(height: 20,),
+                          Row(
+                            children: <Widget>[
+                              Text('Otomatik Giris'),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal * 5,),
+                              CupertinoSwitch(
+                                onChanged: (val){
+                                  if(val){
+                                    setState(() {
+                                      remember = true;
+                                    });
+                                  }else{
+                                    setState(() {
+                                      remember = false;
+                                    });
+                                  }
+                                },
+                                value: remember,
+                              ),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal * 24,),
+                              MaterialButton(
+                                onPressed: () {
+                                  internet == false
+                                      ? _checkInternetConnectivity()
+                                      : postRequest();
+                                },
+                                child: Text(
+                                  'Giriş Yap',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                color: Colors.lightBlueAccent,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical*2,),
+                          FlatButton(
                               onPressed: () => Navigator.of(context)
                                   .pushReplacementNamed('/forget'),
                               child: Text(
@@ -269,19 +305,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                                     decoration: TextDecoration.underline),
                               ),
                             ),
-                            trailing: MaterialButton(
-                              onPressed: () {
-                                internet == false
-                                    ? _checkInternetConnectivity()
-                                    : postRequest();
-                              },
-                              child: Text(
-                                'Giriş Yap',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: Colors.lightBlueAccent,
-                            ),
-                          )
                         ],
                       ),
                     ),
