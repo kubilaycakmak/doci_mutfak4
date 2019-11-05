@@ -66,8 +66,7 @@ class _LastOrdersState extends State<LastOrders> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-       child: Scaffold(
+    return Scaffold(
          appBar: AppBar(
            elevation: 0,
            title: Text('Siparişlerim'),
@@ -200,7 +199,6 @@ class _LastOrdersState extends State<LastOrders> {
                },
              )
          ),
-       ),
     );
   }
 }

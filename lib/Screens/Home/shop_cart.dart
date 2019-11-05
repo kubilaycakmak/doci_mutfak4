@@ -65,6 +65,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   @override
   Widget build(BuildContext context) {
+    double finalPrice = 0;
+      setState(() {
+        for (var item in listItems) {
+          finalPrice += item.price * item.itemCount;
+        }
+      });
     SizeConfig().init(context);
     double _count = 0;
     return Scaffold(
@@ -205,7 +211,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   style: TextStyle(fontSize: 15),
                 ),
                 subtitle: Text(
-                  _count.toInt().toString() + " TL",
+                  finalPrice.toInt().toString() + " TL",
                   style: TextStyle(fontSize: 18),
                 ),
               ),

@@ -38,7 +38,7 @@ int _counter = 1;
 var itemOfProducts;
 Products products;
 bool door = false;
-
+var types;
 void _showToast(BuildContext context, String desc) {
   final scaffold = Scaffold.of(context);
   scaffold.showSnackBar(
@@ -74,9 +74,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     final keyContext = myKey.currentContext;
 
     if (keyContext != null) {
-      // make sure that your widget is visible
-      _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7) * index) : previousOffset,
-          duration: Duration(milliseconds: 600), curve: Curves.linear);
+      // make sure that your widget is visibles
+      _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7.5) * index) : previousOffset,
+          duration: Duration(milliseconds: 2000), curve: Curves.linear);
     }
   }
 
@@ -95,6 +95,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         .get(Uri.encodeFull(url), headers: {"Accept": 'application/json'});
     if (response.statusCode == 200) {
       final items = json.decode(response.body);
+      types = items;
       List<Types> listOfTypes = items["types"].map<Types>((json) {
         return Types.fromJson(json);
       }).toList();
@@ -127,7 +128,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     SizeConfig().init(context);
     return Scaffold(
         key: _scaffoldKey,
@@ -152,7 +152,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
-                    initiallyExpanded: false,
+                    initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
+                    //dataProducts[index]['priority'].toString() == '0' ? true : false,
                     onExpansionChanged: (val){
                         setState(() {
                           if (val) previousOffset = _scrollController.offset;
@@ -194,14 +195,39 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                             _showToast(context,
                                                 "Ürün sepete eklenmiştir!");
                                             setState(() {
+                                              var currentItemId = dataProducts[index][i]['id'];
                                               switches = false;
-                                                var items = new AddItemtoShopCart(
+                                              if(listItems == null){
+                                                var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
                                                   id: dataProducts[index][i]["id"],
                                                   name: dataProducts[index][i]["name"],
                                                   price: dataProducts[index][i]["price"],
                                                   itemCount: 1,
                                                 );
                                                 listItems.add(items);
+                                              }else{
+                                                bool ifExist = false;
+                                                for(var k=0;k<listItems.length; k++){
+                                                  if(currentItemId == listItems[k].id){
+                                                    ifExist = true;
+                                                  }
+                                                }
+                                                if(ifExist){
+                                                  for(var j=0;j<listItems.length;j++){
+                                                    if(listItems[j].id == currentItemId){
+                                                      listItems[j].itemCount++;
+                                                    }
+                                                  }
+                                                }else{
+                                                  var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
+                                                  id: dataProducts[index][i]["id"],
+                                                  name: dataProducts[index][i]["name"],
+                                                  price: dataProducts[index][i]["price"],
+                                                  itemCount: 1,
+                                                );
+                                                listItems.add(items);
+                                                }
+                                              }
                                             });
                                           },
                                         ),
