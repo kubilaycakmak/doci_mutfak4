@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:doci_mutfak4/Screens/Home/last_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -33,6 +31,18 @@ class _InfoState extends State<Info> {
           print('aq');
         },
       child : Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: null,
+          label: Container(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.phone),
+                SizedBox(width: 10,),
+                Text('Bizi ara')
+              ],
+            ),
+          ),
+        ),
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),

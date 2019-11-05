@@ -155,11 +155,11 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
         "phoneNumber": _phoneNumber.text,
         "address": _address.text
       },
-      "securityQuestion": {"id": setQuestion},
+      "securityQuestion": {"id": currentQuestion.id},
       "answer": _answer.text
     };
-
     var body = json.encode(data);
+    print(body);
     var response = await http.post(registerCheck,
         headers: {"Content-Type": "application/json"}, body: body);
     statusValidator = response.statusCode;
@@ -518,10 +518,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                                   onPressed: () => Navigator.of(context)
                                       .pushReplacementNamed('/login'),
                                   child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
-                                ),
-                                DialogButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: Text('Tamam',style: TextStyle(color: Colors.white),),
                                 ),
                               ],
                             ).show();

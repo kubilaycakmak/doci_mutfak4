@@ -72,7 +72,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         }
       });
     SizeConfig().init(context);
-    double _count = 0;
+    //double _count = 0;
     return Scaffold(
       appBar: AppBar(
         title: Text('Sepetim'),
@@ -346,6 +346,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
 
+
   Future<http.Response> postItself() async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": key,
@@ -369,7 +370,9 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   @override
   void initState() {
     super.initState();
-    postItself();
+    setState(() {
+      postItself();
+    });
     selectedPayment = 1;
   }
 
@@ -395,8 +398,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       };
        listId.add(id);
     }
-    Order or = Order(listId, note.text, payment);
-
+    Order or = Order(listId, note.text, payment,_addressController.text);
+    print(or);
     print(or.toJson());
     var body = JSON.jsonEncode(or.toJson());
     print(body);
@@ -705,13 +708,15 @@ class Order{
   var product;
   String note;
   Map payment;
+  String address;
 
-  Order(this.product, this.note, this.payment);
+  Order(this.product, this.note, this.payment, this.address);
 
   Map<String, dynamic> toJson() =>
       {
         'products': product,
         'note': note,
         'paymentMethod':payment,
+        'address':address,
       };
 }

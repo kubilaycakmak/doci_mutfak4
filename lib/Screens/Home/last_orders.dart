@@ -155,11 +155,7 @@ class _LastOrdersState extends State<LastOrders> {
                              title: Text('Sipariş Notu : '),
                              subtitle: Text(snapshot.data[index]['note'].toString()),
                            ),
-                           snapshot.data[index]['status'] == false ?
-                           ListTile(
-                             title: Text('Sipariş Tamamlandı mı? : '),
-                             subtitle: Text('Hayır'),
-                           ) : Text(''),
+                           
                            CupertinoButton(
                              onPressed: (){
                                setState(() {

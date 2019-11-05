@@ -153,7 +153,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                 return Card(
                   child: ExpansionTile(
                     initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
-                    //dataProducts[index]['priority'].toString() == '0' ? true : false,
                     onExpansionChanged: (val){
                         setState(() {
                           if (val) previousOffset = _scrollController.offset;
