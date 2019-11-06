@@ -38,6 +38,8 @@ dependencies:
   sqflite: 1.1.7+2
   shared_preferences: ^0.5.1+2
   google_maps_flutter: 0.5.21+8
+  smooth_star_rating: 1.0.3
+  scoped_model: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

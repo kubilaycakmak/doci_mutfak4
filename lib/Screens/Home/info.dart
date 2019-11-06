@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'dart:convert';
 class Info extends StatefulWidget {
   Info({Key key}) : super(key: key);
@@ -15,15 +14,20 @@ class _InfoState extends State<Info> {
   String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
   Completer<GoogleMapController> _controller = Completer();
   final String isOpen = 'http://68.183.222.16:8080/api/time/isopen';
-  bool isOpened = false;
+  bool isOpened;
     static final CameraPosition _dociMutfak = CameraPosition(
       target: LatLng(41.045497, 28.783106),
       zoom: 2.0);
 
-  Future<String> storeOpenorNot() async{
+  Future<bool> storeOpenorNot() async{
     var response = await http.get(isOpen);
     var body = json.decode(response.body);
-    print(body);
+    isOpened = body;
+    return isOpened;
+  }
+  @override
+  void initState() {
+    this.storeOpenorNot(); 
   }
 
   @override
@@ -93,7 +97,7 @@ class _InfoState extends State<Info> {
               ListTile(
                 leading: Icon(Icons.store),
                 title: Text('Durum'),
-                subtitle: Text('asd'),
+                subtitle: isOpened == false ? Text('KAPALI') : Text('ACIK'),
               ),
               ListTile(
                 leading: Icon(Icons.timelapse),

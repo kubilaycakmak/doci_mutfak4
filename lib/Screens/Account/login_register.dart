@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TabController tabController;
 final _formKey = new GlobalKey<FormState>();
@@ -17,12 +18,15 @@ var authKey;
 String key;
 int statusCode;
 bool internet = true;
+bool isLoggedIn;
 var user;
 List<User> userInformations = new List();
 List<User> getList() {
   return userInformations;
 }
-
+var usernameAuto;
+var passwordAuto;
+var keyAuto;
 var statusForgetPass;
 int setQuestion;
 String currentQuest;
@@ -93,8 +97,54 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
   final _phoneNumber = TextEditingController();
   final _address = TextEditingController();
   final _answer = TextEditingController();
+  
+
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String userId = prefs.getString('username');
+
+    if (userId != null) {
+      setState(() {
+        inside = false;
+        usernameAuto = userId;
+      });
+      return;
+    }
+  }
+
+  Future<Null> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', null);
+
+    setState(() {
+      usernameAuto = '';
+      keyAuto = null;
+      passwordAuto = '';
+      inside = true;
+    });
+  }
+
+  Future<Null> loginUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', _usernameController.text);
+    prefs.setString('password', _passwordController.text);
+    setState(() {
+      usernameAuto = _usernameController.text;
+      passwordAuto = _passwordController.text;
+      keyAuto = key;
+      inside = false;
+    });
+    _usernameController.clear();
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    autoLogIn();
+  }
 
   Future<http.Response> postRequest() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map data = {
       'username': _usernameController.text,
       'password': _passwordController.text
@@ -107,6 +157,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
       authKey = json.decode(response.body);
     });
     key = authKey["authorization"];
+    prefs.setString('authorization', key);
     print(statusCode);
     if (response.statusCode == 200) {
       if (key != '') {
@@ -189,6 +240,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     tabController = new TabController(length: 2, vsync: this);
     var tabBarItem = new TabBar(
       tabs: <Widget>[
@@ -271,10 +323,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                                   if(val){
                                     setState(() {
                                       remember = true;
+                                      loginUser();
                                     });
                                   }else{
                                     setState(() {
                                       remember = false;
+                                      logout();
                                     });
                                   }
                                 },
@@ -283,9 +337,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister>
                               SizedBox(width: SizeConfig.blockSizeHorizontal * 24,),
                               MaterialButton(
                                 onPressed: () {
-                                  internet == false
-                                      ? _checkInternetConnectivity()
-                                      : postRequest();
+                                  if(!internet){
+                                    _checkInternetConnectivity();
+                                  }else{
+                                    postRequest();
+                                    loginUser();
+                                  }
                                 },
                                 child: Text(
                                   'Giriş Yap',

@@ -9,6 +9,7 @@ import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:doci_mutfak4/Screens/Profile/change_pass.dart';
 import 'package:doci_mutfak4/Screens/splashScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/Home/shop_cart.dart';
 import 'Screens/Profile/update.dart';
 
@@ -117,10 +118,28 @@ class EntryScreen extends StatefulWidget {
 }
 
 class _EntryScreenState extends State<EntryScreen> {
+  
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String keyAuto = prefs.getString('authorization');
+    if (keyAuto != null) {
+      setState(() {
+        inside = false;
+      });
+      return;
+    }
+  }
+  @override
+  void initState() { 
+    super.initState();
+    autoLogIn();
+  }
+
+
   Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
 
   Function duringSplash = () {
-    if (key != null)
+    if (keyAuto != true)
       return 1;
     else
       return 2;
@@ -128,6 +147,7 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(keyAuto);
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       body: Container(

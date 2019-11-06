@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 import 'menu.dart';
 List tr = new List();
@@ -23,9 +24,16 @@ class LastOrders extends StatefulWidget {
 
 class _LastOrdersState extends State<LastOrders> {
   final String orderUrl = 'http://68.183.222.16:8080/api/order/user';
+  final String raitingService = 'http://68.183.222.16:8080/api/order/rate';
   List productItems;
   List orderCount;
   bool noOrder = false;
+  double taste = 3;
+  double rating = 0;
+  double speed = 3;
+  double services = 3;
+  var selectedId;
+  bool finishRaiting = false;
 
   // ignore: missing_return
   Future<List> _fetchData() async {
@@ -45,6 +53,31 @@ class _LastOrdersState extends State<LastOrders> {
       throw Exception('Failed to get products');
     }
   }
+
+  Future<http.Response> _fetchRaiting() async{
+    Map data =
+    {
+        "taste": taste.toInt(),
+        "speed": speed.toInt(),
+        "service": services.toInt()
+    };
+    var body = json.encode(data);
+    print(body);
+    var response = await http.put(Uri.encodeFull('http://68.183.222.16:8080/api/order/rate?orderId=$selectedId'),
+      headers: {
+        "Authorization": key,
+        "content-Type": "application/json"
+      },
+      body: body
+      );
+      print('response body ' + response.body);
+      if(response.statusCode == 201){
+        finishRaiting = true;
+      }else{
+        finishRaiting = false;
+        throw Exception('failed to load raiting');
+      }
+  }
   Future<List> _fetchData1() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
@@ -56,13 +89,16 @@ class _LastOrdersState extends State<LastOrders> {
       for(var i=0;i<orderCount.length;i++){
         productItems = item[i]['products'];
       }
-
       return productItems;
     }else{
       throw Exception('Failed to get products');
     }
   }
 
+  // @override
+  // void initState() {
+  //   this._fetchRaiting();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +191,76 @@ class _LastOrdersState extends State<LastOrders> {
                              title: Text('Sipariş Notu : '),
                              subtitle: Text(snapshot.data[index]['note'].toString()),
                            ),
-                           
+                           Column(
+                            children: <Widget>[
+                              Text('Tat'),
+                              SizedBox(height: 5,),
+                              SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                taste = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: taste,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 5,),
+                            Text('Hiz'),
+                            SizedBox(height: 5,),
+                            SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                speed = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: speed,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 5,),
+                            Text('Servis'),
+                            SizedBox(height: 5,),
+                            SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                services = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: services,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 10,),
+                            ],
+                          ),
+                          CupertinoButton(
+                            child: finishRaiting == false ? Text('Degerlendirmeyi Onayla') : Text('Oylamayi Gor'),
+                            onPressed: (){
+                              setState(() {
+                                selectedId = orderCount[index]['id'];
+                                _fetchRaiting();
+                                if(!finishRaiting){
+                                  print('oylama bitmemis');
+                                }
+                                else{
+                                  print('oylama bitmis');
+                                }
+                                print(selectedId);
+                              });
+                            },
+                            color: Colors.lightBlueAccent,
+                          ),
+                          SizedBox(height: 10,),
                            CupertinoButton(
                              onPressed: (){
                                setState(() {
