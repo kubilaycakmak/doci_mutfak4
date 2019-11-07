@@ -14,4 +14,12 @@ class User{
     this.address,
     this.created
   });
+
+  User.fromJson(Map<String, dynamic> json)
+      : id = json['value']['id'],
+        name = json['value']['name'],
+        lastname = json['value']['lastname'],
+        phoneNumber = json['value']['phoneNumber'],
+        address = json['value']['address'],
+        created = json['value']['created'];
 }

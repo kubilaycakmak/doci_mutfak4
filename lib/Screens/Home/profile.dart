@@ -1,10 +1,11 @@
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/material.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 bool inside = true;
 var statusCode;
 class Profile extends StatefulWidget {
@@ -17,7 +18,9 @@ class Profile extends StatefulWidget {
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
 
-class _ProfileState extends State<Profile>{
+class _ProfileState extends State<Profile> {
+  var keyShared;
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
 
   Future<http.Response> postItself() async{
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
@@ -41,79 +44,98 @@ class _ProfileState extends State<Profile>{
     return response;
   }
 
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+  getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+  } 
+
+  logout() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('LastKey', '');
+    prefs.setString('LastUsername', '');
+    prefs.setString('LastPassword', '');
+  }
+
+  @override
+  void dispose() {
+    this.postItself();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     //postItself();
     return Scaffold(
-      appBar: AppBar(
-        leading: null,
-        title: inside == false ? Text('Profilim') : Text('GIRIS YAP / YENI UYE'),
-        backgroundColor: Colors.lightBlueAccent,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Container(
-        child: inside == false ? ListView(
-          children: <Widget>[
-            FlatButton(
-              onPressed: (){
-                print(key);
-              },
-              child: image,
-              color: Colors.lightBlueAccent,
-            ),
-            Center(
-              heightFactor: 3,
-              child: Text("Hosgeldiniz ", style: TextStyle(fontSize: 20),),
-            ),
-            ListTile(
-              title: Text('Bilgilerimi Güncelle'),
-              subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
-              leading: Icon(Icons.update),
-              onTap: (){
-                setState(() {
-                  postItself();
-                });
-                Navigator.of(context).pushReplacementNamed('/update');
-              },
-            ),
-            ListTile(
-              title: Text('Kayıtlı Siparişler'),
-              subtitle: Text('Tek tıkla siparişin sepette'),
-              leading: Icon(Icons.save),
-              onTap: null,
-            ),
-            ListTile(
-              title: Text('Şifremi değiştir'),
-              subtitle: Text('Sifre işlemleri'),
-              leading: Icon(Icons.settings),
-              onTap: ()=> Navigator.of(context).pushReplacementNamed('/change'),
-            ),
-            ListTile(
-              title: Text('Hakkımızda'),
-              subtitle: Text('Lokasyonumuz - iletişim bilgileri'),
-              leading: Icon(Icons.info),
-              onTap: null,
-            ),
-            ListTile(
-              title: Text('Çıkış Yap'),
-              subtitle: Text('Güle güle'),
-              leading: Icon(Icons.close),
-              onTap: (){
-                inside = true;
-                key = null;
-                print(key);
-                Navigator.of(context).pushReplacementNamed('/home');
-                print(key);
-              },
-            ),
-          ],
-        )
-        :
-        LoginAndRegister()
-      )
-    );
+        appBar: AppBar(
+          leading: null,
+          title:
+              inside == false ? Text('Profilim') : Text('GIRIS YAP / YENI UYE'),
+          backgroundColor: Colors.lightBlueAccent,
+          elevation: 0,
+          centerTitle: true,
+        ),
+        body: Container(
+            child: inside == false
+                ? ListView(
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          print(key);
+                        },
+                        child: image,
+                        color: Colors.lightBlueAccent,
+                      ),
+                      Center(
+                        heightFactor: 3,
+                        child: Text(
+                          "Hosgeldiniz ",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Bilgilerimi Güncelle'),
+                        subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
+                        leading: Icon(Icons.update),
+                        onTap: () {
+                          setState(() {
+                            postItself();
+                          });
+                          Navigator.of(context).pushReplacementNamed('/update');
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Şifremi değiştir'),
+                        subtitle: Text('Sifre işlemleri'),
+                        leading: Icon(Icons.settings),
+                        onTap: () => Navigator.of(context)
+                            .pushReplacementNamed('/change'),
+                      ),
+                      ListTile(
+                        title: Text('Hakkımızda'),
+                        subtitle: Text('Lokasyonumuz - iletişim bilgileri'),
+                        leading: Icon(Icons.info),
+                        onTap: () => Navigator.of(context)
+                            .pushReplacementNamed('/info'),
+                      ),
+                      ListTile(
+                        title: Text('Çıkış Yap'),
+                        subtitle: Text('Güle güle'),
+                        leading: Icon(Icons.close),
+                        onTap: () {
+                          setState(() {
+                            print(username);
+                            logout();
+                            inside = true;
+                            key = null;
+                            userInformations.clear();
+                          });
+                          Navigator.of(context).pushReplacementNamed('/home');
+                        },
+                      ),
+                    ],
+                  )
+                : LoginAndRegister()));
   }
 }

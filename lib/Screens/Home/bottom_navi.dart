@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:doci_mutfak4/Screens/Account/user.dart';
+import 'package:http/http.dart' as http;
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'last_orders.dart';
 import 'menu.dart';
 
@@ -14,6 +19,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var username;
+  var password;
+  var keyShared;
+  bool switcha;
+  Timer timer;
+  var user;
 
   Future<bool> _onBackPressed(){
     return showDialog(
@@ -32,6 +43,75 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       )
     );
+  }
+  
+  getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+    keyShared = prefs.getString('LastKey');
+    if(key != ''){
+      setState(() {
+        postRequesAuto(username, password);
+        postItselfAuto(keyShared);
+        print(keyShared);
+      });
+    }
+    else{
+      print('key yerinde');
+    }
+  } 
+
+
+    Future<http.Response> postRequesAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            inside = false;
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+          inside = true;
+        }
+      }
+    return response;
+  }
+
+  Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull('http://68.183.222.16:8080/api/user/itself'), headers: {
+      "authorization": keyJson,
+    });
+
+    if(response.statusCode == 200){
+        user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        print(userInformations[0].name);
+        return response;
+      }else{
+        throw Exception('postItselfAuto');
+    }
+  }
+  
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(Duration(hours: 3), (Timer t)=> getKey());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override

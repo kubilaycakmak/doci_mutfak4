@@ -1,4 +1,5 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,11 +8,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TabController tabController;
 final _formKey = new GlobalKey<FormState>();
 bool _validate = false;
 String username;
+String password;
 var authKey;
 String key;
 int statusCode;
@@ -21,6 +24,8 @@ List<User> userInformations = new List();
 List<User> getList(){
   return userInformations;
 }
+var usernameAuto;
+var passwordAuto;
 var statusForgetPass;
 int setQuestion;
 String currentQuest;
@@ -85,26 +90,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   final _phoneNumber = TextEditingController();
   final _address = TextEditingController();
   final _answer = TextEditingController();
+  
+  bool remember = false;
+  var keyShared;
 
-  Future<http.Response> postRequest() async{
+
+  Future<http.Response> postRequest() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     Map data = {
       'username': _usernameController.text,
       'password': _passwordController.text
     };
     var body = json.encode(data);
-
-    var response = await http.post(loginCheckUrl,
-      headers: {
-        "Content-Type":"application/json"
-      },
-      body: body
-    );
-    setState(() {
+    var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
+    if (response.statusCode == 200) {
       authKey = json.decode(response.body);
-    });
-    key = authKey["authorization"];
-    print(statusCode);
-    if(response.statusCode == 200) {
+      key = authKey["authorization"];
+      await preferences.setString('LastKey', key);
+      await preferences.setString('LastUsername', _usernameController.text);
+      await preferences.setString('LastPassword', _passwordController.text);
+      print(' From Shared ' + preferences.getString('LastKey'));
       if (key != '') {
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
@@ -131,23 +136,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     return response;
   }
 
-  Future<bool> _onBackPressed(){
-    return showDialog(
-      context: context,
-      builder: (context)=>AlertDialog(
-        title: Text('Uygulamadan çıkmak mı istiyorsunuz?'),
-        actions: <Widget>[
-          FlatButton(
-            onPressed: ()=> Navigator.pop(context,true),
-            child: Text('Evet'),
-          ),
-          FlatButton(
-            onPressed: ()=> Navigator.pop(context,false),
-            child: Text('Hayır'),
-          )
-        ],
-      )
-    );
+ Future<http.Response> postRequesAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            inside = false;
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+          inside = true;
+        }
+      }
+    return response;
   }
 
   Future<List<Questions>> _fetchQuestions() async{
@@ -193,25 +201,59 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       return response;
   }
 
-  Future<http.Response> postItself() async{
+  getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+  } 
+
+  Future<http.Response> postItself() async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-        "authorization": key,
-      });
-    setState(() {
-     user = json.decode(response.body);
+      "authorization": key,
     });
-    var userInfo = new User(
-        id: user["value"]["id"],
-        name: user["value"]["name"],
-        lastname: user["value"]["lastname"],
-        phoneNumber: user["value"]["phoneNumber"],
-        address: user["value"]["address"],
-        created: user["value"]["created"]
-        );
-        userInformations.add(userInfo);
+
+    if(response.statusCode == 200){
+      user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
         return response;
+    }else{
+      throw Exception('postItself');
+    }
   }
 
+    Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyJson.toString(),
+    });
+    print(response.body);
+    if(response.statusCode == 200){
+        user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        return response;
+      }else{
+        throw Exception('postItselfAuto');
+    }
+  }
+
+    @override
+  void initState() { 
+    super.initState();
+    getKey();
+    print(keyShared);
+    if(keyShared != null){
+      setState(() {
+        postRequesAuto(username, password);
+        postItselfAuto(key);
+      });
+    }else{
+      setState(() {
+        print('hahaha');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -233,7 +275,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     return DefaultTabController(
       length: 2,
       child: WillPopScope(
-        onWillPop: _onBackPressed,
+        // ignore: missing_return
+        onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/splash');
+        },
               child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
@@ -353,29 +398,75 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               fontFamily: "Poppins",
                             ),
                           ),
-                          TextFormField(
-                            controller: _name,
-                            decoration: InputDecoration(
-                              labelText: "* Ad",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
-                                ),
+                          SizedBox(height: 20,),
+                          Row(
+                            children: <Widget>[
+                              FlatButton(
+                              onPressed: () => Navigator.of(context)
+                                  .pushReplacementNamed('/forget'),
+                              child: Text(
+                                'Şifremi unuttum',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
                               ),
                             ),
-                            validator: (val){
-                              if (val.length == 0) {
-                                return "Lütfen adınızı giriniz!";
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                            ),
+                            SizedBox(width: (SizeConfig.blockSizeVertical/SizeConfig.blockSizeHorizontal)*20,),
+                              MaterialButton(
+                                onPressed: () {
+                                  if(!internet){
+                                    _checkInternetConnectivity();
+                                  }else{
+                                    postRequest();
+                                  }
+                                },
+                                child: Text(
+                                  'Giriş Yap',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                color: Colors.lightBlueAccent,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              Container(
+                child: ListView(
+                  children: <Widget>[
+                    ListTile(
+                      enabled: false,
+                      subtitle: Text(
+                          'Başarılı bir kayıt için yıldızlı alanları eksiksiz doldurunuz!'),
+                    ),
+                    Form(
+                      autovalidate: _validate,
+                      key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _username,
+                              decoration: InputDecoration(
+                                labelText: "* Kullanıcı Adı",
+                                //helperText: 'Kullanıcı Adı ".(Nokta), -(Çizgi) veya _(alttan tire) \n içerebilir ve en az 3 en cok 15 karakterden oluşmalıdır!"',
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              validator: validateUsername,
+                              onSaved: (String val) {
+                                username = val;
+                              },
+                              keyboardType: TextInputType.emailAddress,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                          ),
                           ),
                           TextFormField(
                             controller: _lastname,
@@ -594,9 +685,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   Future<http.Response> forgetPassRequest() async{
     var response = await http.put(Uri.encodeFull(
         'http://68.183.222.16:8080/api/userAccount/resetPassword/?username='
-            '${_forgetUsername.text}&securityQuestionAnswer=${_forgetAnswer.text}'));
+        '${_forgetUsername.text}&securityQuestionAnswer=${_forgetAnswer.text}'));
+        print(response.body);
     setState(() {
       user = json.decode(response.body);
+      print(user);
     });
     newPass = user['password'];
     if(response.statusCode == 201){

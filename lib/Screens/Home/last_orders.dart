@@ -6,6 +6,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 import 'menu.dart';
 
@@ -24,6 +26,21 @@ class _LastOrdersState extends State<LastOrders> {
   List productItems;
   List orderCount;
   bool noOrder = false;
+  double taste = 3;
+  double rating = 0;
+  double speed = 3;
+  double services = 3;
+  var keyShared;
+  var selectedId;
+  bool finishRaiting = false;
+  var _commentController = new TextEditingController();
+
+    getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+  } 
 
   // ignore: missing_return
   Future<List> _fetchData() async {
@@ -44,6 +61,40 @@ class _LastOrdersState extends State<LastOrders> {
       throw Exception('Failed to get products');
     }
   }
+  // ignore: missing_return
+  Future<http.Response> _fetchRaiting() async{
+    Map data =
+    {
+        "taste": taste.toInt(),
+        "speed": speed.toInt(),
+        "service": services.toInt(),
+        //"comment": _commentController.text
+    };
+    var body = json.encode(data);
+    print(body);
+    var response = await http.put(Uri.encodeFull('http://68.183.222.16:8080/api/order/rate?orderId=$selectedId'),
+      headers: {
+        "Authorization": key,
+        "content-Type": "application/json"
+      },
+      body: body
+      );
+      print('selected Id : ' + selectedId.toString());
+
+      print('response body ' + response.body);
+      
+      if(response.statusCode == 201){
+        setState(() {
+          finishRaiting = true;
+        });
+        
+      }else{
+        setState(() {
+          finishRaiting = false;
+        });
+        throw Exception('failed to load raiting');
+      }
+  }
   Future<List> _fetchData1() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
@@ -63,6 +114,14 @@ class _LastOrdersState extends State<LastOrders> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      getKey();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
        child: Scaffold(
@@ -71,7 +130,7 @@ class _LastOrdersState extends State<LastOrders> {
            centerTitle: true,
            backgroundColor: Colors.lightBlueAccent,
          ),
-         body: key == null ?
+         body: keyShared == '' ? //keyde olabilir.
          Container(
            child: ListView(
              children: <Widget>[
@@ -145,13 +204,123 @@ class _LastOrdersState extends State<LastOrders> {
                              },
                            ),
                            ListTile(
+                             title: Text('Toplam ödenen :'),
+                             subtitle: Text(snapshot.data[index]['price'].toInt().toString() + ' TL', style: TextStyle(fontSize: 30),),
+                           ),
+                           ListTile(
                              title: Text('Sipariş Notu : '),
                              subtitle: Text(snapshot.data[index]['note'].toString()),
                            ),
-                           ListTile(
-                             title: Text('Sipariş Tamamlandı mı? : '),
-                             subtitle: snapshot.data[index]['status'] == false ? Text('Hayır') : Text('Evet'),
-                           ),
+                           Column(
+                            children: 
+                            snapshot.data[index]['status'] == false ?
+                            snapshot.data[index]['orderRating'] == null ? <Widget>[
+                              Text('Tat'),
+                              SizedBox(height: 5,),
+                              SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                taste = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: taste,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 5,),
+                            Text('Hiz'),
+                            SizedBox(height: 5,),
+                            SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                speed = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: speed,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 5,),
+                            Text('Servis'),
+                            SizedBox(height: 5,),
+                            SmoothStarRating(
+                              allowHalfRating: false,
+                              onRatingChanged: (v) {
+                                services = v;
+                                setState(() {});
+                              },
+                              starCount: 5,
+                              rating: services,
+                              size: 40.0,
+                              color: Colors.lightBlueAccent,
+                              borderColor: Colors.black26,
+                              spacing:3.0
+                            ),
+                            SizedBox(height: 10,),
+                            TextFormField(
+                              maxLines: 3,
+                              controller: _commentController,
+                              decoration: InputDecoration(
+                                labelText: 'Yorumunuz',
+                                labelStyle: TextStyle(backgroundColor: Colors.lightBlueAccent, color: Colors.white, fontSize: 20, letterSpacing: 1.3),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(2),
+                                )
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            CupertinoButton(
+                            child: Text('Degerlendirmeyi Onayla'),
+                            onPressed: (){
+                              setState(() {
+                                selectedId = orderCount[index]['id'];
+                                _fetchRaiting();
+                                if(finishRaiting == false){
+                                  print('oylama bitmemis');
+                                }
+                                else{
+                                  print('oylama bitmis');
+                                }
+                                print(selectedId);
+                              });
+                            },
+                            color: Colors.lightBlueAccent,
+                          ),
+                            ] : <Widget>[
+                              ListTile(
+                                title: Text('Oylamanız :'),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(' Hız : ' + snapshot.data[index]['orderRating']["speed"].toString() + ' yıldız'),
+                                    Text(' Servis : ' + snapshot.data[index]['orderRating']["service"].toString() + ' yıldız'),
+                                    Text(' Tat : ' + snapshot.data[index]['orderRating']["taste"].toString() + ' yıldız'),
+                                  ],
+                                ),
+                              ),
+                              ListTile(
+                                title: Text('Yorumunuz :'),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //Text(snapshot.data[index]['comment']["speed"].toString()),
+                                  ],
+                                ),
+                              ),
+                              
+
+                            ] : <Widget>[
+                              Text('Siparişi oylayabilmeniz için, restaurant ın siparişi onaylaması gerekmektedir', textAlign: TextAlign.center,)
+                            ],
+                          ),
+                          
+                          SizedBox(height: 10,),
                            CupertinoButton(
                              onPressed: (){
                                setState(() {

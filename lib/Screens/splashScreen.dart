@@ -1,6 +1,5 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
