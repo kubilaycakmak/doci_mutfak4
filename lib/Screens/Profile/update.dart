@@ -1,3 +1,4 @@
+import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _UpdateState extends State<Update> {
   final String updateUrl = 'http://68.183.222.16:8080/api/user/update';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
 
-  Future<http.Response> postItself() async{
+  Future<http.Response> postItself() async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": key,
     });
@@ -38,8 +39,7 @@ class _UpdateState extends State<Update> {
         lastname: user["value"]["lastname"],
         phoneNumber: user["value"]["phoneNumber"],
         address: user["value"]["address"],
-        created: user["value"]["created"]
-    );
+        created: user["value"]["created"]);
     userInformations.clear();
     userInformations.add(userInfo);
     return response;
@@ -56,9 +56,8 @@ class _UpdateState extends State<Update> {
     }
   }
 
-  Future<http.Response> postUpdate() async{
-    Map data =
-    {
+  Future<http.Response> postUpdate() async {
+    Map data = {
       "name": name.text,
       "lastname": lastName.text,
       "phoneNumber": phoneNumber.text,
@@ -67,20 +66,41 @@ class _UpdateState extends State<Update> {
 
     var body = json.encode(data);
     var response = await http.put(updateUrl,
-        headers: {
-          "authorization": key,
-          "Content-Type":"application/json"
-        },
-        body: body
-    );
-
-    statusValidatorUpdate = response.statusCode.toString();
+        headers: {"authorization": key, "Content-Type": "application/json"},
+        body: body);
+    if (response.statusCode == 201) {
+      print('data guncellendi');
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: 'Bilgilerin Güncellendi!',
+        desc: 'Bir sonraki girişinde bilgilerin güncellenmiş olacak',
+        buttons: [
+          DialogButton(
+            onPressed: () {
+                Navigator.of(context)
+                  .pushReplacementNamed('/home');
+            },
+            child: Text('Ana Ekrana don', style: TextStyle(color: Colors.white),),
+          ),
+        ],
+      ).show();
+    } else {
+      print('guncelleme de hata!');
+      
+    }
     return response;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        // ignore: missing_return
+        onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/home');
+          print('aq');
+        },
+        child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
         title: Text('Bilgileri Guncelle'),
@@ -93,9 +113,18 @@ class _UpdateState extends State<Update> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.info),
-              subtitle: Text('Bilgilerini guncellemek icin asagidaki uygun alanlara yeni bilgilerinizi giriniz, Girmediginiz alanlardaki bilgiler eskisi gibi kalacaktir.'),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 5),
+              child: InkWell(
+                child: Text(
+                  'Güncellemek istediğiniz bilgileri aşağıdaki '
+                  'uygun alanlardan değiştirebilir, boş bıraktığınız alanlar ise eski halinde kalacaktır.',
+                  style: TextStyle(color: Colors.black38),
+                ),
+              ),
             ),
             Form(
               child: Padding(
@@ -171,33 +200,15 @@ class _UpdateState extends State<Update> {
                         fontFamily: "Poppins",
                       ),
                     ),
+                    SizedBox(height: 10,),
                     ListTile(
-                      contentPadding: EdgeInsets.only(top: 20),
-                      trailing: MaterialButton(
+                      trailing: CupertinoButton(
                         onPressed: (){
-                          if (statusValidatorUpdate == '201') {
-                            Alert(
-                              context:context,
-                              type: AlertType.success,
-                              title: 'Bilgilerin Guncellendi!',
-                              buttons: [
-                                DialogButton(
-                                  onPressed: (){
-                                    Navigator.of(context).pushReplacementNamed('/home');
-                                    postItself();
-                                  },
-                                  child: Text('Ana Ekrana don'),
-                                ),
-                              ],
-                            ).show();
-                          } else {
-                            setState(() {
-                              validate = false;
-                            });
-                          }
                           postUpdate();
-                        }, child: Text('Guncelle'),color: Colors.lightBlueAccent,),
-                    )
+                        }, child: Text('Guncelle', style: TextStyle(color: Colors.white),)
+                        ,color: Colors.lightBlueAccent
+                      )
+                    ),
                   ],
                 ),
               ),
@@ -205,6 +216,6 @@ class _UpdateState extends State<Update> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

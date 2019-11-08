@@ -224,7 +224,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                              buttons: [
                                DialogButton(
                                  onPressed: () => Navigator.pop(context,false),
-                                 child: Text('Tamam'),
+                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                ),
                              ], context: context,
                            ).show();
@@ -236,7 +236,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                              buttons: [
                                DialogButton(
                                  onPressed: () => Navigator.pop(context,false),
-                                 child: Text('Tamam'),
+                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                ),
                              ], context: context,
                            ).show();
@@ -248,11 +248,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             buttons: [
                               DialogButton(
                                 onPressed: () => Navigator.pop(context,false),
-                                child: Text('Tamam'),
+                                child: Text('Tamam', style: TextStyle(color: Colors.white),),
                               ),
                               DialogButton(
                                 onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                child: Text('Üye girişi'),
+                                child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                               ),
                             ], context: context,
                           ).show();
@@ -264,11 +264,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               buttons: [
                                 DialogButton(
                                   onPressed: () => Navigator.pop(context,false),
-                                  child: Text('Tamam'),
+                                  child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                 ),
                                 DialogButton(
                                   onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                  child: Text('Üye girişi'),
+                                  child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                                 ),
                               ], context: context,
                             ).show();
@@ -334,7 +334,6 @@ class EndOfTheShoppingCart extends StatefulWidget {
   @override
   _EndOfTheShoppingCartState createState() => _EndOfTheShoppingCartState();
 }
-
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   final _addressController =
@@ -345,6 +344,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String paymentMethodsUrl =
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
+
 
     Future<http.Response> postItself() async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
@@ -370,7 +370,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   void initState() {
     super.initState();
     setState(() {
-      postItself();
+      this.postItself();
     });
     selectedPayment = 1;
   }
@@ -633,7 +633,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                           actions: <Widget>[
                             FlatButton(
                               onPressed: ()=> Navigator.pop(context,false),
-                              child: Text('Tamam'),
+                              child: Text('Tamam', style: TextStyle(color: Colors.white),),
                             ),
                           ],
                         )
@@ -647,7 +647,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                     buttons: [
                       DialogButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: Text('Tamam'),
+                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
                       ),
                     ],
                     context: context,
@@ -661,12 +661,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                   buttons: [
                     DialogButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: Text('Tamam'),
+                      child: Text('Tamam', style: TextStyle(color: Colors.white),),
                     ),
                     DialogButton(
                       onPressed: () =>
                           Navigator.of(context).pushReplacementNamed('/login'),
-                      child: Text('Üye girişi'),
+                      child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                     ),
                   ],
                   context: context,
@@ -680,12 +680,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 buttons: [
                   DialogButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: Text('Tamam'),
+                    child: Text('Tamam', style: TextStyle(color: Colors.white),),
                   ),
                   DialogButton(
                     onPressed: () =>
                         Navigator.of(context).pushReplacementNamed('/login'),
-                    child: Text('Üye girişi'),
+                    child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                   ),
                 ],
                 context: context,

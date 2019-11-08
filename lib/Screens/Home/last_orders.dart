@@ -68,7 +68,7 @@ class _LastOrdersState extends State<LastOrders> {
         "taste": taste.toInt(),
         "speed": speed.toInt(),
         "service": services.toInt(),
-        //"comment": _commentController.text
+        "comment": _commentController.text
     };
     var body = json.encode(data);
     print(body);
@@ -171,7 +171,15 @@ class _LastOrdersState extends State<LastOrders> {
                    itemBuilder: (BuildContext context, int index){
                      return Card(
                        child: ExpansionTile(
-                         title: Text(snapshot.data[index]['created'].toString()),
+                         onExpansionChanged: (val){
+                           _commentController.text = '';
+                         },
+                         title: Text(snapshot.data[index]['created']
+                             .replaceAll('Nov','Kasım').replaceAll('Oct', 'Ekim').replaceAll('Dec','Aralık').replaceAll('Jan','Ocak')
+                             .replaceAll('Feb','Şubat').replaceAll('Mar', 'Mart').replaceAll('Ap','Nisan').replaceAll('May','Mayıs')
+                             .replaceAll('June','Haziran').replaceAll('July', 'Temmuz').replaceAll('Agu','Ağustos').replaceAll('Sep','Eylül')
+                             .replaceAll('AM','').replaceAll('PM', '')
+                         ),
                          children: <Widget>[
                            FutureBuilder<List>(
                              future: _fetchData1(),
@@ -309,7 +317,7 @@ class _LastOrdersState extends State<LastOrders> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    //Text(snapshot.data[index]['comment']["speed"].toString()),
+                                    Text(snapshot.data[index]['orderRating']['comment'].toString()),
                                   ],
                                 ),
                               ),

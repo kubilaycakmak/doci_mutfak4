@@ -33,6 +33,8 @@ int statusValidator;
 bool lock;
 List num;
 
+
+
 String validateUsername(String value){
   Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
   RegExp regex = new RegExp(pattern);
@@ -90,7 +92,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   final _phoneNumber = TextEditingController();
   final _address = TextEditingController();
   final _answer = TextEditingController();
-  
+  bool isTrue;
   bool remember = false;
   var keyShared;
 
@@ -104,6 +106,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
     if (response.statusCode == 200) {
+      isTrue = true;
       authKey = json.decode(response.body);
       key = authKey["authorization"];
       await preferences.setString('LastKey', key);
@@ -115,22 +118,8 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
         Navigator.of(context).pushReplacementNamed('/home');
         postItself();
       }else{
+        isTrue = false;
         inside = true;
-        Alert(
-          context:context,
-          title: 'Kullanici adi veya Sifreniz yanlistir',
-          desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
-          buttons: [
-            DialogButton(
-              onPressed: null,
-              child: Text('Sifremi unuttum'),
-            ),
-            DialogButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam'),
-            ),
-          ],
-        ).show();
       }
     }
     return response;
@@ -257,6 +246,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     tabController = new TabController(length: 2, vsync: this);
     var tabBarItem = new TabBar(
       tabs: <Widget>[
@@ -279,144 +269,92 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
         onWillPop: (){
           Navigator.of(context).pushReplacementNamed('/splash');
         },
-              child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: AppBar(
-            bottom: tabBarItem,
-            backgroundColor: Colors.lightBlueAccent,
-          ),
-          ),
-        body: TabBarView(
-          controller: tabController,
-          children: <Widget>[
-            Container(
-              child: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(25),
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          controller: _usernameController,
-                          decoration: InputDecoration(
-                            labelText: "Kullanici Adi veya E-Posta",
-                            fillColor: Colors.white,
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.lightBlueAccent
-                              ),
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: "Sifre",
-                            fillColor: Colors.white,
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.lightBlueAccent
-                              ),
-                            ),
-                          ),
-                          keyboardType: TextInputType.number,
-                          style: TextStyle(
-                            fontFamily: "Poppins",
-                          ),
-                        ),
-                        ListTile(
-                          contentPadding: EdgeInsets.only(top: 20),
-                          leading: FlatButton(
-                            onPressed: ()=> Navigator.of(context).pushReplacementNamed('/forget'),
-                            child: Text('Şifremi unuttum', style: TextStyle(decoration: TextDecoration.underline),),),
-                          trailing: MaterialButton(
-                            onPressed: (){
-                              internet == false ? _checkInternetConnectivity() :
-                                postRequest();
-                          }, child: Text('Giriş Yap', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(60),
+            child: AppBar(
+              elevation: 0,
+              bottom: tabBarItem,
+              backgroundColor: Colors.lightBlueAccent,
             ),
-            Container(
-              child: ListView(
-                children: <Widget>[
-                    ListTile(
-                    enabled: false,
-                    subtitle: Text('Başarılı bir kayıt için yıldızlı alanları eksiksiz doldurunuz!'),
-                    ),
-                  Form(
-                    autovalidate: _validate,
-                    key: _formKey,
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
+          ),
+          body: TabBarView(
+            controller: tabController,
+            children: <Widget>[
+              Container(
+                child: ListView(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(25),
                       child: Column(
                         children: <Widget>[
                           TextFormField(
-                            controller: _username,
+                            controller: _usernameController,
                             decoration: InputDecoration(
-                              labelText: "* Kullanıcı Adı",
-                              //helperText: 'Kullanıcı Adı ".(Nokta), -(Çizgi) veya _(alttan tire) \n içerebilir ve en az 3 en cok 15 karakterden oluşmalıdır!"',
+                              labelText: "Kullanıcı Adı",
                               fillColor: Colors.white,
                               border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
-                                ),
+                                borderSide:
+                                    BorderSide(color: Colors.lightBlueAccent),
                               ),
                             ),
-                            validator: validateUsername,
-                            onSaved: (String val){
-                              username = val;
-                            },
                             keyboardType: TextInputType.emailAddress,
                             style: TextStyle(
                               fontFamily: "Poppins",
                             ),
                           ),
                           TextFormField(
-                            controller: _password,
+                            controller: _passwordController,
                             decoration: InputDecoration(
-                              labelText: "* Şifre",
+                              labelText: "Şifre",
                               fillColor: Colors.white,
                               border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
-                                ),
+                                borderSide:
+                                    BorderSide(color: Colors.lightBlueAccent),
                               ),
                             ),
-                            validator: validatePassword,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.number,
                             style: TextStyle(
-                              fontFamily: "Poppins",
+                              color: Colors.black,
+                              fontFamily: "RobotoMono",
                             ),
                           ),
                           SizedBox(height: 20,),
-                          Row(
-                            children: <Widget>[
-                              FlatButton(
-                              onPressed: () => Navigator.of(context)
-                                  .pushReplacementNamed('/forget'),
-                              child: Text(
-                                'Şifremi unuttum',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ),
-                            SizedBox(width: (SizeConfig.blockSizeVertical/SizeConfig.blockSizeHorizontal)*20,),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal * 24,),
                               MaterialButton(
                                 onPressed: () {
                                   if(!internet){
                                     _checkInternetConnectivity();
                                   }else{
-                                    postRequest();
+                                    if(isTrue == true){
+                                      Alert(
+                                        context: context,
+                                        type: AlertType.success,
+                                        title: 'Basarili giris',
+                                        buttons: [
+                                          DialogButton(
+                                            onPressed: postRequest,
+                                            child: Text('Devam et',style: TextStyle(color: Colors.white),),
+                                          ),
+                                        ],
+                                      ).show();
+                                    }else{
+                                    Alert(
+                                        context:context,
+                                        title: 'Kullanici adi veya Sifreniz yanlistir',
+                                        desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
+                                        buttons: [
+                                          DialogButton(
+                                            onPressed: null,
+                                            child: Text('Sifremi unuttum', style: TextStyle(color: Colors.white),),
+                                          ),
+                                          DialogButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                                          ),
+                                        ],
+                                      ).show();
+                                    }
                                   }
                                 },
                                 child: Text(
@@ -425,11 +363,19 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                 ),
                                 color: Colors.lightBlueAccent,
                               ),
-                            ],
-                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical*2,),
+                          FlatButton(
+                              onPressed: () => Navigator.of(context)
+                                  .pushReplacementNamed('/forget'),
+                              child: Text(
+                                'Şifremi unuttum',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
+                              ),
+                            ),
                         ],
                       ),
-                    )),
+                    ),
                   ],
                 ),
               ),
@@ -466,171 +412,219 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               keyboardType: TextInputType.emailAddress,
                               style: TextStyle(
                                 fontFamily: "Poppins",
-                          ),
-                          ),
-                          TextFormField(
-                            controller: _lastname,
-                            decoration: InputDecoration(
-                              labelText: "* Soyad",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
-                                ),
                               ),
                             ),
-                            validator: (val){
-                              if (val.length == 0) {
-                                return "Lütfen soyadınızı giriniz";
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                          ),
-                          ListTile(
-                            enabled: false,
-                            leading: Icon(Icons.info_outline),
-                            subtitle: Text('Lütfen telefon numarınızı "0" olmadan giriniz!', style: TextStyle(fontSize: 12.5),),
-                          ),
-                          TextFormField(
-                            controller: _phoneNumber,
-                            validator: validatePhoneNumber,
-                            decoration: InputDecoration(
-                              labelText: "* Telefon numarası",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
+                            TextFormField(
+                              controller: _password,
+                              decoration: InputDecoration(
+                                labelText: "* Şifre",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
                                 ),
                               ),
-                            ),
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(
-                            ),
-                          ),
-                          TextFormField(
-                            controller: _address,
-                            decoration: InputDecoration(
-                              labelText: "* Adres bilgisi",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
-                                ),
+                              validator: validatePassword,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
                               ),
                             ),
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                          SizedBox(height: 20,),
-                          Column(
-                            children: <Widget>[
-                              FutureBuilder<List<Questions>>(
-                            future: _fetchQuestions(),
-                            builder: (BuildContext context, AsyncSnapshot<List<Questions>> snapshot){
-                              if(!snapshot.hasData) return CircularProgressIndicator();
-                              return DropdownButton<Questions>(
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.black
-                                ),
-                                items: snapshot.data.map((question) => DropdownMenuItem<Questions>(
-                                  child: Text(question.question),
-                                  value: question,
-                                )).toList(),
-                                onChanged: (Questions questions){
-                                  setState(() {
-                                    currentQuestion = questions; 
-                                  });
-                                },
-                                isExpanded: true,
-                                elevation: 20,
-                                hint: Text('Lütfen bir soru seçiniz'),
-                                );
-                            },
-                              ),
-                              SizedBox(height: 20,),
-                              currentQuestion != null ? Text(currentQuestion.question, style: TextStyle(fontSize: 20),) : Text('Soru yok')
-                            ],
-                            
-                          ),
-                          TextFormField(
-                            controller: _answer,
-                            maxLength: null,
-                            decoration: InputDecoration(
-                              labelText: "* Cevap",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent
+                            TextFormField(
+                              controller: _name,
+                              decoration: InputDecoration(
+                                labelText: "* Ad",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
                                 ),
                               ),
+                              validator: (val) {
+                                if (val.length == 0) {
+                                  return "Lütfen adınızı giriniz!";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
                             ),
-                            validator: validateAnswer,
-                            keyboardType: TextInputType.multiline,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
+                            TextFormField(
+                              controller: _lastname,
+                              decoration: InputDecoration(
+                                labelText: "* Soyad",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              validator: (val) {
+                                if (val.length == 0) {
+                                  return "Lütfen soyadınızı giriniz";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                            ),
+                            ListTile(
+                              enabled: false,
+                              leading: Icon(Icons.info_outline),
+                              subtitle: Text(
+                                'Lütfen telefon numarınızı "0" olmadan giriniz!',
+                                style: TextStyle(fontSize: 12.5),
+                              ),
+                            ),
+                            TextFormField(
+                              controller: _phoneNumber,
+                              validator: validatePhoneNumber,
+                              decoration: InputDecoration(
+                                labelText: "* Telefon numarası",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(),
+                            ),
+                            TextFormField(
+                              controller: _address,
+                              decoration: InputDecoration(
+                                labelText: "* Adres bilgisi",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Column(
+                              children: <Widget>[
+                                FutureBuilder<List<Questions>>(
+                                  future: _fetchQuestions(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<List<Questions>> snapshot) {
+                                    if (!snapshot.hasData)
+                                      return CircularProgressIndicator();
+                                    return DropdownButton<Questions>(
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.black),
+                                      items: snapshot.data
+                                          .map((question) =>
+                                              DropdownMenuItem<Questions>(
+                                                child: Text(question.question),
+                                                value: question,
+                                              ))
+                                          .toList(),
+                                      onChanged: (Questions questions) {
+                                        setState(() {
+                                          currentQuestion = questions;
+                                        });
+                                      },
+                                      isExpanded: true,
+                                      elevation: 20,
+                                      hint: Text('Lütfen bir soru seçiniz'),
+                                    );
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                currentQuestion != null
+                                    ? Text(
+                                        currentQuestion.question,
+                                        style: TextStyle(fontSize: 20),
+                                      )
+                                    : Text('Soru yok')
+                              ],
+                            ),
+                            TextFormField(
+                              controller: _answer,
+                              maxLength: null,
+                              decoration: InputDecoration(
+                                labelText: "* Cevap",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              validator: validateAnswer,
+                              keyboardType: TextInputType.multiline,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-
-                  ListTile(
-                          enabled: false,
-                          contentPadding: EdgeInsets.only(top: 0, left: 5, right: 5),
-                          subtitle: Text('Bilgilerinizi giriş yaptıktan sonra "Bilgilerimi düzenle" sayfasından düzenleyebilirsiniz.'),
-                          ),
-                        ListTile(
-                          enabled: false,
-                          contentPadding: EdgeInsets.only(top: 0, left: 5, right: 5),
-                          subtitle: Text('Kullanıcı sözleşmesini ve Gizlilik Politikasını okudum ve kabul ediyorum.', style: TextStyle(fontWeight: FontWeight.w800),),
-                        ),
-                        ListTile(
-                          title: MaterialButton(onPressed: (){
-                            postRegisterRequest();
-                            /*if(statusValidator == 200){
-                              inside = true;
-                              Navigator.of(context).pushReplacementNamed('/login');
-                            }*/
-                              if (_formKey.currentState.validate()) {
-                                _formKey.currentState.save();
-                                Alert(
-                                  context:context,
-                                  type: AlertType.success,
-                                  title: 'Başarıyla kayıt oldunuz!',
-                                  buttons: [
-                                    DialogButton(
-                                      onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                      child: Text('Giriş sayfasına git'),
-                                    ),
-                                    DialogButton(
-                                      onPressed: () => Navigator.of(context).pop(),
-                                      child: Text('Tamam'),
-                                    ),
-                                  ],
-                                ).show();
-                              } else {
-                                setState(() {
-                                  _validate = true;
-                                });
-                              }
-                            }, child: Text('Yeni Üye'),color: Colors.lightBlueAccent,),
-                        ),
-                ],
+                    ListTile(
+                      enabled: false,
+                      contentPadding:
+                          EdgeInsets.only(top: 0, left: 5, right: 5),
+                      subtitle: Text(
+                          'Bilgilerinizi giriş yaptıktan sonra "Bilgilerimi düzenle" sayfasından düzenleyebilirsiniz.'),
+                    ),
+                    ListTile(
+                      enabled: false,
+                      contentPadding:
+                          EdgeInsets.only(top: 0, left: 5, right: 5),
+                      subtitle: Text(
+                        'Kullanıcı sözleşmesini ve Gizlilik Politikasını okudum ve kabul ediyorum.',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    ListTile(
+                      title: MaterialButton(
+                        onPressed: () {
+                          postRegisterRequest();
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            Alert(
+                              context: context,
+                              type: AlertType.success,
+                              title: 'Başarıyla kayıt oldunuz!',
+                              buttons: [
+                                DialogButton(
+                                  onPressed: () => Navigator.of(context)
+                                      .pushReplacementNamed('/login'),
+                                  child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
+                                ),
+                              ],
+                            ).show();
+                          } else {
+                            setState(() {
+                              _validate = true;
+                            });
+                          }
+                        },
+                        child: Text('Yeni Üye', style: TextStyle(color: Colors.white),),
+                        color: Colors.lightBlueAccent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             ],
           ),
         ),
@@ -778,4 +772,5 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     );
   }
 }
+
 

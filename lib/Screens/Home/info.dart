@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class Info extends StatefulWidget {
   Info({Key key}) : super(key: key);
 
@@ -73,24 +72,6 @@ class _InfoState extends State<Info> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(
-                child: GoogleMap(
-                  mapToolbarEnabled: true,
-                  onTap: (val){
-                    print('maps');
-                  },
-                  scrollGesturesEnabled: true,
-                  tiltGesturesEnabled: true,
-                  rotateGesturesEnabled: true,
-                  myLocationButtonEnabled: true,
-                  zoomGesturesEnabled: true,
-                  mapType: MapType.normal,
-                  initialCameraPosition: _dociMutfak,
-                  onMapCreated: (GoogleMapController controller){
-                    _controller.complete(controller);
-                  },
-                ),
-              ),
               ListTile(
                 leading: Icon(Icons.timeline),
                 title: Text('Servis Saati'),

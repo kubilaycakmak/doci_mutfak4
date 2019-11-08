@@ -22,7 +22,7 @@ class Routes{
     runApp(MaterialApp(
       title: 'Doci Bosnak Mutfagi',
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: EntryScreen(),
       onGenerateRoute: (RouteSettings settings){
         switch(settings.name){
 
@@ -107,7 +107,6 @@ class Routes{
         return null;
       },
     ));
-    
   }
 }
 
@@ -136,8 +135,6 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
     keyShared = prefs.getString('LastKey');
-    //print('prefs : ' + username);
-    //print('prefs : ' + password);
     if(keyShared != ''){
       setState(() {
         switcha = true;
@@ -216,14 +213,15 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
           imagePath: 'assets/images/logo.png',
           home: SplashScreen(),
           customFunction: (){
-            if (!switcha) {
+            print(switcha);
+            if (switcha == false) {
               return 2;
             } else {
               return 1;
             } 
           },
           duration: 2500,
-          type: AnimatedSplashType.BackgroundProcess,
+          type: AnimatedSplashType.StaticDuration,
           outputAndHome: returnValueAndHomeScreen,
         ),
       ),

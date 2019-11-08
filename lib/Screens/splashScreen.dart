@@ -1,4 +1,5 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:flutter/material.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -17,13 +18,76 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     _checkInternetConnectivity();
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.lightBlueAccent,
+        label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20),),
+        onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
+      ),
+      bottomNavigationBar: Container(
+        height: SizeConfig.blockSizeVertical*10,
+        color: Colors.lightBlueAccent,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+          ButtonBar(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+            ButtonTheme(
+              child: FlatButton(
+                  onPressed: () {
+                    internet == false ? _checkInternetConnectivity() :
+                    Navigator.of(context).pushReplacementNamed("/register");
+                  },
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.00),
+                ),
+                color: Colors.lightBlueAccent,
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: const Text(
+                  'YENİ ÜYE',
+                  style: TextStyle(fontSize: 15)
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: SizeConfig.blockSizeHorizontal * 5,),
+          ButtonTheme(
+              child: FlatButton(
+                onPressed: () {
+                  internet == false ? _checkInternetConnectivity() :
+                  Navigator.of(context).pushReplacementNamed("/login");
+                },
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.00),
+                  side: BorderSide(color: Colors.lightBlueAccent)
+                ),
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: const Text(
+                  'GİRİŞ YAP',
+                  style: TextStyle(fontSize: 15)
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+        ],),
+      ),
       body: Container(
         child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 180),
+            padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical*10),
           ),
           Center(
             child: Text('Hoş Geldiniz', 
@@ -35,84 +99,15 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 35, right: 35, top: 50),
+            padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical*10,horizontal: SizeConfig.blockSizeHorizontal*10),
             child: Text('Doci Boşnak Mutfağını kullandığınız için teşekkür ederiz.' +  
             '\n Bu uygulamayı kullanarak siparişinizi daha hızlı verebilir, Eski siparişlerinizi görebilirsiniz.', 
               style: TextStyle(fontSize: 20, color: Colors.white), 
               textAlign: TextAlign.center,),
           ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Center(
-                child: ButtonBar(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 100),
-                      child: Column(
-                        children: <Widget>[
-                          ButtonBar(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                            ButtonTheme(
-                              child: RaisedButton(
-                                  onPressed: () {
-                                    internet == false ? _checkInternetConnectivity() :
-                                    Navigator.of(context).pushReplacementNamed("/register");
-                                  },
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.00),
-                                ),
-                                color: Colors.lightBlueAccent,
-                                child: Container(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: const Text(
-                                  'YENİ ÜYE',
-                                  style: TextStyle(fontSize: 15)
-                                ),
-                              ),
-                            ),
-                          ),
-                          ButtonTheme(
-                              child: RaisedButton(
-                                onPressed: () {
-                                  internet == false ? _checkInternetConnectivity() :
-                                  Navigator.of(context).pushReplacementNamed("/login");
-                                },
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.00),
-                                  side: BorderSide(color: Colors.lightBlueAccent)
-                                ),
-                                color: Colors.transparent,
-                                child: Container(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: const Text(
-                                  'GİRİŞ YAP',
-                                  style: TextStyle(fontSize: 15)
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                        FlatButton(
-                          onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
-                          textColor: Colors.white,
-                          child: const Text('Misafir olarak devam et',style: TextStyle(fontSize: 25)),
-                        ),
-                      ],
-                    )
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
+      
       decoration: BoxDecoration(
             color: Colors.lightBlue,
             image: DecorationImage(
@@ -146,6 +141,4 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     internet = true;
   }
-
-
 }
