@@ -106,7 +106,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
     if (response.statusCode == 200) {
-      isTrue = true;
+      
       authKey = json.decode(response.body);
       key = authKey["authorization"];
       await preferences.setString('LastKey', key);
@@ -114,13 +114,16 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       await preferences.setString('LastPassword', _passwordController.text);
       print(' From Shared ' + preferences.getString('LastKey'));
       if (key != '') {
+        isTrue = true;
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
         postItself();
       }else{
-        isTrue = false;
+        
         inside = true;
       }
+    }else{
+      isTrue = false;
     }
     return response;
   }
@@ -326,6 +329,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                   if(!internet){
                                     _checkInternetConnectivity();
                                   }else{
+                                    postRequest();
                                     if(isTrue == true){
                                       Alert(
                                         context: context,
