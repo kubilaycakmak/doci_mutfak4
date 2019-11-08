@@ -30,18 +30,18 @@ class _UpdateState extends State<Update> {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": key,
     });
-    setState(() {
-      user = json.decode(response.body);
-    });
-    var userInfo = new User(
+    if(response.statusCode == 200){
+      user = json.decode(response.body);  
+      var userInfo = new User(
         id: user["value"]["id"],
         name: user["value"]["name"],
         lastname: user["value"]["lastname"],
         phoneNumber: user["value"]["phoneNumber"],
         address: user["value"]["address"],
         created: user["value"]["created"]);
-    userInformations.clear();
-    userInformations.add(userInfo);
+      userInformations.clear();
+      userInformations.add(userInfo);
+    }
     return response;
   }
 
@@ -78,6 +78,7 @@ class _UpdateState extends State<Update> {
         buttons: [
           DialogButton(
             onPressed: () {
+                postItself();
                 Navigator.of(context)
                   .pushReplacementNamed('/home');
             },
@@ -87,7 +88,6 @@ class _UpdateState extends State<Update> {
       ).show();
     } else {
       print('guncelleme de hata!');
-      
     }
     return response;
   }
@@ -103,7 +103,7 @@ class _UpdateState extends State<Update> {
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
-        title: Text('Bilgileri Guncelle'),
+        title: Text('Bilgileri Güncelle'),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
@@ -135,6 +135,7 @@ class _UpdateState extends State<Update> {
                     TextFormField(
                       controller: name,
                       decoration: InputDecoration(
+                        labelText: 'Ad',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -153,6 +154,7 @@ class _UpdateState extends State<Update> {
                       },
                       controller: lastName,
                       decoration: InputDecoration(
+                        labelText: 'Soyad',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -169,6 +171,7 @@ class _UpdateState extends State<Update> {
                     TextFormField(
                       controller: phoneNumber,
                       decoration: InputDecoration(
+                        labelText: 'Telefon numarası',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -182,12 +185,12 @@ class _UpdateState extends State<Update> {
                         fontFamily: "Poppins",
                       ),
                     ),
-
                     TextFormField(
                       controller: address,
                       maxLines: 3,
                       maxLength: 100,
                       decoration: InputDecoration(
+                        labelText: 'Adres',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -205,7 +208,8 @@ class _UpdateState extends State<Update> {
                       trailing: CupertinoButton(
                         onPressed: (){
                           postUpdate();
-                        }, child: Text('Guncelle', style: TextStyle(color: Colors.white),)
+                          postItself();
+                        }, child: Text('Güncelle', style: TextStyle(color: Colors.white),)
                         ,color: Colors.lightBlueAccent
                       )
                     ),

@@ -16,19 +16,40 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool internet = true;
 
+  _checkInternetConnectivity() async{
+    var result = await Connectivity().checkConnectivity();
+    if(result == ConnectivityResult.none){
+      internet = false;
+       return Alert(
+          context:context,
+          type: AlertType.error,
+          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+              'bağlantısı gereklidir.',
+          title: '',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ]
+      ).show();
+    }
+    internet = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     _checkInternetConnectivity();
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.lightBlueAccent,
-        label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20),),
+        backgroundColor: Colors.blueAccent,
+        label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20, color: Colors.white), ),
         onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
       ),
       bottomNavigationBar: Container(
         height: SizeConfig.blockSizeVertical*10,
-        color: Colors.lightBlueAccent,
+        color: Colors.blueAccent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -47,7 +68,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.00),
                 ),
-                color: Colors.lightBlueAccent,
                 child: Container(
                   padding: const EdgeInsets.all(15.0),
                   child: const Text(
@@ -66,8 +86,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 },
                 textColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.00),
-                  side: BorderSide(color: Colors.lightBlueAccent)
                 ),
                 color: Colors.transparent,
                 child: Container(
@@ -93,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Text('Hoş Geldiniz', 
             style:TextStyle(
               fontSize: 35, 
-              fontWeight: FontWeight.w400, 
+              fontWeight: FontWeight.w700, 
               color: Colors.white
               ),
               ),
@@ -115,30 +133,10 @@ class _SplashScreenState extends State<SplashScreen> {
             alignment: Alignment.topCenter,
             repeat: ImageRepeat.repeat,
             fit: BoxFit.scaleDown,
-            colorFilter: ColorFilter.mode(Colors.black54.withOpacity(0.1), BlendMode.dstATop)
+            colorFilter: ColorFilter.mode(Colors.black54.withOpacity(0.2), BlendMode.dstIn)
           )
         ),
       ),
     );
-  }
-  _checkInternetConnectivity() async{
-    var result = await Connectivity().checkConnectivity();
-    if(result == ConnectivityResult.none){
-      internet = false;
-       return Alert(
-          context:context,
-          type: AlertType.error,
-          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-              'bağlantısı gereklidir.',
-          title: '',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ]
-      ).show();
-    }
-    internet = true;
   }
 }

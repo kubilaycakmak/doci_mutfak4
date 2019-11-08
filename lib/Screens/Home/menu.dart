@@ -84,6 +84,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         .get(Uri.encodeFull(url), headers: {"Accept": 'application/json'});
     if (response.statusCode == 200) {
       final items = json.decode(response.body);
+      types = items;
       List<Types> listOfTypes = items["types"].map<Types>((json) {
         return Types.fromJson(json);
       }).toList();
@@ -134,6 +135,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
+                    initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
                     title: Text(snapshot.data[index].name),
                     children: <Widget>[
                       FutureBuilder<String>(
@@ -244,7 +246,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
                                   child:  ExpansionTile(
-                                    initiallyExpanded: dataProducts[index]['priority'] <= 0 ? true : false,
+                                    //initiallyExpanded: dataProducts[index]['priority'] <= 0 ? true : false,
                                         onExpansionChanged: (val){
                                           setState(() {
                                             if (val) previousOffset = _scrollController.offset;

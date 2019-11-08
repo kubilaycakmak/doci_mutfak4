@@ -127,7 +127,18 @@ class _EntryScreenState extends State<EntryScreen> {
 var keyShared;
 var username;
 var password;
-bool switcha;
+static bool switcha;
+GlobalKey _scaffold = GlobalKey();
+
+Function duringSplash = () {
+
+    if (switcha == false) {
+              return 2;
+            } else {
+              return 1;
+            } 
+  };
+
 Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
 
   getKey() async{
@@ -206,22 +217,16 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffold,
       backgroundColor: Colors.lightBlueAccent,
       body: Container(
         color: Colors.lightBlueAccent,
         child: AnimatedSplash(
           imagePath: 'assets/images/logo.png',
           home: SplashScreen(),
-          customFunction: (){
-            print(switcha);
-            if (switcha == false) {
-              return 2;
-            } else {
-              return 1;
-            } 
-          },
           duration: 2500,
-          type: AnimatedSplashType.StaticDuration,
+          customFunction: duringSplash,
+          type: AnimatedSplashType.BackgroundProcess,
           outputAndHome: returnValueAndHomeScreen,
         ),
       ),

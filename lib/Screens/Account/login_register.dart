@@ -3,6 +3,7 @@ import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -17,6 +18,7 @@ String username;
 String password;
 var authKey;
 String key;
+var isSelected;
 int statusCode;
 bool internet = true;
 var user;
@@ -105,25 +107,36 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     };
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
+    statusCode = response.statusCode;
     if (response.statusCode == 200) {
-      
       authKey = json.decode(response.body);
       key = authKey["authorization"];
       await preferences.setString('LastKey', key);
       await preferences.setString('LastUsername', _usernameController.text);
       await preferences.setString('LastPassword', _passwordController.text);
-      print(' From Shared ' + preferences.getString('LastKey'));
+      //print(' From Shared ' + preferences.getString('LastKey'));
       if (key != '') {
-        isTrue = true;
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
         postItself();
       }else{
-        
         inside = true;
+        print('yanlis giris');
+        Alert(
+          title: 'Kullanıcı adı ve ya Şifre yanlış',
+          desc: 'Şifrenizi unuttuysanız, Şifremi unuttum dan şifrenizi yenileyebilirsiniz.',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.pop(context,false),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+            DialogButton(
+              onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
+              child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
+            ),
+          ], context: context,
+        ).show();
       }
-    }else{
-      isTrue = false;
     }
     return response;
   }
@@ -246,12 +259,31 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       });
     }
   }
+  var textStyle = TextStyle(
+    fontSize: 12.0,
+    color: Colors.white,
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.w600);
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     tabController = new TabController(length: 2, vsync: this);
     var tabBarItem = new TabBar(
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(color: Colors.white24, width: SizeConfig.blockSizeHorizontal*2, style: BorderStyle.solid),
+        insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 40.0),
+      ),
+      unselectedLabelColor: Colors.white54,
+      indicatorSize: TabBarIndicatorSize.tab,
+      unselectedLabelStyle: textStyle.copyWith(
+      fontSize: 20.0,
+      color: Color(0xFFc9c9c9),
+      fontWeight: FontWeight.w700),
+      labelStyle: textStyle.copyWith(
+      fontSize: 20.0,
+      color: Color(0xFFc9c9c9),
+      fontWeight: FontWeight.w700),
       tabs: <Widget>[
         Tab(
           child: Text('Giriş Yap'),
@@ -293,6 +325,15 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         children: <Widget>[
                           TextFormField(
                             controller: _usernameController,
+                            autovalidate: true,
+                            validator: (String arg){
+                              if(arg.length == 0){
+                                return 'Lütfen kullanıcı adını giriniz.';
+                              }
+                              else{
+                                return null;
+                              }
+                            },
                             decoration: InputDecoration(
                               labelText: "Kullanıcı Adı",
                               fillColor: Colors.white,
@@ -308,6 +349,16 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                           ),
                           TextFormField(
                             controller: _passwordController,
+                            autovalidate: true,
+                            validator: (String arg){
+                              if(arg.length == 0){
+                                return 'Lütfen şifrenizi giriniz.';
+                              }
+                              else{
+                                return null;
+                              }
+                            },
+                            obscureText: true,
                             decoration: InputDecoration(
                               labelText: "Şifre",
                               fillColor: Colors.white,
@@ -330,35 +381,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                     _checkInternetConnectivity();
                                   }else{
                                     postRequest();
-                                    if(isTrue == true){
-                                      Alert(
-                                        context: context,
-                                        type: AlertType.success,
-                                        title: 'Basarili giris',
-                                        buttons: [
-                                          DialogButton(
-                                            onPressed: postRequest,
-                                            child: Text('Devam et',style: TextStyle(color: Colors.white),),
-                                          ),
-                                        ],
-                                      ).show();
-                                    }else{
-                                    Alert(
-                                        context:context,
-                                        title: 'Kullanici adi veya Sifreniz yanlistir',
-                                        desc: 'Sifremi unuttum a tiklayarak sifrenizi sifirlayabilirsiniz!',
-                                        buttons: [
-                                          DialogButton(
-                                            onPressed: null,
-                                            child: Text('Sifremi unuttum', style: TextStyle(color: Colors.white),),
-                                          ),
-                                          DialogButton(
-                                            onPressed: () => Navigator.of(context).pop(),
-                                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                                          ),
-                                        ],
-                                      ).show();
-                                    }
                                   }
                                 },
                                 child: Text(
@@ -679,23 +701,22 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _forgetUsername = TextEditingController();
   final _forgetAnswer = TextEditingController();
   var newPass;
+  bool isCorrectIntent = false;
 
   Future<http.Response> forgetPassRequest() async{
     var response = await http.put(Uri.encodeFull(
         'http://68.183.222.16:8080/api/userAccount/resetPassword/?username='
         '${_forgetUsername.text}&securityQuestionAnswer=${_forgetAnswer.text}'));
-        print(response.body);
-    setState(() {
-      user = json.decode(response.body);
-      print(user);
-    });
-    newPass = user['password'];
+        print('request body' + response.body);
+
     if(response.statusCode == 201){
-      return showDialog(
+      user = json.decode(response.body);
+      newPass = user['password'];
+      isCorrectIntent = true;
+        return showDialog(
           context: context,
           builder: (context)=>AlertDialog(
             title: SelectableText(
-
                 'Yeni Şifreniz: \n\n$newPass'
             ),
             content: Text('Üstüne basılı tutarak kopyalayabilirsiniz'),
@@ -706,8 +727,21 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               ),
             ],
           )
-      );
+        );
     }
+    showDialog(
+          context: context,
+          builder: (context)=>AlertDialog(
+            title: Text('Kullanıcı adı ve ya cevabınız yanlış'),
+            content: Text('Şifrenizi değiştirmek için gerekli bilgileri doğru şekilde girmeniz gerekmektedir.'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: ()=> Navigator.pop(context,false),
+                child: Text('Tamam', style: TextStyle(color: Colors.black),),
+              ),
+            ],
+          )
+        );
     return response;
   }
 
@@ -729,8 +763,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 children: <Widget>[
                   TextFormField(
                     controller: _forgetUsername,
+                    autovalidate: true,
+                    validator: (String arg){
+                      if(arg.length == 0){
+                        return 'Lütfen kullanıcı adını giriniz.';
+                      }
+                      else{
+                        return null;
+                      }
+                    },
                     decoration: InputDecoration(
-                      labelText: "Kullanici Adi",
+                      labelText: "Kullanıcı Adı",
                       fillColor: Colors.white,
                       border: UnderlineInputBorder(
                         borderSide: BorderSide(
@@ -745,6 +788,15 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   ),
                   TextFormField(
                     controller: _forgetAnswer,
+                    autovalidate: true,
+                    validator: (String arg){
+                      if(arg.length == 0){
+                        return 'Lütfen cevabını giriniz';
+                      }
+                      else{
+                        return null;
+                      }
+                    },
                     decoration: InputDecoration(
                       labelText: "Güvenlik sorusu cevabınız",
                       fillColor: Colors.white,
@@ -764,7 +816,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     trailing: MaterialButton(
                       // ignore: missing_return
                       onPressed: (){
-                        forgetPassRequest();
+                          forgetPassRequest();
                       }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
                   )
                 ],
