@@ -192,7 +192,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Expanded(
-              child: ListTile(
+              child: Container(
+                height: 70,
+                color: Colors.black12,
+                child: ListTile(
                 leading: Icon(Icons.shopping_basket),
                 title: Text(
                   "Tutar: ",
@@ -202,7 +205,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   finalPrice.toInt().toString() + " TL",
                   style: TextStyle(fontSize: 18),
                 ),
-              ),
+                ),
+              )
             ),
               Expanded(
                 child: CupertinoButton(

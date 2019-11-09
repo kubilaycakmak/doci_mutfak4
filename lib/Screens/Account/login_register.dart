@@ -5,6 +5,7 @@ import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -318,80 +319,80 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
             controller: tabController,
             children: <Widget>[
               Container(
+                color: Colors.lightBlueAccent,
                 child: ListView(
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(25),
-                      child: Column(
-                        children: <Widget>[
-                          TextFormField(
-                            controller: _usernameController,
-                            autovalidate: true,
-                            validator: (String arg){
-                              if(arg.length == 0){
-                                return 'Lütfen kullanıcı adını giriniz.';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: "Kullanıcı Adı",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.lightBlueAccent),
-                              ),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                            ),
+                      child: Card(
+                        elevation: 12,
+                        borderOnForeground: false,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 2.0,
                           ),
-                          TextFormField(
-                            controller: _passwordController,
-                            autovalidate: true,
-                            validator: (String arg){
-                              if(arg.length == 0){
-                                return 'Lütfen şifrenizi giriniz.';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              labelText: "Şifre",
-                              fillColor: Colors.white,
-                              border: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.lightBlueAccent),
-                              ),
-                            ),
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: "RobotoMono",
-                            ),
-                          ),
-                          SizedBox(height: 20,),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal * 24,),
-                              MaterialButton(
-                                onPressed: () {
-                                  if(!internet){
-                                    _checkInternetConnectivity();
-                                  }else{
-                                    postRequest();
-                                  }
-                                },
-                                child: Text(
-                                  'Giriş Yap',
-                                  style: TextStyle(color: Colors.white),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 10,),
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.person),
+                                labelText: "Kullanıcı Adı",
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                color: Colors.lightBlueAccent,
                               ),
-                          SizedBox(height: SizeConfig.blockSizeVertical*2,),
-                          FlatButton(
+                              keyboardType: TextInputType.emailAddress,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock),
+                                labelText: "Şifre",
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "RobotoMono",
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            SizedBox(width: SizeConfig.blockSizeHorizontal * 24,),
+                            CupertinoButton(
+                              padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal*20),
+                              onPressed: () {
+                                if(!internet){
+                                  _checkInternetConnectivity();
+                                }else{
+                                  postRequest();
+                                }
+                              },
+                              child: Text(
+                                'Giriş Yap',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.lightBlueAccent,
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical*2,),
+                            FlatButton(
                               onPressed: () => Navigator.of(context)
                                   .pushReplacementNamed('/forget'),
                               child: Text(
@@ -400,8 +401,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                     decoration: TextDecoration.underline),
                               ),
                             ),
-                        ],
-                      ),
+                          ],
+                          )
+                          ),
+                      )
                     ),
                   ],
                 ),
@@ -791,10 +794,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     decoration: InputDecoration(
                       labelText: "Kullanıcı Adı",
                       fillColor: Colors.white,
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.lightBlueAccent
-                        ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,

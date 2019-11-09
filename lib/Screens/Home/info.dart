@@ -11,6 +11,7 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
+
   String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
   Completer<GoogleMapController> _controller = Completer();
   final String isOpen = 'http://68.183.222.16:8080/api/time/isopen';
@@ -72,6 +73,12 @@ class _InfoState extends State<Info> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+//              GoogleMap(
+//                mapType: MapType.hybrid,
+//                onMapCreated: (GoogleMapController controller) {
+//                  _controller.complete(controller);
+//                }, initialCameraPosition: null,
+//              ),
               ListTile(
                 leading: Icon(Icons.timeline),
                 title: Text('Servis Saati'),

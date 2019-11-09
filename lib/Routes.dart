@@ -149,7 +149,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     if(keyShared != ''){
       setState(() {
         switcha = true;
-        postRequesAuto(username, password);
+        postRequestAuto(username, password);
         postItselfAuto(keyShared);
       });
     }
@@ -171,7 +171,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
 
   
 
-  Future<http.Response> postRequesAuto(String username, String password) async {
+  Future<http.Response> postRequestAuto(String username, String password) async {
       Map data = {
         'username': username,
         'password': password
@@ -212,6 +212,10 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
   void initState() { 
     super.initState();
     this.getKey();
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

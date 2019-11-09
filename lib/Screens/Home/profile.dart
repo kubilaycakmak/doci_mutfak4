@@ -1,4 +1,5 @@
 import 'package:doci_mutfak4/Screens/Account/user.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'dart:async';
@@ -49,7 +50,7 @@ class _ProfileState extends State<Profile> {
     keyShared = prefs.getString('LastKey');
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
-  } 
+  }
 
   logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -65,6 +66,13 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print('asd');
+    this.getKey();
+  }
+
+  @override
   Widget build(BuildContext context) {
     //postItself();
     return Scaffold(
@@ -77,65 +85,95 @@ class _ProfileState extends State<Profile> {
           centerTitle: true,
         ),
         body: Container(
+          color: Colors.lightBlueAccent,
             child: inside == false
-                ? ListView(
+                  ? ListView(
                     children: <Widget>[
                       FlatButton(
                         onPressed: () {
                           print(key);
                         },
                         child: image,
+                        padding: EdgeInsets.only(bottom: 25),
                         color: Colors.lightBlueAccent,
                       ),
-                      Center(
-                        heightFactor: 3,
-                        child: Text(
-                          "Hosgeldiniz ",
-                          style: TextStyle(fontSize: 20),
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Center(
+                          heightFactor: 3,
+                          child: Text(
+                            "Hoşgeldiniz ",
+                            style: TextStyle(fontSize: 20),
+                          ),
                         ),
                       ),
-                      ListTile(
-                        title: Text('Bilgilerimi Güncelle'),
-                        subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
-                        leading: Icon(Icons.update),
-                        onTap: () {
-                          setState(() {
-                            postItself();
-                          });
-                          Navigator.of(context).pushReplacementNamed('/update');
-                        },
-                      ),
-                      ListTile(
-                        title: Text('Şifremi değiştir'),
-                        subtitle: Text('Sifre işlemleri'),
-                        leading: Icon(Icons.settings),
-                        onTap: () => Navigator.of(context)
-                            .pushReplacementNamed('/change'),
-                      ),
-                      ListTile(
-                        title: Text('Hakkımızda'),
-                        subtitle: Text('Lokasyonumuz - iletişim bilgileri'),
-                        leading: Icon(Icons.info),
-                        onTap: () => Navigator.of(context)
-                            .pushReplacementNamed('/info'),
-                      ),
-                      ListTile(
-                        title: Text('Çıkış Yap'),
-                        subtitle: Text('Güle güle'),
-                        leading: Icon(Icons.close),
-                        onTap: () {
-                          setState(() {
-                            print(username);
-                            logout();
-                            inside = true;
-                            key = null;
-                            userInformations.clear();
-                          });
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        },
+                      Card(
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side: BorderSide(
+                          color: Colors.white,
+                          width: 2.0,
+                          ),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: Text('Bilgilerimi Güncelle'),
+                              subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
+                              leading: Icon(Icons.info_outline),
+                              onTap: () {
+                                setState(() {
+                                  postItself();
+                                });
+                                Navigator.of(context).pushReplacementNamed('/update');
+                              },
+                            ),
+                            ListTile(
+                              title: Text('Şifremi değiştir'),
+                              subtitle: Text('Sifre işlemleri'),
+                              leading: Icon(Icons.lock_outline),
+                              onTap: () => Navigator.of(context)
+                                  .pushReplacementNamed('/change'),
+                            ),
+                            ListTile(
+                              title: Text('Hakkımızda'),
+                              subtitle: Text('Lokasyonumuz - iletişim bilgileri'),
+                              leading: Icon(Icons.map),
+                              onTap: () => Navigator.of(context)
+                                  .pushReplacementNamed('/info'),
+                            ),
+                            SizedBox(height: 10,),
+                            CupertinoButton(
+                              color: Colors.red,
+                              pressedOpacity: 0.5,
+                              child: Text('Çıkış Yap', textAlign: TextAlign.center,),
+                              onPressed: () {
+                                setState(() {
+                                  print(username);
+                                  logout();
+                                  inside = true;
+                                  key = null;
+                                  userInformations.clear();
+                                });
+                                Navigator.of(context).pushReplacementNamed('/home');
+                              },
+                            ),
+                          ],
+                        ),
+                        )
                       ),
                     ],
-                  )
+            )
                 : LoginAndRegister()));
   }
 }

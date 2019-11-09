@@ -56,10 +56,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   void _scrollToSelectedContent(bool isExpanded, double previousOffset, int index, GlobalKey myKey) {
     final keyContext = myKey.currentContext;
-
     if (keyContext != null) {
       // make sure that your widget is visibles
-      _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7.7) * index) : previousOffset,
+      _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7.6) * index) : previousOffset,
           duration: Duration(milliseconds: 500), curve: Curves.linear);
     }
   }
@@ -95,8 +94,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     }
   }
 
-
-
   @override
   // ignore: must_call_super
   void initState() {
@@ -108,7 +105,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     super.dispose();
     this.makeRequest();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -131,10 +127,20 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   child: CircularProgressIndicator(),
                   alignment: Alignment.center);
             return ListView.builder(
+              controller: _scrollController,
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
+                    
+                    onExpansionChanged: (val){
+                      setState(() {
+                        if (val){
+                          previousOffset = _scrollController.offset;
+                        }
+                        _scrollToSelectedContent(val, previousOffset, index, expansionTileKey);
+                      });
+                    },
                     initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
                     title: Text(snapshot.data[index].name),
                     children: <Widget>[
@@ -153,12 +159,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                 return Card(
                                   child:  ExpansionTile(
                                     //initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
-                                        onExpansionChanged: (val){
-                                          setState(() {
-                                            if (val) previousOffset = _scrollController.offset;
-                                            _scrollToSelectedContent(val, previousOffset, index, expansionTileKey);
-                                          });
-                                        },
                                         backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),
                                         leading: InkWell(
@@ -168,41 +168,46 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           onTap: (){
                                             _showToast(context,
                                                 "Ürün sepete eklenmiştir!");
-                                            setState(() {
-                                              var currentItemId = dataProducts[index][i]['id'];
-                                              switches = false;
-                                              if(listItems == null){
-                                                var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
-                                              }else{
-                                                bool ifExist = false;
-                                                for(var k=0;k<listItems.length; k++){
-                                                  if(currentItemId == listItems[k].id){
-                                                    ifExist = true;
-                                                  }
-                                                }
-                                                if(ifExist){
-                                                  for(var j=0;j<listItems.length;j++){
-                                                    if(listItems[j].id == currentItemId){
-                                                      listItems[j].itemCount++;
+                                            if(this.mounted) {
+                                                var currentItemId = dataProducts[index][i]['id'];
+                                                switches = false;
+                                                if (listItems == null) {
+                                                  var items = new AddItemtoShopCart(
+                                                    id: dataProducts[index][i]["id"],
+                                                    name: dataProducts[index][i]["name"],
+                                                    price: dataProducts[index][i]["price"],
+                                                    itemCount: 1,
+                                                  );
+                                                  listItems.add(items);
+                                                } else {
+                                                  bool ifExist = false;
+                                                  for (var k = 0; k <
+                                                      listItems.length; k++) {
+                                                    if (currentItemId ==
+                                                        listItems[k].id) {
+                                                      ifExist = true;
                                                     }
                                                   }
-                                                }else{
-                                                  var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
+                                                  if (ifExist) {
+                                                    for (var j = 0; j <
+                                                        listItems.length; j++) {
+                                                      if (listItems[j].id ==
+                                                          currentItemId) {
+                                                        listItems[j]
+                                                            .itemCount++;
+                                                      }
+                                                    }
+                                                  } else {
+                                                    var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
+                                                      id: dataProducts[index][i]["id"],
+                                                      name: dataProducts[index][i]["name"],
+                                                      price: dataProducts[index][i]["price"],
+                                                      itemCount: 1,
+                                                    );
+                                                    listItems.add(items);
+                                                  }
                                                 }
-                                              }
-                                            });
+                                            }
                                           },
                                         ),
                                         trailing: Row(
@@ -246,13 +251,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
                                   child:  ExpansionTile(
-                                    //initiallyExpanded: dataProducts[index]['priority'] <= 0 ? true : false,
-                                        onExpansionChanged: (val){
-                                          setState(() {
-                                            if (val) previousOffset = _scrollController.offset;
-                                            _scrollToSelectedContent(val, previousOffset, index, expansionTileKey);
-                                          });
-                                        },
                                         backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),
                                         leading: InkWell(
@@ -262,41 +260,46 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           onTap: (){
                                             _showToast(context,
                                                 "Ürün sepete eklenmiştir!");
-                                            setState(() {
-                                              var currentItemId = dataProducts[index][i]['id'];
-                                              switches = false;
-                                              if(listItems == null){
-                                                var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
-                                              }else{
-                                                bool ifExist = false;
-                                                for(var k=0;k<listItems.length; k++){
-                                                  if(currentItemId == listItems[k].id){
-                                                    ifExist = true;
-                                                  }
-                                                }
-                                                if(ifExist){
-                                                  for(var j=0;j<listItems.length;j++){
-                                                    if(listItems[j].id == currentItemId){
-                                                      listItems[j].itemCount++;
+                                            if(this.mounted) {
+                                                var currentItemId = dataProducts[index][i]['id'];
+                                                switches = false;
+                                                if (listItems == null) {
+                                                  var items = new AddItemtoShopCart(
+                                                    id: dataProducts[index][i]["id"],
+                                                    name: dataProducts[index][i]["name"],
+                                                    price: dataProducts[index][i]["price"],
+                                                    itemCount: 1,
+                                                  );
+                                                  listItems.add(items);
+                                                } else {
+                                                  bool ifExist = false;
+                                                  for (var k = 0; k <
+                                                      listItems.length; k++) {
+                                                    if (currentItemId ==
+                                                        listItems[k].id) {
+                                                      ifExist = true;
                                                     }
                                                   }
-                                                }else{
-                                                  var items = new AddItemtoShopCart(                                           // var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
+                                                  if (ifExist) {
+                                                    for (var j = 0; j <
+                                                        listItems.length; j++) {
+                                                      if (listItems[j].id ==
+                                                          currentItemId) {
+                                                        listItems[j]
+                                                            .itemCount++;
+                                                      }
+                                                    }
+                                                  } else {
+                                                    var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
+                                                      id: dataProducts[index][i]["id"],
+                                                      name: dataProducts[index][i]["name"],
+                                                      price: dataProducts[index][i]["price"],
+                                                      itemCount: 1,
+                                                    );
+                                                    listItems.add(items);
+                                                  }
                                                 }
-                                              }
-                                            });
+                                            }
                                           },
                                         ),
                                         trailing: Row(
@@ -348,9 +351,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   Future<void> _refreshController() async
   {
     print('refreshing stocks...');
+    if(this.mounted) {
       setState(() {
         _fetchTypes();
         makeRequest();
       });
+    }
   }
 }

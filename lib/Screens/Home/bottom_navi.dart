@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Uygulamadan çıkmak mı istiyorsunuz?'),
         actions: <Widget>[
           FlatButton(
-            onPressed: ()=> Navigator.pop(context,true),
+            onPressed: ()=> exit(0),
             child: Text('Evet'),
           ),
           FlatButton(

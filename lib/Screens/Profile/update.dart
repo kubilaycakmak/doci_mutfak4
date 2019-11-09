@@ -1,4 +1,5 @@
 import 'package:doci_mutfak4/Model/size_config.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String statusValidatorUpdate;
 bool validate = false;
@@ -19,12 +21,13 @@ class Update extends StatefulWidget {
 
 class _UpdateState extends State<Update> {
 
-  var name = TextEditingController(text: userInformations[0].name);
-  var lastName = TextEditingController(text: userInformations[0].lastname);
-  var phoneNumber = TextEditingController(text: userInformations[0].phoneNumber);
-  var address = TextEditingController(text: userInformations[0].address);
+  var name = TextEditingController();
+  var lastName = TextEditingController();
+  var phoneNumber = TextEditingController();
+  var address = TextEditingController();
   final String updateUrl = 'http://68.183.222.16:8080/api/user/update';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+
 
   Future<http.Response> postItself() async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
