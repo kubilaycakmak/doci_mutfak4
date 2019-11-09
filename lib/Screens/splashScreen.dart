@@ -43,13 +43,13 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkInternetConnectivity();
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.lightBlueAccent,
         label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20, color: Colors.white), ),
         onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
       ),
       bottomNavigationBar: Container(
         height: SizeConfig.blockSizeVertical*10,
-        color: Colors.blueAccent,
+        color: Colors.lightBlueAccent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -69,7 +69,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   borderRadius: BorderRadius.circular(10.00),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(15.0),
                   child: const Text(
                   'YENİ ÜYE',
                   style: TextStyle(fontSize: 15)
@@ -89,7 +88,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 color: Colors.transparent,
                 child: Container(
-                  padding: const EdgeInsets.all(15.0),
                   child: const Text(
                   'GİRİŞ YAP',
                   style: TextStyle(fontSize: 15)

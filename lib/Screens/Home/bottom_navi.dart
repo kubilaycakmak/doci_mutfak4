@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
@@ -122,12 +123,14 @@ class _HomeScreenState extends State<HomeScreen> {
       LastOrders(),
       ShoppingCart(),
     ];
-
+    SizeConfig().init(context);
     return WillPopScope(
       onWillPop: _onBackPressed,
           child: Scaffold(
         body: _children[_currentIndex],
-        bottomNavigationBar: BottomNavyBar(
+        bottomNavigationBar: Container(
+          height: SizeConfig.blockSizeVertical*9,
+          child: BottomNavyBar(
           selectedIndex: _currentIndex,
           showElevation: false,
           backgroundColor: Colors.lightBlueAccent,
@@ -140,9 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
           items: [
               BottomNavyBarItem(icon: Icon(Icons.person_outline), title:inside == false ? Text('Profilim') : Text('Giriş Yap \nKayıt Ol'), activeColor: Colors.white),
               BottomNavyBarItem(icon: Icon(Icons.fastfood,), title: Text('Menü'), activeColor: Colors.white),
-              BottomNavyBarItem(icon: Icon(Icons.reorder,), title: Text('Siparişlerim'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(Icons.check_box,), title: Text('Siparişlerim'), activeColor: Colors.white),
               BottomNavyBarItem(icon: Icon(Icons.shopping_cart,), title: Text('Sepetim'), activeColor: Colors.white),
           ],
+        ),
         )
       ),
     );

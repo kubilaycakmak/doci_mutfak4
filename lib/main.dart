@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 
 main() async {
 
-  ErrorWidget.builder = (FlutterErrorDetails details) => ErrorHandlingPage();
+  ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
+    appBar: AppBar(
+      title: Text('Hata'),
+    ),
+    body: ErrorHandlingPage()
+  );
   Routes();
 }
 
@@ -30,7 +35,7 @@ class _ErrorHandlingPageState extends State<ErrorHandlingPage> {
              SizedBox(height: 20,),
              CupertinoButton(
                child: Text('Ana menüden devam et'),
-               onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),
+               onPressed: ()=> Navigator.of(context).pushReplacementNamed('/splash'),
              )
            ],
          ),

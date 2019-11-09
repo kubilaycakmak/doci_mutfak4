@@ -95,6 +95,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   final _address = TextEditingController();
   final _answer = TextEditingController();
   bool isTrue;
+  bool _agreedToTOS = true;
   bool remember = false;
   var keyShared;
 
@@ -611,19 +612,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                       subtitle: Text(
                           'Bilgilerinizi giriş yaptıktan sonra "Bilgilerimi düzenle" sayfasından düzenleyebilirsiniz.'),
                     ),
-                    ListTile(
-                      enabled: false,
-                      contentPadding:
-                          EdgeInsets.only(top: 0, left: 5, right: 5),
-                      subtitle: Text(
-                        'Kullanıcı sözleşmesini ve Gizlilik Politikasını okudum ve kabul ediyorum.',
-                        style: TextStyle(fontWeight: FontWeight.w800),
-                      ),
-                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Checkbox(
+                            value: _agreedToTOS,
+                            onChanged: _setAgreedToTOS,
+                          ),
+                          GestureDetector(
+                            onTap: () => _setAgreedToTOS(!_agreedToTOS),
+                            child: Text(
+                              'Şartlar, Hizmetler ve Gizlilik Politikasını kabul ediyorum', style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal*3),
+                            ),
+                          ),
+                        ],
+                      )),
                     ListTile(
                       title: MaterialButton(
                         onPressed: () {
-                          postRegisterRequest();
+                          _submittable() ? postRegisterRequest() : null;
                           if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
                             Alert(
@@ -656,6 +664,14 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
         ),
       ),
     );
+  }
+  bool _submittable() {
+    return _agreedToTOS;
+  }
+  void _setAgreedToTOS(bool newValue) {
+    setState(() {
+      _agreedToTOS = newValue;
+    });
   }
   _checkInternetConnectivity() async{
     var result = await Connectivity().checkConnectivity();
