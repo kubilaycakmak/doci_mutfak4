@@ -50,7 +50,6 @@ class _LastOrdersState extends State<LastOrders> {
         });
     if(response.statusCode == 200){
       if(response.body != null){
-        print('basarili');
         final item = json.decode(response.body);
         orderCount = item;
         return orderCount;
@@ -101,7 +100,6 @@ class _LastOrdersState extends State<LastOrders> {
           "authorization": key,
         });
     if(response.statusCode == 200){
-      print('basarili');
       final item = json.decode(response.body);
       orderCount = item;
       for(var i=0;i<orderCount.length;i++){

@@ -401,10 +401,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
        listId.add(id);
     }
     Order or = Order(listId, note.text, payment,_addressController.text);
-    print(or);
-    print(or.toJson());
     var body = JSON.jsonEncode(or.toJson());
-    print(body);
     var response = await http.post(Uri.encodeFull(orderCreate),
         headers: {
           "content-type" : "application/json",
@@ -412,8 +409,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           "authorization": key,
         },
         body: body);
-    print(response.body);
     if (response.statusCode == 201) {
+        print(' Response Body : ' + response.body);
         listItems.clear();
          Alert(
           type: AlertType.success,

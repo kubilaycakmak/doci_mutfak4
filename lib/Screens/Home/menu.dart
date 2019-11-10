@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/widgets.dart';
 
 var currentSelected;
 List<String> addItem;
@@ -49,6 +50,7 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
+
   List dataProducts;
   var quantity = 1;
   TabController tabController;
@@ -132,7 +134,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: ExpansionTile(
-                    
+                    leading: Icon(Icons.fastfood),
                     onExpansionChanged: (val){
                       setState(() {
                         if (val){
@@ -142,7 +144,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                       });
                     },
                     initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
-                    title: Text(snapshot.data[index].name),
+                    backgroundColor: types['types'][index]['priority'] <= 0 ? Colors.lightBlueAccent : Colors.white,
+                    title: types['types'][index]['priority'] <= 0 ? Text('Kampanyalar', style: TextStyle(),) : Text(snapshot.data[index].name, style: TextStyle(color: Colors.black),),
                     children: <Widget>[
                       FutureBuilder<String>(
                           future: makeRequest(),
@@ -158,8 +161,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
                                   child:  ExpansionTile(
-                                    //initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
-                                        backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),
                                         leading: InkWell(
                                           child: dataProducts[index][i]['valid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
