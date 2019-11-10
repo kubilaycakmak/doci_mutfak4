@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-var backgroundImage = new AssetImage('assets/images/logo.png');
+var backgroundImage = new AssetImage('assets/images/appLogo.png');
 var image = new Image(image: backgroundImage);
 
 class SplashScreen extends StatefulWidget {
@@ -125,13 +125,13 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
       
       decoration: BoxDecoration(
-            color: Colors.lightBlue,
+            color: Colors.lightBlueAccent,
             image: DecorationImage(
             image: backgroundImage,
             alignment: Alignment.topCenter,
             repeat: ImageRepeat.repeat,
             fit: BoxFit.scaleDown,
-            colorFilter: ColorFilter.mode(Colors.black54.withOpacity(0.2), BlendMode.dstIn)
+            colorFilter: ColorFilter.mode(Colors.black12.withOpacity(0.3), BlendMode.dstIn)
           )
         ),
       ),

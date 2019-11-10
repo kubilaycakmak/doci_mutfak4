@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 main() async {
 
   ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
-    backgroundColor: Colors.lightBlueAccent,
     appBar: AppBar(
+      backgroundColor: Colors.lightBlueAccent,
       title: Text('Hata'),
     ),
     body: ErrorHandlingPage()
@@ -30,7 +30,6 @@ class _ErrorHandlingPageState extends State<ErrorHandlingPage> {
          child: Column(
            children: <Widget>[
              ListTile(
-               title: Text('Hata Sayfası'),
                subtitle: Text('Bir şeyler ters gitti.'),
              ),
              SizedBox(height: 20,),

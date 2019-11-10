@@ -131,7 +131,6 @@ static bool switcha;
 GlobalKey _scaffold = GlobalKey();
 
 Function duringSplash = () {
-
     if (switcha == false) {
               return 2;
             } else {
