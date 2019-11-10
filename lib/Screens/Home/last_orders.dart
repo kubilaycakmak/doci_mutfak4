@@ -151,14 +151,15 @@ class _LastOrdersState extends State<LastOrders> {
              ],
            ),
          ) :
-         noOrder == true ? Container(
+         noOrder == false ? Container(
            child: ListView(
               children: <Widget>[
-                image,
                 SizedBox(height: 20,),
                 Text('Hala Sipariş vermedin mi ?',textAlign: TextAlign.center,),
                 SizedBox(height: 20,),
-                Text('Hemen yan menüye geçip lezzetli yemekleri incele!',textAlign: TextAlign.center,)
+                Text('Hemen yan menüye geçip lezzetli yemekleri incele!',textAlign: TextAlign.center,),
+                SizedBox(height: 20,),
+                IconButton(icon: Icon(Icons.keyboard_arrow_left, size: 60,))
               ],
            ),
          ) : Container(

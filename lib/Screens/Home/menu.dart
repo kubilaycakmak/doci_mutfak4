@@ -61,7 +61,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     if (keyContext != null) {
       // make sure that your widget is visibles
       _scrollController.animateTo(isExpanded ? ((SizeConfig.blockSizeVertical*7.6) * index) : previousOffset,
-          duration: Duration(milliseconds: 500), curve: Curves.linear);
+          duration: Duration(milliseconds: 500), curve: Curves.ease);
     }
   }
 
