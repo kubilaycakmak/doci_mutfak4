@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 main() async {
 
   ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
+    backgroundColor: Colors.lightBlueAccent,
     appBar: AppBar(
       title: Text('Hata'),
     ),
