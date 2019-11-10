@@ -1,6 +1,5 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
-import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
@@ -308,28 +307,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
       color: Colors.black,
     ),
   );
-
-  _checkInternetConnectivity() async{
-    var result = await Connectivity().checkConnectivity();
-    if(result == ConnectivityResult.none){
-      internet = false;
-      return Alert(
-          context:context,
-          style: alertStyle,
-          type: AlertType.error,
-          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-              'bağlantısı gereklidir.',
-          title: '',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ]
-      ).show();
-    }
-    internet = true;
-  }
 }
 
 User currentUser;

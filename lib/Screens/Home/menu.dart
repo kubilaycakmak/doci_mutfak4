@@ -133,6 +133,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
+                  elevation: 3,
                   child: ExpansionTile(
                     leading: Icon(Icons.fastfood),
                     onExpansionChanged: (val){
@@ -144,8 +145,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                       });
                     },
                     initiallyExpanded: types['types'][index]['priority'] <= 0 ? true : false,
-                    backgroundColor: types['types'][index]['priority'] <= 0 ? Colors.lightBlueAccent : Colors.white,
-                    title: types['types'][index]['priority'] <= 0 ? Text('Kampanyalar', style: TextStyle(),) : Text(snapshot.data[index].name, style: TextStyle(color: Colors.black),),
+                    title: Text(snapshot.data[index].name),
                     children: <Widget>[
                       FutureBuilder<String>(
                           future: makeRequest(),
@@ -160,54 +160,63 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemCount: dataProducts[index].length,
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
+                                  borderOnForeground: false,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(
+                                      color: Color.fromRGBO(128, 223, 255, 0.5),
+                                      width: 1.0,
+                                      ),
+                                    ),
                                   child:  ExpansionTile(
-                                        title: Text(dataProducts[index][i]['name'].toString()),
-                                        leading: InkWell(
-                                          child: dataProducts[index][i]['valid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
-                                          highlightColor: Colors.green,
-                                          focusColor: Colors.green,
-                                          onTap: (){
-                                            _showToast(context,
-                                                "Ürün sepete eklenmiştir!");
-                                            if(this.mounted) {
-                                                var currentItemId = dataProducts[index][i]['id'];
-                                                switches = false;
-                                                if (listItems == null) {
-                                                  var items = new AddItemtoShopCart(
+                                    backgroundColor: Color.fromRGBO(128, 223, 255, 0.9),
+                                      title: Text(dataProducts[index][i]['name'].toString()),
+                                      leading: InkWell(
+                                        child: dataProducts[index][i]['valid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
+                                        highlightColor: Colors.green,
+                                        focusColor: Colors.green,
+                                        onTap: (){
+                                          _showToast(context,
+                                              "Ürün sepete eklenmiştir!");
+                                          if(this.mounted) {
+                                              var currentItemId = dataProducts[index][i]['id'];
+                                              switches = false;
+                                              if (listItems == null) {
+                                                var items = new AddItemtoShopCart(
+                                                  id: dataProducts[index][i]["id"],
+                                                  name: dataProducts[index][i]["name"],
+                                                  price: dataProducts[index][i]["price"],
+                                                  itemCount: 1,
+                                                );
+                                                listItems.add(items);
+                                              } else {
+                                                bool ifExist = false;
+                                                for (var k = 0; k <
+                                                    listItems.length; k++) {
+                                                  if (currentItemId ==
+                                                      listItems[k].id) {
+                                                    ifExist = true;
+                                                  }
+                                                }
+                                                if (ifExist) {
+                                                  for (var j = 0; j <
+                                                      listItems.length; j++) {
+                                                    if (listItems[j].id ==
+                                                        currentItemId) {
+                                                      listItems[j]
+                                                          .itemCount++;
+                                                    }
+                                                  }
+                                                } else {
+                                                  var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
                                                     id: dataProducts[index][i]["id"],
                                                     name: dataProducts[index][i]["name"],
                                                     price: dataProducts[index][i]["price"],
                                                     itemCount: 1,
                                                   );
                                                   listItems.add(items);
-                                                } else {
-                                                  bool ifExist = false;
-                                                  for (var k = 0; k <
-                                                      listItems.length; k++) {
-                                                    if (currentItemId ==
-                                                        listItems[k].id) {
-                                                      ifExist = true;
-                                                    }
-                                                  }
-                                                  if (ifExist) {
-                                                    for (var j = 0; j <
-                                                        listItems.length; j++) {
-                                                      if (listItems[j].id ==
-                                                          currentItemId) {
-                                                        listItems[j]
-                                                            .itemCount++;
-                                                      }
-                                                    }
-                                                  } else {
-                                                    var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
-                                                      id: dataProducts[index][i]["id"],
-                                                      name: dataProducts[index][i]["name"],
-                                                      price: dataProducts[index][i]["price"],
-                                                      itemCount: 1,
-                                                    );
-                                                    listItems.add(items);
-                                                  }
                                                 }
+                                              }
                                             }
                                           },
                                         ),
@@ -237,8 +246,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           SizedBox(width: SizeConfig.blockSizeHorizontal * 80, child: Text(dataProducts[index][i]['description'],maxLines: 2,style: TextStyle(wordSpacing: 2),),)
                                               : Padding(padding: EdgeInsets.all(0),child: Card(child: Text('Bu ürün stokta yok', style: TextStyle(color: Colors.white, fontSize: 17), textAlign: TextAlign.center,),
                                             color: Colors.red, elevation: 3, margin: EdgeInsets.all(0),),),
-                                          SizedBox(height: 20,),
-
+                                            SizedBox(height: 20,),
                                         ],
                                       ),
                                 );
@@ -251,6 +259,13 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                               itemCount: dataProducts[index].length,
                               itemBuilder: (BuildContext context, int i) {
                                 return Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(
+                                      color: Colors.lightBlueAccent,
+                                      width: 1.0,
+                                      ),
+                                    ),
                                   child:  ExpansionTile(
                                         backgroundColor: Colors.white,
                                         title: Text(dataProducts[index][i]['name'].toString()),

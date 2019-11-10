@@ -1,5 +1,4 @@
 import 'package:doci_mutfak4/Model/size_config.dart';
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String statusValidatorUpdate;
 bool validate = false;

@@ -149,6 +149,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     if(keyShared != ''){
       setState(() {
         switcha = true;
+        print(keyShared);
         postRequestAuto(username, password);
         postItselfAuto(keyShared);
       });
@@ -167,6 +168,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
       prefs.setString('LastKey', '');
       prefs.setString('LastUsername', '');
       prefs.setString('LastPassword', '');
+      switcha = false;
   }
 
   

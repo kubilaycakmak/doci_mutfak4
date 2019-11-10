@@ -3,7 +3,6 @@ import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'dart:async';

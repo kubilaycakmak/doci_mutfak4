@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:doci_mutfak4/Model/size_config.dart';
 
 import 'menu.dart';
 
@@ -121,6 +122,7 @@ class _LastOrdersState extends State<LastOrders> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Container(
        child: Scaffold(
          appBar: AppBar(
@@ -129,19 +131,21 @@ class _LastOrdersState extends State<LastOrders> {
            centerTitle: true,
            backgroundColor: Colors.lightBlueAccent,
          ),
-         body: keyShared == '' ? //keyde olabilir.
+         body: key == null ? //keyde olabilir.
          Container(
            child: ListView(
              children: <Widget>[
                image,
                SizedBox(height: 20,),
-               Text('Eski siparişlerini görüntülemek için, lüften giriş yap!',textAlign: TextAlign.center,),
+               Container(
+                 child: Text('Eski siparişlerini görüntülemek için, lüften giriş yap!',textAlign: TextAlign.center,),
+                 padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 10),
+               ),
                SizedBox(height: 20,),
                Container(
-                 child: CupertinoButton(
+                 child: FlatButton(
                    child: Text('Girişe git'),
                    onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                   color: Colors.lightBlueAccent,
                  ),
                )
              ],
