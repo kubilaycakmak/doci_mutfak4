@@ -319,7 +319,7 @@ class EndOfTheShoppingCart extends StatefulWidget {
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   
-  final _addressController =new TextEditingController(text: listItems[0].address);
+  final _addressController =new TextEditingController(text: listItems[0].address == null ? userInformations[0].address : listItems[0].address);
   final _phoneController =
   new TextEditingController(text: userInformations[0].phoneNumber);
   final String orderCreate = 'http://68.183.222.16:8080/api/order/create';
