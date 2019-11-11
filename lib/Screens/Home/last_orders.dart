@@ -30,6 +30,7 @@ class _LastOrdersState extends State<LastOrders> {
   double taste = 3;
   double rating = 0;
   double speed = 3;
+  List starCount;
   double services = 3;
   var keyShared;
   var selectedId;
@@ -134,10 +135,9 @@ class _LastOrdersState extends State<LastOrders> {
     this._fetchData1();
     super.dispose();
   }
-
+  var star = Icon(Icons.star);
   @override
   Widget build(BuildContext context) {
-
     SizeConfig().init(context);
     return Container(
        child: Scaffold(
@@ -237,6 +237,10 @@ class _LastOrdersState extends State<LastOrders> {
                              subtitle: Text(snapshot.data[index]['price'].toInt().toString() + ' TL', style: TextStyle(fontSize: 30),),
                            ),
                            ListTile(
+                             title: Text('Sipariş Adresi : '),
+                             subtitle: Text(snapshot.data[index]['address'].toString()),
+                           ),
+                           ListTile(
                              title: Text('Sipariş Notu : '),
                              subtitle: Text(snapshot.data[index]['note'].toString()),
                            ),
@@ -327,9 +331,24 @@ class _LastOrdersState extends State<LastOrders> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(' Hız : ' + snapshot.data[index]['orderRating']["speed"].toString() + ' yıldız'),
-                                    Text(' Servis : ' + snapshot.data[index]['orderRating']["service"].toString() + ' yıldız'),
-                                    Text(' Tat : ' + snapshot.data[index]['orderRating']["taste"].toString() + ' yıldız'),
+                                    Row(
+                                      children: <Widget>[
+                                        Text('Hız :'),
+                                        for(int i = 0; i< snapshot.data[index]['orderRating']["speed"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Text('Servis :'),
+                                        for(int i = 0; i< snapshot.data[index]['orderRating']["service"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Text('Tad :'),
+                                        for(int i = 0; i< snapshot.data[index]['orderRating']["taste"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -342,10 +361,8 @@ class _LastOrdersState extends State<LastOrders> {
                                   ],
                                 ),
                               ),
-                              
-
                             ] : <Widget>[
-                              Text('Siparişi oylayabilmeniz için, restaurant ın siparişi onaylaması gerekmektedir', textAlign: TextAlign.center,)
+                              Text("Siparişi oylayabilmeniz için, restaurant'ın siparişi onaylaması gerekmektedir", textAlign: TextAlign.center,)
                             ],
                           ),
                           
@@ -361,7 +378,9 @@ class _LastOrdersState extends State<LastOrders> {
                                      price: orderCount[index]['products'][i]['dociProduct']['price'],
                                      itemCount: orderCount[index]['products'][i]['quantity'],
                                      quantity: orderCount[index]['products'][i]['quantity'],
+                                     address: snapshot.data[index]['address'].toString()
                                    );
+                                   print(items.address);
                                    listItems.add(items);
                                  }
                                  Alert(

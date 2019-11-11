@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 class AddItemtoShopCart{
   int id;
@@ -6,15 +5,20 @@ class AddItemtoShopCart{
   double price;
   int quantity;
   int itemCount;
-
+  String address;
 
   AddItemtoShopCart({
-    @required this.id, 
-    @required this.name,
-    @required this.price,
+    this.id, 
+    this.name,
+    this.price,
     this.quantity,
-    this.itemCount
+    this.itemCount,
+    this.address
     });
+}
+
+String get address{
+  return address;
 }
 
 int get id{

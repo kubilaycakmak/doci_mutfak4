@@ -1,4 +1,5 @@
-import 'package:connectivity/connectivity.dart';
+// import 'package:connectivity/connectivity.dart';
+import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -26,6 +27,7 @@ List<User> userInformations = new List();
 List<User> getList(){
   return userInformations;
 }
+
 var usernameAuto;
 var passwordAuto;
 var statusForgetPass;
@@ -89,6 +91,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   final _passwordController = TextEditingController();
   final _username = TextEditingController();
   final _password = TextEditingController();
+  final _password2 = TextEditingController();
   final _name = TextEditingController();
   final _lastname = TextEditingController();
   final _phoneNumber = TextEditingController();
@@ -115,13 +118,31 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       await preferences.setString('LastKey', key);
       await preferences.setString('LastUsername', _usernameController.text);
       await preferences.setString('LastPassword', _passwordController.text);
-      //print(' From Shared ' + preferences.getString('LastKey'));
+      print(' From Shared ' + preferences.getString('LastKey'));
       if (key != '') {
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
         postItself();
+      }else{
+        print('alamadik');
+        Alert(
+          type: AlertType.warning,
+          title: 'Kullanıcı adı ve ya Şifre yanlış',
+          desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.pop(context,false),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+            DialogButton(
+              onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
+              child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
+            ),
+          ], context: context,
+        ).show();
       }
-    }
+    }else{}
+    print(response.body);
     return response;
   }
 
@@ -249,7 +270,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.w600);
 
-      void _onLoading() {
+void _onLoading() {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -268,7 +289,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
           children: [
             new CircularProgressIndicator(),
             SizedBox(width: 10,),
-            new Text("Yükleniyor",style: TextStyle(color: Colors.white),),
+            new Text("  Giriş Yapılıyor ",style: TextStyle(color: Colors.white),),
           ],
         ),
       );
@@ -276,11 +297,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   );
   new Future.delayed(new Duration(seconds: 3), () {
     Navigator.pop(context); //pop dialog
-    if(!internet){
-      _checkInternetConnectivity();
-    }else{
       postRequest();
-    }
   });
 }
 
@@ -396,12 +413,13 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             CupertinoButton(
                               padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal*20),
                               onPressed: () {
-                                if(_usernameController.text == null){
+                                if(_usernameController.text == '' || _passwordController.text == ''){
                                   inside = true;
                                   print('yanlis giris');
                                   Alert(
-                                    title: 'Kullanıcı adı ve ya Şifre yanlış',
-                                    desc: 'Şifrenizi unuttuysanız, Şifremi unuttum dan şifrenizi yenileyebilirsiniz.',
+                                    type: AlertType.warning,
+                                    title: 'Kullanıcı adı ve ya şifre boş',
+                                    desc: "Lütfen giriş yapabilmek için, boşlukları doldurunuz.",
                                     buttons: [
                                       DialogButton(
                                         onPressed: () => Navigator.pop(context,false),
@@ -444,11 +462,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
               Container(
                 child: ListView(
                   children: <Widget>[
-                    ListTile(
-                      enabled: false,
-                      subtitle: Text(
-                          'Başarılı bir kayıt için yıldızlı alanları eksiksiz doldurunuz!'),
-                    ),
                     Form(
                       autovalidate: _validate,
                       key: _formKey,
@@ -456,11 +469,18 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                         padding: EdgeInsets.all(20),
                         child: Column(
                           children: <Widget>[
+                            ListTile(
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('Kullanıcı adınız, boşluk olmadan büyük harf kücük harf rakamlar yada . - _ olusacak sekilde en az 3, en fazla 15 karakter olmalıdır.',),
+                                ],
+                              )
+                            ),
                             TextFormField(
                               controller: _username,
                               decoration: InputDecoration(
                                 labelText: "* Kullanıcı Adı",
-                                //helperText: 'Kullanıcı Adı ".(Nokta), -(Çizgi) veya _(alttan tire) \n içerebilir ve en az 3 en cok 15 karakterden oluşmalıdır!"',
                                 fillColor: Colors.white,
                                 border: UnderlineInputBorder(
                                   borderSide:
@@ -480,6 +500,22 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               controller: _password,
                               decoration: InputDecoration(
                                 labelText: "* Şifre",
+                                fillColor: Colors.white,
+                                border: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.lightBlueAccent),
+                                ),
+                              ),
+                              validator: validatePassword,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            TextFormField(
+                              controller: _password2,
+                              decoration: InputDecoration(
+                                labelText: "* Şifre tekrar",
                                 fillColor: Colors.white,
                                 border: UnderlineInputBorder(
                                   borderSide:
@@ -541,11 +577,14 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             ),
                             ListTile(
                               enabled: false,
-                              leading: Icon(Icons.info_outline),
-                              subtitle: Text(
-                                'Lütfen telefon numarınızı "0" olmadan giriniz!',
-                                style: TextStyle(fontSize: 12.5),
-                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('Lütfen telefon numarınızı "0" olmadan giriniz',),
+                                  SizedBox(height: 5,),
+                                  Text('Telefon numaranız Ev telefonuysa 7, Cep telefonuysa 11 haneli olmalıdır.',),
+                                ],
+                              )
                             ),
                             TextFormField(
                               controller: _phoneNumber,
@@ -616,7 +655,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                         currentQuestion.question,
                                         style: TextStyle(fontSize: 20),
                                       )
-                                    : Text('Soru yok')
+                                    : Text('')
                               ],
                             ),
                             TextFormField(
@@ -666,21 +705,35 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                     ListTile(
                       title: MaterialButton(
                         onPressed: () {
-                          _submittable() ? postRegisterRequest() : null;
+                          //_submittable() ?  : null;
                           if (_formKey.currentState.validate()) {
-                            _formKey.currentState.save();
-                            Alert(
-                              context: context,
-                              type: AlertType.success,
-                              title: 'Başarıyla kayıt oldunuz!',
-                              buttons: [
-                                DialogButton(
-                                  onPressed: () => Navigator.of(context)
-                                      .pushReplacementNamed('/login'),
-                                  child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
-                                ),
-                              ],
-                            ).show();
+                            if(_password.text == _password2.text){
+                              _formKey.currentState.save();
+                              Alert(
+                                context: context,
+                                type: AlertType.success,
+                                title: 'Başarıyla kayıt oldunuz!',
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: () => Navigator.of(context)
+                                        .pushReplacementNamed('/login'),
+                                    child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
+                                  ),
+                                ],
+                              ).show();
+                            }else{
+                              Alert(
+                                context: context,
+                                type: AlertType.warning,
+                                title: 'Şifreler aynı değil',
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: () => Navigator.pop(context,false),
+                                    child: Text('Tamam',style: TextStyle(color: Colors.white),),
+                                  ),
+                                ],
+                              ).show();
+                            }
                           } else {
                             setState(() {
                               _validate = true;
@@ -708,26 +761,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       _agreedToTOS = newValue;
     });
   }
-  _checkInternetConnectivity() async{
-    var result = await Connectivity().checkConnectivity();
-    if(result == ConnectivityResult.none){
-      internet = false;
-      return Alert(
-          context:context,
-          type: AlertType.error,
-          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-              'bağlantısı gereklidir.',
-          title: '',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ]
-      ).show();
-    }
-    internet = true;
-  }
+  // _checkInternetConnectivity() async{
+  //   var result = await Connectivity().checkConnectivity();
+  //   if(result == ConnectivityResult.none){
+  //     internet = false;
+  //     return Alert(
+  //         context:context,
+  //         type: AlertType.error,
+  //         desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+  //             'bağlantısı gereklidir.',
+  //         title: '',
+  //         buttons: [
+  //           DialogButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: Text('Tamam', style: TextStyle(color: Colors.white),),
+  //           ),
+  //         ]
+  //     ).show();
+  //   }
+  //   internet = true;
+  // }
 }
 class Questions{
   int id;
@@ -836,6 +889,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       fontFamily: "Poppins",
                     ),
                   ),
+                  SizedBox(height: 20,),
+                  Text(' SORU '),
+                  SizedBox(height: 20,),
                   TextFormField(
                     controller: _forgetAnswer,
                     autovalidate: true,
@@ -848,12 +904,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       }
                     },
                     decoration: InputDecoration(
-                      labelText: "Güvenlik sorusu cevabınız",
+                      labelText: "Cevap",
                       fillColor: Colors.white,
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.lightBlueAccent
-                        ),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,

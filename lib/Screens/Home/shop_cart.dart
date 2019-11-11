@@ -1,7 +1,10 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
+import 'package:doci_mutfak4/Model/item_to_cart.dart';
+import 'package:doci_mutfak4/Model/item_to_cart.dart' as prefix1;
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -192,8 +195,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
           children: <Widget>[
             Expanded(
               child: Container(
-                height: 70,
-                color: Colors.black12,
                 child: ListTile(
                 leading: Icon(Icons.shopping_basket),
                 title: Text(
@@ -317,8 +318,8 @@ class EndOfTheShoppingCart extends StatefulWidget {
 }
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-  final _addressController =
-  new TextEditingController(text: userInformations[0].address);
+  
+  final _addressController =new TextEditingController(text: listItems[0].address);
   final _phoneController =
   new TextEditingController(text: userInformations[0].phoneNumber);
   final String orderCreate = 'http://68.183.222.16:8080/api/order/create';
@@ -347,7 +348,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
 
   int selectedPayment;
 
-    @override
+  @override
   void initState() {
     super.initState();
     setState(() {
@@ -391,9 +392,9 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         listItems.clear();
          Alert(
           type: AlertType.success,
-          title: 'Siparişiniz Verildi',
+          title: 'Siparişiniz Onaylandı',
           desc:
-          'Menünüz hazırlanıyor, Bizi seçtiğiniz için teşekkür ederiz!',
+          'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
           buttons: [
             DialogButton(
               onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),

@@ -160,8 +160,8 @@ class _ProfileState extends State<Profile> {
                                 setState(() {
                                   logout();
                                   inside = true;
-                                  key = null;
-                                  keyShared = null;
+                                  key = '';
+                                  keyShared = '';
                                   userInformations.clear();
                                 });
                                 Navigator.of(context).pushReplacementNamed('/home');
