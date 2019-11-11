@@ -26,7 +26,7 @@ class _LastOrdersState extends State<LastOrders> {
   final String orderUrl = 'http://68.183.222.16:8080/api/order/user';
   List productItems;
   List orderCount;
-  bool noOrder = false;
+  bool orderStatus;
   double taste = 3;
   double rating = 0;
   double speed = 3;
@@ -35,7 +35,6 @@ class _LastOrdersState extends State<LastOrders> {
   var selectedId;
   bool finishRaiting = false;
   var _commentController = new TextEditingController();
-
     getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     keyShared = prefs.getString('LastKey');
@@ -43,20 +42,20 @@ class _LastOrdersState extends State<LastOrders> {
     password = prefs.getString('LastPassword');
   } 
 
-  // ignore: missing_return
   Future<List> _fetchData() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": key,
         });
     if(response.statusCode == 200){
-      if(response.body != null){
         final item = json.decode(response.body);
         orderCount = item;
+        if(orderCount != null){
+            orderStatus = true;
+        }else{
+            orderStatus = false;
+        }
         return orderCount;
-      }else{
-        noOrder = true;
-      }
     }else{
       throw Exception('Failed to get products');
     }
@@ -103,6 +102,11 @@ class _LastOrdersState extends State<LastOrders> {
     if(response.statusCode == 200){
       final item = json.decode(response.body);
       orderCount = item;
+      if(orderCount != null){
+          orderStatus = true;
+        }else{
+          orderStatus = false;
+        }
       for(var i=0;i<orderCount.length;i++){
         productItems = item[i]['products'];
       }
@@ -116,12 +120,24 @@ class _LastOrdersState extends State<LastOrders> {
   void initState() {
     super.initState();
     setState(() {
-      getKey();
+      this.getKey();
+      this._fetchData();
+      this._fetchData1();
     });
+
+  }
+
+  @override
+  void dispose() { 
+    this.getKey();
+    this._fetchData();
+    this._fetchData1();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     SizeConfig().init(context);
     return Container(
        child: Scaffold(
@@ -131,7 +147,8 @@ class _LastOrdersState extends State<LastOrders> {
            centerTitle: true,
            backgroundColor: Colors.lightBlueAccent,
          ),
-         body: key == null ? //keyde olabilir.
+         body: 
+         key == null ?//keyde olabilir.
          Container(
            child: ListView(
              children: <Widget>[
@@ -151,7 +168,7 @@ class _LastOrdersState extends State<LastOrders> {
              ],
            ),
          ) :
-         noOrder == false ? Container(
+         orderStatus == false ? Container(
            child: ListView(
               children: <Widget>[
                 SizedBox(height: 20,),
@@ -159,7 +176,7 @@ class _LastOrdersState extends State<LastOrders> {
                 SizedBox(height: 20,),
                 Text('Hemen yan menüye geçip lezzetli yemekleri incele!',textAlign: TextAlign.center,),
                 SizedBox(height: 20,),
-                IconButton(icon: Icon(Icons.keyboard_arrow_left, size: 60,))
+                Icon(Icons.arrow_back)
               ],
            ),
          ) : Container(

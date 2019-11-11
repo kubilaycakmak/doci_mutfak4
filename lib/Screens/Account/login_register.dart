@@ -120,23 +120,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
         postItself();
-      }else{
-        inside = true;
-        print('yanlis giris');
-        Alert(
-          title: 'Kullanıcı adı ve ya Şifre yanlış',
-          desc: 'Şifrenizi unuttuysanız, Şifremi unuttum dan şifrenizi yenileyebilirsiniz.',
-          buttons: [
-            DialogButton(
-              onPressed: () => Navigator.pop(context,false),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-            DialogButton(
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
-              child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
-            ),
-          ], context: context,
-        ).show();
       }
     }
     return response;
@@ -266,6 +249,41 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.w600);
 
+      void _onLoading() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.lightBlueAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          side: BorderSide(
+            color: Colors.white,
+            width: 2.0,
+          ),
+        ) ,
+        child: new Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new CircularProgressIndicator(),
+            SizedBox(width: 10,),
+            new Text("Yükleniyor",style: TextStyle(color: Colors.white),),
+          ],
+        ),
+      );
+    },
+  );
+  new Future.delayed(new Duration(seconds: 3), () {
+    Navigator.pop(context); //pop dialog
+    if(!internet){
+      _checkInternetConnectivity();
+    }else{
+      postRequest();
+    }
+  });
+}
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -378,10 +396,25 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             CupertinoButton(
                               padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal*20),
                               onPressed: () {
-                                if(!internet){
-                                  _checkInternetConnectivity();
+                                if(_usernameController.text == null){
+                                  inside = true;
+                                  print('yanlis giris');
+                                  Alert(
+                                    title: 'Kullanıcı adı ve ya Şifre yanlış',
+                                    desc: 'Şifrenizi unuttuysanız, Şifremi unuttum dan şifrenizi yenileyebilirsiniz.',
+                                    buttons: [
+                                      DialogButton(
+                                        onPressed: () => Navigator.pop(context,false),
+                                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                                      ),
+                                      DialogButton(
+                                        onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
+                                        child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
+                                      ),
+                                    ], context: context,
+                                  ).show();
                                 }else{
-                                  postRequest();
+                                  _onLoading();
                                 }
                               },
                               child: Text(

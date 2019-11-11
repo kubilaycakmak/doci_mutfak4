@@ -18,11 +18,10 @@ class Update extends StatefulWidget {
 }
 
 class _UpdateState extends State<Update> {
-
-  var name = TextEditingController();
-  var lastName = TextEditingController();
-  var phoneNumber = TextEditingController();
-  var address = TextEditingController();
+  var name = TextEditingController(text: userInformations[0].name);
+  var lastName = TextEditingController(text: userInformations[0].lastname);
+  var phoneNumber = TextEditingController(text: userInformations[0].phoneNumber);
+  var address = TextEditingController(text: userInformations[0].address);
   final String updateUrl = 'http://68.183.222.16:8080/api/user/update';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
 
@@ -94,7 +93,14 @@ class _UpdateState extends State<Update> {
   }
 
   @override
+  void initState() { 
+    super.initState();
+    this.postItself();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print(userInformations[0].name);
     return WillPopScope(
         // ignore: missing_return
         onWillPop: (){

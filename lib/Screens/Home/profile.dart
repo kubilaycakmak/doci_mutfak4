@@ -158,10 +158,10 @@ class _ProfileState extends State<Profile> {
                               child: Text('Çıkış Yap', textAlign: TextAlign.center,),
                               onPressed: () {
                                 setState(() {
-                                  print(username);
                                   logout();
                                   inside = true;
                                   key = null;
+                                  keyShared = null;
                                   userInformations.clear();
                                 });
                                 Navigator.of(context).pushReplacementNamed('/home');

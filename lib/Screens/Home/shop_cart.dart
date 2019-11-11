@@ -474,7 +474,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         child: ListTile(
                             title: Text('Teslimat Adresi'),
                             subtitle: TextFormField(
-                              maxLines: 3,
+                              maxLines: 2,
                               controller: _addressController,
                               decoration: InputDecoration(),
                             )),
@@ -483,11 +483,11 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         margin: EdgeInsets.all(5),
                         elevation: 1,
                         child: ListTile(
-                            title: Text('Telefon Numarası'),
-                            subtitle: TextFormField(
-                              controller: _phoneController,
-                              decoration: InputDecoration(),
-                            )),
+                          title: Text('Telefon Numarası'),
+                          subtitle: Text(
+                            _phoneController.text, style: TextStyle(fontSize: 20),
+                            )
+                          ),
                       ),
                       Card(
                         margin: EdgeInsets.all(5),
@@ -570,7 +570,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         child: Container(
                           margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
                           child: TextFormField(
-                            maxLines: 10,
+                            maxLines: 2,
                             controller: note,
                             decoration: InputDecoration(
                               labelText: "Mesajınız",
@@ -601,7 +601,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 if(inside == false){
                   if(internet == true){
                     listItems.length != 0 ?
-                     _sendOrders()
+                    //_sendOrders()
+                    _onLoading()
                         :
                     showDialog(
                         context: context,
@@ -680,6 +681,36 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
             )
         ));
   }
+  void _onLoading() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.lightBlueAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          side: BorderSide(
+            color: Colors.white,
+            width: 2.0,
+          ),
+        ) ,
+        child: new Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new CircularProgressIndicator(),
+            SizedBox(width: 10,),
+            new Text("İşleminiz Sürüyor",style: TextStyle(color: Colors.white),),
+          ],
+        ),
+      );
+    },
+  );
+  new Future.delayed(new Duration(seconds: 3), () {
+    Navigator.pop(context); //pop dialog
+    _sendOrders();
+  });
+}
 }
 
 //@JsonSerializable()

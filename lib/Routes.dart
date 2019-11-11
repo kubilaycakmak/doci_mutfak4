@@ -127,15 +127,15 @@ class _EntryScreenState extends State<EntryScreen> {
 var keyShared;
 var username;
 var password;
-static bool switcha = false;
+static bool switcha;
 GlobalKey _scaffold = GlobalKey();
 
 Function duringSplash = () {
     if (switcha == false) {
-              return 2;
-            } else {
-              return 1;
-            } 
+      return 2;
+    } else {
+      return 1;
+    } 
   };
 
 Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
@@ -146,13 +146,12 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     password = prefs.getString('LastPassword');
     keyShared = prefs.getString('LastKey');
     if(keyShared != null){
-      if(key != null){
       setState(() {
+        switcha = true;
         print(keyShared);
         postRequestAuto(username, password);
         postItselfAuto(keyShared);
       });
-      }
     }
     else{
       setState(() {
