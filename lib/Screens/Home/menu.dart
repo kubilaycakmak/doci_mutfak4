@@ -169,7 +169,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                       ),
                                     ),
                                   child:  ExpansionTile(
-                                    backgroundColor: Color.fromRGBO(128, 223, 255, 0.9),
+                                    backgroundColor: dataProducts[index][i]['valid'].toString() == 'true' ? Colors.transparent : Colors.redAccent,
                                       title: Text(dataProducts[index][i]['name'].toString()),
                                       leading: InkWell(
                                         child: dataProducts[index][i]['valid'].toString() == 'true' ? Icon(Icons.add_circle_outline) : Text(''),
@@ -262,8 +262,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                     side: BorderSide(
-                                      color: Colors.lightBlueAccent,
                                       width: 1.0,
+                                      color: Colors.black26
                                       ),
                                     ),
                                   child:  ExpansionTile(

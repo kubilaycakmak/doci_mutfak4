@@ -300,7 +300,7 @@ void _onLoading() {
       );
     },
   );
-  new Future.delayed(new Duration(milliseconds: 500), () {
+  new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
       postRequest();
   });
@@ -823,8 +823,38 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   @override
   void initState() { 
     super.initState();
-    this.getQuestion();
   }
+
+  void _onLoading() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.lightBlueAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          side: BorderSide(
+            color: Colors.white,
+            width: 2.0,
+          ),
+        ) ,
+        child: new Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new CircularProgressIndicator(),
+            SizedBox(width: 10,),
+            new Text(" Yükleniyor.. ",style: TextStyle(color: Colors.white),),
+          ],
+        ),
+      );
+    },
+  );
+  new Future.delayed(new Duration(milliseconds: 1500), () {
+    Navigator.pop(context); //pop dialog
+      getQuestion();
+  });
+}
 
   Future<http.Response> forgetPassRequest() async{
     var response = await http.put(Uri.encodeFull(
@@ -881,6 +911,15 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     else if(response.statusCode == 204){
       setState(() {
         _question = null;
+        Alert(
+          context: context,
+          title: 'Bu kullanıcı bulunamadı.',
+          buttons: [
+            DialogButton(child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            onPressed: ()=>Navigator.pop(context,false),
+            )
+          ]
+        ).show();
       });
     }
     return _question;
@@ -953,7 +992,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     trailing: MaterialButton(
                       // ignore: missing_return
                       onPressed: (){
-                          getQuestion();
+                          _onLoading();
                       }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
                   )
                 ]

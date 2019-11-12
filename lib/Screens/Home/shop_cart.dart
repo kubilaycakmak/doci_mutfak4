@@ -1,10 +1,7 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
-import 'package:doci_mutfak4/Model/item_to_cart.dart';
-import 'package:doci_mutfak4/Model/item_to_cart.dart' as prefix1;
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/login_register.dart' as prefix0;
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -707,7 +704,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       );
     },
   );
-  new Future.delayed(new Duration(milliseconds: 900), () {
+  new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
     _sendOrders();
   });
