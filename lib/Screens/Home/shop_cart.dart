@@ -707,7 +707,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       );
     },
   );
-  new Future.delayed(new Duration(seconds: 3), () {
+  new Future.delayed(new Duration(milliseconds: 900), () {
     Navigator.pop(context); //pop dialog
     _sendOrders();
   });

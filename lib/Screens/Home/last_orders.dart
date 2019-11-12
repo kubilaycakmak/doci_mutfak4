@@ -1,5 +1,6 @@
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -25,22 +26,29 @@ class LastOrders extends StatefulWidget {
 class _LastOrdersState extends State<LastOrders> {
   final String orderUrl = 'http://68.183.222.16:8080/api/order/user';
   List productItems;
+  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   List orderCount;
   bool orderStatus;
   double taste = 3;
   double rating = 0;
   double speed = 3;
+  String keyAgain;
   List starCount;
   double services = 3;
   var keyShared;
   var selectedId;
+  bool noUser;
   bool finishRaiting = false;
   var _commentController = new TextEditingController();
+    
     getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     keyShared = prefs.getString('LastKey');
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
+    if(key == ''){
+    }
   } 
 
   Future<List> _fetchData() async {
@@ -57,9 +65,60 @@ class _LastOrdersState extends State<LastOrders> {
             orderStatus = false;
         }
         return orderCount;
-    }else{
+    }else if(
+      response.statusCode == 401){
+        if(username != null){
+          postRequestAuto(username, password);
+          postItselfAuto(key);
+        }else{
+          print('username');
+        }
+    }
+    
+    else{
       throw Exception('Failed to get products');
     }
+  }
+
+    Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyJson.toString(),
+    });
+    print(response.body);
+    if(response.statusCode == 200){
+        noUser = false;
+        user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        return response;
+      }else{
+        //Navigator.of(context).pushReplacementNamed('/login');
+        setState(() {
+          noUser = true;
+        });
+        print(noUser);
+        throw Exception('postItselfAuto');
+    }
+  }
+
+    Future<http.Response> postRequestAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+        }
+      }
+    return response;
   }
   // ignore: missing_return
   Future<http.Response> _fetchRaiting() async{
@@ -124,8 +183,8 @@ class _LastOrdersState extends State<LastOrders> {
       this.getKey();
       this._fetchData();
       this._fetchData1();
+      keyAgain = key;
     });
-
   }
 
   @override
@@ -148,7 +207,7 @@ class _LastOrdersState extends State<LastOrders> {
            backgroundColor: Colors.lightBlueAccent,
          ),
          body: 
-         key == null ?//keyde olabilir.
+         key == null?
          Container(
            child: ListView(
              children: <Widget>[
@@ -157,7 +216,8 @@ class _LastOrdersState extends State<LastOrders> {
                Container(
                  child: Text('Eski siparişlerini görüntülemek için, lüften giriş yap!',textAlign: TextAlign.center,),
                  padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 10),
-               ),
+               )
+               ,
                SizedBox(height: 20,),
                Container(
                  child: FlatButton(
@@ -167,7 +227,26 @@ class _LastOrdersState extends State<LastOrders> {
                )
              ],
            ),
-         ) :
+         ) : noUser == true ? Container(
+           child: ListView(
+             children: <Widget>[
+               image,
+               SizedBox(height: 20,),
+               Container(
+                 child: Text('Eski siparişlerini görüntülemek için, lüften giriş yap!',textAlign: TextAlign.center,),
+                 padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 10),
+               )
+               ,
+               SizedBox(height: 20,),
+               Container(
+                 child: FlatButton(
+                   child: Text('Girişe git'),
+                   onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                 ),
+               )
+             ],
+           ),
+         ):
          orderStatus == false ? Container(
            child: ListView(
               children: <Widget>[

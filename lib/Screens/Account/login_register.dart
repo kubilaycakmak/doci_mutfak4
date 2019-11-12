@@ -1,5 +1,4 @@
 // import 'package:connectivity/connectivity.dart';
-import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -141,7 +140,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
           ], context: context,
         ).show();
       }
-    }else{}
+    }else if(response.statusCode == 401){
+      setState(() {
+        key = null;
+        print('key yok aga');
+      });
+    }
     print(response.body);
     return response;
   }
@@ -201,6 +205,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     };
 
     var body = json.encode(data);
+    print(data);
     var response = await http.post(registerCheck,
       headers: {
         "Content-Type":"application/json"
@@ -295,7 +300,7 @@ void _onLoading() {
       );
     },
   );
-  new Future.delayed(new Duration(seconds: 3), () {
+  new Future.delayed(new Duration(milliseconds: 500), () {
     Navigator.pop(context); //pop dialog
       postRequest();
   });
@@ -496,6 +501,14 @@ void _onLoading() {
                                 fontFamily: "Poppins",
                               ),
                             ),
+                            ListTile(
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('Şifre en az 5 haneli ve sayılardan oluşmalıdır.',),
+                                ],
+                              )
+                            ),
                             TextFormField(
                               controller: _password,
                               decoration: InputDecoration(
@@ -639,6 +652,7 @@ void _onLoading() {
                                       onChanged: (Questions questions) {
                                         setState(() {
                                           currentQuestion = questions;
+                                          setQuestion = questions.id;
                                         });
                                       },
                                       isExpanded: true,
@@ -647,12 +661,9 @@ void _onLoading() {
                                     );
                                   },
                                 ),
-                                SizedBox(
-                                  height: 20,
-                                ),
                                 currentQuestion != null
                                     ? Text(
-                                        currentQuestion.question,
+                                        'Soru : ' + currentQuestion.question,
                                         style: TextStyle(fontSize: 20),
                                       )
                                     : Text('')
@@ -709,6 +720,7 @@ void _onLoading() {
                           if (_formKey.currentState.validate()) {
                             if(_password.text == _password2.text){
                               _formKey.currentState.save();
+                              postRegisterRequest();
                               Alert(
                                 context: context,
                                 type: AlertType.success,
@@ -804,8 +816,15 @@ class ForgetPassword extends StatefulWidget {
 class _ForgetPasswordState extends State<ForgetPassword> {
   final _forgetUsername = TextEditingController();
   final _forgetAnswer = TextEditingController();
+  var _question;
   var newPass;
   bool isCorrectIntent = false;
+
+  @override
+  void initState() { 
+    super.initState();
+    this.getQuestion();
+  }
 
   Future<http.Response> forgetPassRequest() async{
     var response = await http.put(Uri.encodeFull(
@@ -849,6 +868,24 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     return response;
   }
 
+  Future<String> getQuestion() async{
+    var response = await http.get('http://68.183.222.16:8080/api/userAccount/securityQuestion/?username=${_forgetUsername.text}');
+    print(response.statusCode);
+    if(response.statusCode == 200){
+      setState(() {
+
+        var body = json.decode(response.body);
+        _question = body['question'].toString();
+      });
+    }
+    else if(response.statusCode == 204){
+      setState(() {
+        _question = null;
+      });
+    }
+    return _question;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -856,7 +893,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         backgroundColor: Colors.lightBlueAccent,
         title: Text('Şifremi unuttum'),
         centerTitle: true,
-        leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),),
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),),
       ),
       body: Container(
         child: ListView(
@@ -864,45 +901,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             Padding(
               padding: EdgeInsets.all(25),
               child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    controller: _forgetUsername,
-                    autovalidate: true,
-                    validator: (String arg){
-                      if(arg.length == 0){
-                        return 'Lütfen kullanıcı adını giriniz.';
-                      }
-                      else{
-                        return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Kullanıcı Adı",
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white, width: 2.0),
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                    ),
-                  ),
+                children: 
+                _question != null ?
+                <Widget>[
                   SizedBox(height: 20,),
-                  Text(' SORU '),
+                  Text('Soru : $_question'),
                   SizedBox(height: 20,),
                   TextFormField(
                     controller: _forgetAnswer,
-                    autovalidate: true,
-                    validator: (String arg){
-                      if(arg.length == 0){
-                        return 'Lütfen cevabını giriniz';
-                      }
-                      else{
-                        return null;
-                      }
-                    },
                     decoration: InputDecoration(
                       labelText: "Cevap",
                       fillColor: Colors.white,
@@ -924,7 +930,33 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           forgetPassRequest();
                       }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
                   )
-                ],
+                ] 
+                :
+                <Widget>[
+                  TextFormField(
+                    controller: _forgetUsername,
+                    decoration: InputDecoration(
+                      labelText: "Kullanıcı Adı",
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.only(top: 20),
+                    trailing: MaterialButton(
+                      // ignore: missing_return
+                      onPressed: (){
+                          getQuestion();
+                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
+                  )
+                ]
               ),
             ),
           ],

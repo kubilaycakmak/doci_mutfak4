@@ -21,27 +21,55 @@ var image = new Image(image: backgroundImage);
 
 class _ProfileState extends State<Profile> {
   var keyShared;
+  String name;
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+
+    Future<http.Response> postRequestAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+        }
+      }
+    return response;
+  }
 
   Future<http.Response> postItself() async{
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": key,
     });
-    setState(() {
+
+    if(response.statusCode == 200){
       user = json.decode(response.body);
-    });
-    var userInfo = new User(
-        id: user["value"]["id"],
-        name: user["value"]["name"],
-        lastname: user["value"]["lastname"],
-        phoneNumber: user["value"]["phoneNumber"],
-        address: user["value"]["address"],
-        created: user["value"]["created"]
-    );
-    userInformations.clear();
-    userInformations.add(userInfo);
-    statusCode = response.statusCode;
+      var userInfo = new User(
+          id: user["value"]["id"],
+          name: user["value"]["name"],
+          lastname: user["value"]["lastname"],
+          phoneNumber: user["value"]["phoneNumber"],
+          address: user["value"]["address"],
+          created: user["value"]["created"]
+      );
+      userInformations.clear();
+      userInformations.add(userInfo);
+      print(userInformations[0].name);
+      setState(() {
+        name = userInformations[0].name;
+      });
+    }else if(response.statusCode == 401){
+      postRequestAuto(username, password);
+    }
     print(response.statusCode);
+    
     return response;
   }
 
@@ -68,6 +96,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    this.postItself();
     this.getKey();
   }
 
@@ -108,7 +137,8 @@ class _ProfileState extends State<Profile> {
                         child: Center(
                           heightFactor: 3,
                           child: Text(
-                            "Hoşgeldiniz ",
+                            name == null ? "Hoşgeldin" :
+                            "Hoşgeldin $name",
                             style: TextStyle(fontSize: 20),
                           ),
                         ),

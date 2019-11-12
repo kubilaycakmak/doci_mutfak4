@@ -135,9 +135,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                 return Card(
                   elevation: 3,
                   child: ExpansionTile(
-                    leading: Icon(Icons.fastfood),
                     onExpansionChanged: (val){
                       setState(() {
+                        print(_scrollController);
                         if (val){
                           previousOffset = _scrollController.offset;
                         }
