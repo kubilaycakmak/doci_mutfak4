@@ -472,6 +472,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         child: ListTile(
                             title: Text('Teslimat Adresi'),
                             subtitle: TextFormField(
+                              autofocus: true,
                               maxLines: 2,
                               controller: _addressController,
                               decoration: InputDecoration(),
@@ -486,6 +487,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             _phoneController.text, style: TextStyle(fontSize: 20),
                             )
                           ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Text('Odeme yontemleri', textAlign: TextAlign.center,),
                       ),
                       Card(
                         margin: EdgeInsets.all(5),
@@ -516,6 +521,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             ),
                           ],
                         ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Text('Siparis Ozeti', textAlign: TextAlign.center,),
                       ),
                       Card(
                         margin: EdgeInsets.all(5),
