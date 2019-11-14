@@ -161,7 +161,30 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                 ),
                                 ),
                                 title: Text(dataProducts[index][i]['name'].toString(),),
-                                subtitle: dataProducts[index][i]['description'].toString() == '' ? null : Text('Açıklama için tıklayınız', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12),),
+                                subtitle: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    currentSelected.toString() == dataProducts[index][i].toString() ?
+                                    dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') : Text((dataProducts[index][i]['priceWithoutNoDiscount']).toInt().toString() +' TL',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          decoration: TextDecoration
+                                              .lineThrough,
+                                          fontWeight:
+                                          FontWeight.w400),) : dataProducts[index][i]['priceWithoutNoDiscount'].toInt() == 0 ? Text(' ') :  Text(dataProducts[index][i]['priceWithoutNoDiscount'].toInt().toString() +' TL',style: TextStyle(
+                                        fontSize: 13,
+                                        decoration: TextDecoration
+                                            .lineThrough,
+                                        fontWeight:
+                                        FontWeight.w400),),
+                                    Text('  '),
+                                    currentSelected.toString() == dataProducts[index][i].toString() ?
+                                    Text((dataProducts[index][i]["price"]).toInt().toString() +' TL') : Text(dataProducts[index][i]["price"].toInt().toString() +' TL'),
+                                    SizedBox(width: 20,),
+                                    dataProducts[index][i]['description'].toString() != '' ? 
+                                    Text('Açıklama için tıklayınız', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12),) : Text(''),
+                                  ],
+                                ),
                                 onTap: (){
                                   dataProducts[index][i]['description'].toString() == '' ? null : Alert(
                                     context: context,
