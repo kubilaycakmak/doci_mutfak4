@@ -281,26 +281,26 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.w600);
 
-void _onLoading() {
+  void _onLoading() {
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.lightBlueAccent,
+      return AlertDialog(
+        backgroundColor: Colors.black38,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.white,
-            width: 2.0,
-          ),
-        ) ,
-        child: new Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            new CircularProgressIndicator(),
-            SizedBox(width: 10,),
-            new Text("  Giriş Yapılıyor ",style: TextStyle(color: Colors.white),),
+            color: Colors.lightBlueAccent,
+            width: 2
+          )
+        ),
+        title: Column(
+          children: <Widget>[
+            CircularProgressIndicator(
+            ),
+            SizedBox(height: 5,),
+            Text('Giriş Yapılıyor...', style: TextStyle(color: Colors.white),)
           ],
         ),
       );
@@ -308,7 +308,7 @@ void _onLoading() {
   );
   new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
-      postRequest();
+    postRequest();
   });
 }
 
@@ -360,6 +360,8 @@ void _onLoading() {
               backgroundColor: Colors.lightBlueAccent,
             ),
           ),
+          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomPadding: false,
           body: TabBarView(
             controller: tabController,
             children: <Widget>[
@@ -645,11 +647,11 @@ void _onLoading() {
                                       AsyncSnapshot<List<Questions>> snapshot) {
                                     if (!snapshot.hasData)
                                       return CircularProgressIndicator();
-                                    return DropdownButton<Questions>(
-                                      style: TextStyle(
-                                          fontSize: 17, color: Colors.black),
-                                      items: snapshot.data
-                                          .map((question) =>
+                                    return SingleChildScrollView(
+                                      scrollDirection: Axis.vertical,
+                                      child: DropdownButton<Questions>(
+                                      style: TextStyle(fontSize: 17, color: Colors.black),
+                                      items: snapshot.data.map((question) =>
                                               DropdownMenuItem<Questions>(
                                                 child: Text(question.question),
                                                 value: question,
@@ -664,6 +666,7 @@ void _onLoading() {
                                       isExpanded: true,
                                       elevation: 20,
                                       hint: Text('Lütfen bir soru seçiniz'),
+                                    ),
                                     );
                                   },
                                 ),

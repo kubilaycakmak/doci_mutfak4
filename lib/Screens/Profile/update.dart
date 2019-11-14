@@ -49,21 +49,21 @@ class _UpdateState extends State<Update> {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.lightBlueAccent,
+      return AlertDialog(
+        backgroundColor: Colors.black38,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.white,
-            width: 2.0,
-          ),
-        ) ,
-        child: new Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            new CircularProgressIndicator(),
-            SizedBox(width: 10,),
-            new Text("  İşleminiz sürüyor.. ",style: TextStyle(color: Colors.white),),
+            color: Colors.lightBlueAccent,
+            width: 2
+          )
+        ),
+        title: Column(
+          children: <Widget>[
+            CircularProgressIndicator(
+            ),
+            SizedBox(height: 5,),
+            Text('İşleminiz Sürüyor...', style: TextStyle(color: Colors.white),)
           ],
         ),
       );
@@ -71,7 +71,7 @@ class _UpdateState extends State<Update> {
   );
   new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
-      postUpdate();
+    postUpdate();
       postItself();
   });
 }

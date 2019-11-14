@@ -700,21 +700,21 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.lightBlueAccent,
+      return AlertDialog(
+        backgroundColor: Colors.black38,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.white,
-            width: 2.0,
-          ),
-        ) ,
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(child: new CircularProgressIndicator(),height: 10,),
-            SizedBox(width: 10,),
-            new Text("İşleminiz Sürüyor",style: TextStyle(color: Colors.white),),
+            color: Colors.lightBlueAccent,
+            width: 2
+          )
+        ),
+        title: Column(
+          children: <Widget>[
+            CircularProgressIndicator(
+            ),
+            SizedBox(height: 5,),
+            Text('İşleminiz Sürüyor...', style: TextStyle(color: Colors.white),)
           ],
         ),
       );
