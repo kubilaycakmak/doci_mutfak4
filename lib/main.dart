@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 main() async {
 
-  ErrorWidget.builder = (FlutterErrorDetails details) => Scaffold(
+  ErrorWidget.builder = (FlutterErrorDetails details) => Container(child:Scaffold(
     appBar: AppBar(
       backgroundColor: Colors.lightBlueAccent,
       title: Text('Hata'),
     ),
     body: ErrorHandlingPage()
-  );
+  ));
   Routes();
 }
 

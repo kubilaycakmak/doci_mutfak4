@@ -1,5 +1,6 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
+import 'dart:io';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
@@ -49,7 +50,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -310,6 +310,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
 User currentUser;
 
 class EndOfTheShoppingCart extends StatefulWidget {
+
+  String validatePhoneNumber(String value){
+  Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
+  RegExp regexPhone = new RegExp(cellphone);
+  if(!regexPhone.hasMatch(value))
+    return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
+  else
+    return null;
+}
+
   @override
   _EndOfTheShoppingCartState createState() => _EndOfTheShoppingCartState();
 }
@@ -375,7 +385,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       };
        listId.add(id);
     }
-    Order or = Order(listId, note.text, payment,_addressController.text);
+    Order or = Order(listId, note.text, payment,_addressController.text, _phoneController.text);
     var body = JSON.jsonEncode(or.toJson());
     var response = await http.post(Uri.encodeFull(orderCreate),
         headers: {
@@ -384,14 +394,17 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           "authorization": key,
         },
         body: body);
+        print(body);
+
     if (response.statusCode == 201) {
         print(' Response Body : ' + response.body);
         listItems.clear();
          Alert(
           type: AlertType.success,
           title: 'Siparişiniz Onaylandı',
-          desc:
-          'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
+
+          desc:'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
+          
           buttons: [
             DialogButton(
               onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
@@ -399,6 +412,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
             ),
           ],
           context: context,
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+            isCloseButton: false,
+            isOverlayTapDismiss: false,
+          )
         ).show();
 
     } else {
@@ -440,7 +459,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
       appBar: AppBar(
                 backgroundColor: Colors.lightBlueAccent,
                 title: Text('Siparişi Onayla | Bitir'),
-                centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back_ios),
@@ -452,10 +470,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                   color: Colors.white,
                   child: ListView(
                     children: <Widget>[
-                      Card(
-                        margin: EdgeInsets.all(5),
-                        elevation: 0.2,
-                        child: Container(
+                        Container(
                           padding: EdgeInsets.all(10),
                           child: Text(
                             'Aşağıdaki bilgiler doğru ise değişiklik yapmadan ilerleyiniz.',
@@ -465,37 +480,38 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                                 color: Colors.black45),
                           ),
                         ),
-                      ),
-                      Card(
-                        margin: EdgeInsets.all(5),
-                        elevation: 1,
-                        child: ListTile(
-                            title: Text('Teslimat Adresi'),
-                            subtitle: TextFormField(
-                              autofocus: true,
-                              maxLines: 2,
-                              controller: _addressController,
-                              decoration: InputDecoration(),
-                            )),
-                      ),
-                      Card(
-                        margin: EdgeInsets.all(5),
-                        elevation: 1,
-                        child: ListTile(
-                          title: Text('Telefon Numarası'),
-                          subtitle: Text(
-                            _phoneController.text, style: TextStyle(fontSize: 20),
+                      Divider(thickness: 2,),
+                      ListTile(
+                        title: Text('Teslimat Adresi'),
+                        subtitle: TextFormField(
+                          maxLines: 2,
+                          controller: _addressController,
+                          decoration: InputDecoration(
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide.none
                             )
                           ),
-                      ),
+                        )),
+                        Divider(thickness: 2,),
+                      ListTile(
+                        title: Text('Telefon Numarası'),
+                        subtitle: TextFormField(
+                          keyboardType: TextInputType.number,
+                          autofocus: false,
+                          controller: _phoneController,
+                          decoration: InputDecoration(
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide.none
+                            )
+                          ),
+                        )),
+                        Divider(thickness: 2,),
                       Padding(
                         padding: EdgeInsets.all(5),
                         child: Text('Odeme yontemleri', textAlign: TextAlign.center,),
                       ),
-                      Card(
-                        margin: EdgeInsets.all(5),
-                        elevation: 1,
-                        child: Column(
+                      Divider(thickness: 2,),
+                       Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             RadioListTile(
@@ -521,15 +537,13 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             ),
                           ],
                         ),
-                      ),
+                        Divider(thickness: 2,),
                       Padding(
                         padding: EdgeInsets.all(5),
                         child: Text('Siparis Ozeti', textAlign: TextAlign.center,),
                       ),
-                      Card(
-                        margin: EdgeInsets.all(5),
-                        elevation: 1,
-                        child: ListView.builder(
+                      Divider(thickness: 2,),
+                        ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
@@ -557,11 +571,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             );
                           },
                         ),
-                      ),
-                      Card(
-                        elevation: 1,
-                        margin: EdgeInsets.all(5),
-                        child: Container(
+                        Divider(thickness: 2,),
+                 Container(
                           padding: EdgeInsets.all(20),
                           child: Text(
                             'Tutar : ' + finalPrice.toInt().toString() + ' TL',
@@ -570,11 +581,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             ),
                           ),
                         ),
-                      ),
-                      Card(
-                        elevation: 1,
-                        margin: EdgeInsets.all(5),
-                        child: Container(
+                        Divider(thickness: 2,),
+                        Container(
                           margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
                           child: TextFormField(
                             maxLines: 2,
@@ -585,8 +593,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                               hintMaxLines: 100,
                               fillColor: Colors.white,
                               border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors
-                                    .lightBlueAccent),
+                                borderSide: BorderSide.none,
                               ),
                             ),
                             keyboardType: TextInputType.text,
@@ -595,10 +602,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             ),
                           ),
                         ),
-                      )
+                        Divider(thickness: 2,),
                     ],
                   )),
-      bottomNavigationBar: CupertinoButton(
+          bottomNavigationBar: SingleChildScrollView(child: CupertinoButton(
             borderRadius: BorderRadius.circular(0),
             pressedOpacity: 0.2,
             color: Colors.lightBlueAccent,
@@ -685,7 +692,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
               ),
             ),
             padding: EdgeInsets.all(25),
-            )
+            ),)
         ));
   }
   void _onLoading() {
@@ -703,9 +710,9 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           ),
         ) ,
         child: new Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            new CircularProgressIndicator(),
+            Container(child: new CircularProgressIndicator(),height: 10,),
             SizedBox(width: 10,),
             new Text("İşleminiz Sürüyor",style: TextStyle(color: Colors.white),),
           ],
@@ -726,8 +733,9 @@ class Order{
   String note;
   Map payment;
   String address;
+  String phoneNumber;
 
-  Order(this.product, this.note, this.payment, this.address);
+  Order(this.product, this.note, this.payment, this.address, this.phoneNumber);
 
   Map<String, dynamic> toJson() =>
       {
@@ -735,5 +743,6 @@ class Order{
         'note': note,
         'paymentMethod':payment,
         'address':address,
+        'phoneNumber':phoneNumber
       };
 }

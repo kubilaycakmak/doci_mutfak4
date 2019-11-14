@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
-          SizedBox(width: SizeConfig.blockSizeHorizontal * 5,),
+          SizedBox(width: SizeConfig.blockSizeHorizontal * 15,),
           ButtonTheme(
               child: FlatButton(
                 onPressed: () {

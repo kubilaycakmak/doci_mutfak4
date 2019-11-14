@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
@@ -142,10 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           
           items: [
-              BottomNavyBarItem(icon: Icon(Icons.person_outline), title:inside == false ? Text('Profilim') : Text('Giriş Yap \nKayıt Ol'), activeColor: Colors.white),
-              BottomNavyBarItem(icon: Icon(Icons.fastfood,), title: Text('Menü'), activeColor: Colors.white),
-              BottomNavyBarItem(icon: Icon(Icons.check_box,), title: Text('Siparişlerim'), activeColor: Colors.white),
-              BottomNavyBarItem(icon: Icon(Icons.shopping_cart,), title: Text('Sepetim'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(Icons.person_pin), title:inside == false ? Text('Profilim') : Text('Giriş Yap \nKayıt Ol'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(Icons.fastfood), title: Text('Menü'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(Icons.list), title: Text('Siparişlerim'), activeColor: Colors.white),
+              BottomNavyBarItem(icon: Icon(FontAwesomeIcons.shoppingBag), title: Text('Sepetim'), activeColor: Colors.white,),
           ],
         ),
         )

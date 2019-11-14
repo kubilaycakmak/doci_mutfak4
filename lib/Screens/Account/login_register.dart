@@ -110,7 +110,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
     };
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
-    statusCode = response.statusCode;
+    print(response.statusCode);
     if (response.statusCode == 200) {
       authKey = json.decode(response.body);
       key = authKey["authorization"];
@@ -140,10 +140,16 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
           ], context: context,
         ).show();
       }
-    }else if(response.statusCode == 401){
+    }else if(response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 500){
       setState(() {
         key = null;
-        print('key yok aga');
+        Alert(
+          context: context,
+          title: 'Server Hatasi',
+          desc: 'Serverimiz suan da bakimdadir, lutfen daha sonra tekrar deneyiniz.',
+          buttons: [
+          ]
+        ).show();
       });
     }
     print(response.body);

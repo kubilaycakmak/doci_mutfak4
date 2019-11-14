@@ -444,8 +444,9 @@ class _LastOrdersState extends State<LastOrders> {
                               Text("Siparişi oylayabilmeniz için, restaurant'ın siparişi onaylaması gerekmektedir", textAlign: TextAlign.center,)
                             ],
                           ),
-                          
-                          SizedBox(height: 10,),
+                          Divider(
+                            height: 20,
+                          ),
                            CupertinoButton(
                              onPressed: (){
                                setState(() {
@@ -465,6 +466,12 @@ class _LastOrdersState extends State<LastOrders> {
                                  Alert(
                                    context:context,
                                    type: AlertType.success,
+                                   style: AlertStyle(
+                                    animationDuration: Duration(milliseconds: 500),
+                                    animationType: AnimationType.grow,
+                                    isCloseButton: false,
+                                    isOverlayTapDismiss: false,
+                                  ),
                                    title: 'Sipariş başarıyla sepete eklendi',
                                    buttons: [
                                      DialogButton(

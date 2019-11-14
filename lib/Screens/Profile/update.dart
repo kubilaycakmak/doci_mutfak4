@@ -8,6 +8,24 @@ import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 
+String nameValidator(String value){
+  Pattern pattern = r'^[a-zA-Z0-9. ğüşöçİĞÜŞÖÇ]{5,20}$';
+  RegExp regex = new RegExp(pattern);
+  if(!regex.hasMatch(value))
+    return 'Adınızı düzeltiniz';
+  else
+    return null;
+}
+
+String validatePhoneNumber(String value){
+  Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
+  RegExp regexPhone = new RegExp(cellphone);
+  if(!regexPhone.hasMatch(value))
+    return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
+  else
+    return null;
+}
+
 String statusValidatorUpdate;
 bool validate = false;
 class Update extends StatefulWidget {
@@ -18,12 +36,45 @@ class Update extends StatefulWidget {
 }
 
 class _UpdateState extends State<Update> {
+  final _formKey = new GlobalKey<FormState>();
   var name = TextEditingController(text: userInformations[0].name);
   var lastName = TextEditingController(text: userInformations[0].lastname);
   var phoneNumber = TextEditingController(text: userInformations[0].phoneNumber);
   var address = TextEditingController(text: userInformations[0].address);
   final String updateUrl = 'http://68.183.222.16:8080/api/user/update';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+
+  void _onLoading() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.lightBlueAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+          side: BorderSide(
+            color: Colors.white,
+            width: 2.0,
+          ),
+        ) ,
+        child: new Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new CircularProgressIndicator(),
+            SizedBox(width: 10,),
+            new Text("  İşleminiz sürüyor.. ",style: TextStyle(color: Colors.white),),
+          ],
+        ),
+      );
+    },
+  );
+  new Future.delayed(new Duration(milliseconds: 2000), () {
+    Navigator.pop(context); //pop dialog
+      postUpdate();
+      postItself();
+  });
+}
 
 
   Future<http.Response> postItself() async {
@@ -43,17 +94,6 @@ class _UpdateState extends State<Update> {
       userInformations.add(userInfo);
     }
     return response;
-  }
-
-  String validatePhoneNumberUpdate(String value){
-    Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
-    RegExp regexPhone = new RegExp(cellphone);
-    if(!regexPhone.hasMatch(value))
-      return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
-    else {
-      validate = true;
-      return null;
-    }
   }
 
   Future<http.Response> postUpdate() async {
@@ -134,14 +174,18 @@ class _UpdateState extends State<Update> {
               ),
             ),
             Form(
+              key: _formKey,
+              autovalidate: validate,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: <Widget>[
-
                     TextFormField(
+                      autovalidate: true,
+                      validator: nameValidator,
                       controller: name,
                       decoration: InputDecoration(
+                        helperText: 'Adınız boşluk içeremez',
                         labelText: 'Ad',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
@@ -157,11 +201,12 @@ class _UpdateState extends State<Update> {
                     ),
 
                     TextFormField(
-                      onChanged: (val){
-                      },
                       controller: lastName,
+                      autovalidate: true,
+                      validator: nameValidator,
                       decoration: InputDecoration(
                         labelText: 'Soyad',
+                        helperText: 'Soyadınız boşluk içeremez',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -177,6 +222,7 @@ class _UpdateState extends State<Update> {
 
                     TextFormField(
                       controller: phoneNumber,
+                      autovalidate: true,
                       decoration: InputDecoration(
                         labelText: 'Telefon numarası',
                         fillColor: Colors.white,
@@ -186,15 +232,16 @@ class _UpdateState extends State<Update> {
                           ),
                         ),
                       ),
-                      validator: validatePhoneNumberUpdate,
+                      validator: validatePhoneNumber,
                       keyboardType: TextInputType.number,
                       style: TextStyle(
                         fontFamily: "Poppins",
                       ),
                     ),
                     TextFormField(
+                      autovalidate: true,
                       controller: address,
-                      maxLines: 3,
+                      maxLines: 2,
                       maxLength: 100,
                       decoration: InputDecoration(
                         labelText: 'Adres',
@@ -214,8 +261,9 @@ class _UpdateState extends State<Update> {
                     ListTile(
                       trailing: CupertinoButton(
                         onPressed: (){
-                          postUpdate();
-                          postItself();
+                          if (_formKey.currentState.validate()) {
+                            _onLoading();
+                          }
                         }, child: Text('Güncelle', style: TextStyle(color: Colors.white),)
                         ,color: Colors.lightBlueAccent
                       )
