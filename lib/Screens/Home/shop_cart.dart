@@ -1,6 +1,5 @@
 import 'dart:convert' as JSON;
 import 'dart:convert';
-import 'dart:io';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShoppingCart extends StatefulWidget {
   ShoppingCart({Key key}) : super(key: key);
@@ -23,6 +23,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
   final _countController = TextEditingController();
   User user;
   var user1;
+  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
+  bool noUser;
   bool internet = true;
   var keyShared;
   bool switcha;
@@ -31,6 +34,59 @@ class _ShoppingCartState extends State<ShoppingCart> {
   void dispose() {
     _countController.dispose();
     super.dispose();
+  }
+
+
+    Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyJson.toString(),
+    });
+    print(response.body);
+    if(response.statusCode == 200){
+        noUser = false;
+        var user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        return response;
+      }else{
+        //Navigator.of(context).pushReplacementNamed('/login');
+        setState(() {
+          noUser = true;
+        });
+        print(noUser);
+        throw Exception('postItselfAuto');
+    }
+    
+  }    
+    getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+    if(key == ''){
+      postItselfAuto(keyShared);
+      postRequestAuto(username, password);
+    }
+  } 
+
+      Future<http.Response> postRequestAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+        }
+      }
+    return response;
   }
 
   void _showToast(BuildContext context, String desc) {
@@ -49,6 +105,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getKey();
   }
 
   @override
@@ -212,7 +274,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   color: Colors.lightBlueAccent,
                   // ignore: missing_return
                   onPressed: (){
-                      if(key != ''){
+                      if(keyShared != ''){
                         if(inside == false){
                          if(internet == true){
                            listItems.length != 0 ?
@@ -290,11 +352,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
     );
   }
   var alertStyle = AlertStyle(
-    animationType: AnimationType.fromTop,
     isCloseButton: false,
     isOverlayTapDismiss: false,
     backgroundColor: Colors.white,
-    animationDuration: Duration(milliseconds: 400),
+    animationDuration: Duration(milliseconds: 500),
+    animationType: AnimationType.grow,
     alertBorder: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(0.0),
       side: BorderSide(
@@ -325,7 +387,8 @@ class EndOfTheShoppingCart extends StatefulWidget {
 }
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-  
+  var keyShared;
+  bool noUser;
   final _addressController =new TextEditingController(text: listItems[0].address == null ? userInformations[0].address : listItems[0].address);
   final _phoneController =
   new TextEditingController(text: userInformations[0].phoneNumber);
@@ -333,6 +396,58 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String paymentMethodsUrl =
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
+
+  Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyJson.toString(),
+    });
+    print(response.body);
+    if(response.statusCode == 200){
+        noUser = false;
+        var user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        return response;
+      }else{
+        //Navigator.of(context).pushReplacementNamed('/login');
+        setState(() {
+          noUser = true;
+        });
+        print(noUser);
+        throw Exception('postItselfAuto');
+    }
+    
+  }    
+    getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+    if(key == ''){
+      postItselfAuto(keyShared);
+      postRequestAuto(username, password);
+    }
+  } 
+
+      Future<http.Response> postRequestAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            Navigator.of(context).pushReplacementNamed('/home');
+          });
+        } else {
+        }
+      }
+    return response;
+  }
 
 
     Future<http.Response> postItself() async {
@@ -359,6 +474,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   void initState() {
     super.initState();
     setState(() {
+      this.getKey();
       this.postItself();
     });
     selectedPayment = 1;
@@ -402,9 +518,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
          Alert(
           type: AlertType.success,
           title: 'Siparişiniz Onaylandı',
-
           desc:'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
-          
           buttons: [
             DialogButton(
               onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
@@ -420,9 +534,41 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           )
         ).show();
 
-    } else {
+    } else if(response.statusCode == 401){
+      if(username != null && password !=null ){
+        postRequestAuto(username, password);
+        postItselfAuto(keyShared);
+      }else{
+        setState(() {
+        return Alert(
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+          ),
+          type: AlertType.error,
+          title: 'Hata',
+          desc:
+          'Lütfen sipariş verebilmek için giriş yapınız.',
+          buttons: [
+            DialogButton(
+              onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ],
+          context: context,
+        ).show();
+      });
+      throw Exception('Failed to fetch sendOrders');
+      }
+      
+    }
+    else {
       setState(() {
         return Alert(
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+          ),
           type: AlertType.error,
           title: 'Hata',
           desc:
@@ -437,7 +583,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         ).show();
       });
       throw Exception('Failed to fetch sendOrders');
-    }
+    } 
     return response;
   }
 
@@ -634,6 +780,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                   }
                   else{
                     return Alert(
+                      style: AlertStyle(
+                                  animationDuration: Duration(milliseconds: 500),
+                                  animationType: AnimationType.grow,
+                                ),
                     title: 'İnternet Hatası',
                     desc:
                         'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
@@ -648,6 +798,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 }
                 }else{
                  return Alert(
+                   style: AlertStyle(
+                    animationDuration: Duration(milliseconds: 500),
+                    animationType: AnimationType.grow,
+                  ),
                   title: 'Kullanıcı bulunamadı',
                   desc:
                       'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
@@ -667,6 +821,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
               }
               }else{
                 return Alert(
+                  style: AlertStyle(
+                                  animationDuration: Duration(milliseconds: 500),
+                                  animationType: AnimationType.grow,
+                                ),
                 title: 'Kullanıcı bulunamadı',
                 desc:
                     'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',

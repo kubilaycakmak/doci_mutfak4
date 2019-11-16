@@ -338,7 +338,7 @@ class _LastOrdersState extends State<LastOrders> {
                               starCount: 5,
                               rating: taste,
                               size: 40.0,
-                              color: Colors.lightBlueAccent,
+                              color: Colors.yellow[600],
                               borderColor: Colors.black26,
                               spacing:3.0
                             ),
@@ -354,7 +354,7 @@ class _LastOrdersState extends State<LastOrders> {
                               starCount: 5,
                               rating: speed,
                               size: 40.0,
-                              color: Colors.lightBlueAccent,
+                              color: Colors.yellow[600],
                               borderColor: Colors.black26,
                               spacing:3.0
                             ),
@@ -370,7 +370,7 @@ class _LastOrdersState extends State<LastOrders> {
                               starCount: 5,
                               rating: services,
                               size: 40.0,
-                              color: Colors.lightBlueAccent,
+                              color: Colors.yellow[600],
                               borderColor: Colors.black26,
                               spacing:3.0
                             ),
@@ -380,7 +380,7 @@ class _LastOrdersState extends State<LastOrders> {
                               controller: _commentController,
                               decoration: InputDecoration(
                                 labelText: 'Yorumunuz',
-                                labelStyle: TextStyle(backgroundColor: Colors.lightBlueAccent, color: Colors.white, fontSize: 20, letterSpacing: 1.3),
+                                labelStyle: TextStyle(backgroundColor: Colors.yellow[700], color: Colors.white, fontSize: 20, letterSpacing: 1.3),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(2),
                                 )
@@ -388,7 +388,7 @@ class _LastOrdersState extends State<LastOrders> {
                             ),
                             SizedBox(height: 10,),
                             CupertinoButton(
-                            child: Text('Degerlendirmeyi Onayla'),
+                            child: Text('    Siparişi Oyla    '),
                             onPressed: (){
                               setState(() {
                                 selectedId = orderCount[index]['id'];
@@ -402,7 +402,7 @@ class _LastOrdersState extends State<LastOrders> {
                                 print(selectedId);
                               });
                             },
-                            color: Colors.lightBlueAccent,
+                            color: Colors.yellow[800],
                           ),
                             ] : <Widget>[
                               ListTile(
@@ -482,7 +482,7 @@ class _LastOrdersState extends State<LastOrders> {
                                  ).show();
                                });
                              },
-                             color: Colors.lightBlueAccent,
+                             color: Colors.yellow[800],
                              child: Text('Siparişi Tekrarla'),
                            ),
                            SizedBox(height: 10,)

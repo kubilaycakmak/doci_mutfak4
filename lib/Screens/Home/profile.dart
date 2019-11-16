@@ -122,20 +122,18 @@ class _ProfileState extends State<Profile> {
                           print(key);
                         },
                         child: image,
-                        padding: EdgeInsets.only(bottom: 25),
+                        padding: EdgeInsets.only(bottom: 10),
                         color: Colors.lightBlueAccent,
                       ),
-                      Card(
-                        elevation: 5,
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Card(
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          side: BorderSide(
-                            color: Colors.white,
-                            width: 2.0,
-                          ),
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Center(
-                          heightFactor: 3,
+                          heightFactor: 2,
                           child: Text(
                             name == null ? "Hoşgeldin" :
                             "Hoşgeldin $name",
@@ -143,13 +141,15 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-                      Card(
-                        elevation: 10,
+                      ),
+                      Container(
+                        child: Card(
+                        elevation: 1,
                         shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         side: BorderSide(
-                          color: Colors.white,
-                          width: 2.0,
+                          color: Colors.lightBlueAccent,
+                          width: 1,
                           ),
                         ),
                         child: Container(
@@ -183,7 +183,7 @@ class _ProfileState extends State<Profile> {
                             ),
                             SizedBox(height: 10,),
                             CupertinoButton(
-                              color: Colors.red,
+                              color: Colors.redAccent,
                               pressedOpacity: 0.5,
                               child: Text('Çıkış Yap', textAlign: TextAlign.center,),
                               onPressed: () {
@@ -200,6 +200,8 @@ class _ProfileState extends State<Profile> {
                           ],
                         ),
                         )
+                      ),
+                      padding: EdgeInsets.all(10),
                       ),
                     ],
             )

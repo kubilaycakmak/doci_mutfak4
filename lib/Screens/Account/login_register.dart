@@ -51,7 +51,7 @@ String validatePassword(String value){
   Pattern pattern = r'^[a-zA-Z0-9._-]{5,15}$';
   RegExp regex = new RegExp(pattern);
   if(!regex.hasMatch(value))
-    return 'Sifrenizi duzeltiniz';
+    return 'Şifrenizi düzeltiniz';
   else
     return null;
 }
@@ -59,7 +59,7 @@ String validateAnswer(String value){
  Pattern pattern = r'^[a-zA-Z0-9.-]{2,15}$';
  RegExp regex = new RegExp(pattern);
  if(!regex.hasMatch(value))
-   return 'Cevabinizi duzeltiniz';
+   return 'Cevabınızı düzeltiniz';
  else
    return null;
 }
@@ -125,6 +125,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       }else{
         print('alamadik');
         Alert(
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+          ),
           type: AlertType.warning,
           title: 'Kullanıcı adı ve ya Şifre yanlış',
           desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
@@ -144,6 +148,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       setState(() {
         key = null;
         Alert(
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+          ),
           context: context,
           title: 'Server Hatasi',
           desc: 'Serverimiz suan da bakimdadir, lutfen daha sonra tekrar deneyiniz.',
@@ -415,7 +423,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.text,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: "RobotoMono",
@@ -431,7 +439,11 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                                   print('yanlis giris');
                                   Alert(
                                     type: AlertType.warning,
-                                    title: 'Kullanıcı adı ve ya şifre boş',
+                                    style: AlertStyle(
+                                      animationDuration: Duration(milliseconds: 500),
+                                      animationType: AnimationType.grow,  
+                                    ),
+                                    title: 'Kullanıcı adı ve ya şifre',
                                     desc: "Lütfen giriş yapabilmek için, boşlukları doldurunuz.",
                                     buttons: [
                                       DialogButton(
@@ -519,6 +531,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             ),
                             TextFormField(
                               controller: _password,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 labelText: "* Şifre",
                                 fillColor: Colors.white,
@@ -535,6 +548,7 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                             ),
                             TextFormField(
                               controller: _password2,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 labelText: "* Şifre tekrar",
                                 fillColor: Colors.white,
@@ -731,6 +745,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               _formKey.currentState.save();
                               postRegisterRequest();
                               Alert(
+                                style: AlertStyle(
+                                  animationDuration: Duration(milliseconds: 500),
+                                  animationType: AnimationType.grow,
+                                ),
                                 context: context,
                                 type: AlertType.success,
                                 title: 'Başarıyla kayıt oldunuz!',
@@ -744,6 +762,10 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               ).show();
                             }else{
                               Alert(
+                                style: AlertStyle(
+                                  animationDuration: Duration(milliseconds: 500),
+                                  animationType: AnimationType.grow,
+                                ),
                                 context: context,
                                 type: AlertType.warning,
                                 title: 'Şifreler aynı değil',
@@ -782,26 +804,6 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       _agreedToTOS = newValue;
     });
   }
-  // _checkInternetConnectivity() async{
-  //   var result = await Connectivity().checkConnectivity();
-  //   if(result == ConnectivityResult.none){
-  //     internet = false;
-  //     return Alert(
-  //         context:context,
-  //         type: AlertType.error,
-  //         desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-  //             'bağlantısı gereklidir.',
-  //         title: '',
-  //         buttons: [
-  //           DialogButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: Text('Tamam', style: TextStyle(color: Colors.white),),
-  //           ),
-  //         ]
-  //     ).show();
-  //   }
-  //   internet = true;
-  // }
 }
 class Questions{
   int id;
@@ -839,29 +841,29 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.lightBlueAccent,
+      return AlertDialog(
+        backgroundColor: Colors.black38,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.white,
-            width: 2.0,
-          ),
-        ) ,
-        child: new Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            new CircularProgressIndicator(),
-            SizedBox(width: 10,),
-            new Text(" Yükleniyor.. ",style: TextStyle(color: Colors.white),),
+            color: Colors.lightBlueAccent,
+            width: 2
+          )
+        ),
+        title: Column(
+          children: <Widget>[
+            CircularProgressIndicator(
+            ),
+            SizedBox(height: 5,),
+            Text('İşleminiz Sürüyor...', style: TextStyle(color: Colors.white),)
           ],
         ),
       );
     },
   );
-  new Future.delayed(new Duration(milliseconds: 1500), () {
+  new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
-      getQuestion();
+    getQuestion();
   });
 }
 
@@ -891,19 +893,22 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           )
         );
     }
-    showDialog(
-          context: context,
-          builder: (context)=>AlertDialog(
-            title: Text('Kullanıcı adı ve ya cevabınız yanlış'),
-            content: Text('Şifrenizi değiştirmek için gerekli bilgileri doğru şekilde girmeniz gerekmektedir.'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: ()=> Navigator.pop(context,false),
-                child: Text('Tamam', style: TextStyle(color: Colors.black),),
-              ),
-            ],
-          )
-        );
+    Alert(
+      title: 'Kullanıcı adı ve ya cevabınız yanlış',
+      context: context,
+      desc: 'Şifrenizi değiştirmek için gerekli bilgileri doğru şekilde girmeniz gerekmektedir.',
+      type: AlertType.warning,
+      style: AlertStyle(
+        animationDuration: Duration(milliseconds: 500),
+        animationType: AnimationType.grow
+      ),
+      buttons: [
+        DialogButton(
+          onPressed: ()=> Navigator.pop(context,false),
+          child: Text('Tamam', style: TextStyle(color: Colors.white),),
+        )
+      ]
+    ).show();
     return response;
   }
 
@@ -921,6 +926,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       setState(() {
         _question = null;
         Alert(
+          style: AlertStyle(
+            animationDuration: Duration(milliseconds: 500),
+            animationType: AnimationType.grow,
+          ),
           context: context,
           title: 'Bu kullanıcı bulunamadı.',
           buttons: [
