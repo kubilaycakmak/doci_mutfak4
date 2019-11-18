@@ -1,5 +1,6 @@
 import 'dart:ui' as prefix0;
 
+import 'package:badges/badges.dart';
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
@@ -86,20 +87,60 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     print(headerList);
     SizeConfig().init(context);
     return Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          elevation: 0,
+          backgroundColor: Colors.deepOrangeAccent,
+          label: Badge(
+            animationType: BadgeAnimationType.scale,
+            badgeColor: Colors.white,
+            elevation: 4,
+            badgeContent: Text(listItems.length.toString()),
+            child: Icon(FontAwesomeIcons.shoppingBasket, size: 25,color: Colors.white,),
+          ),
+          onPressed: (){
+            showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (context){
+                return BackdropFilter(
+                  filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: AlertDialog(
+                  backgroundColor: Colors.black54,
+                  shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)
+                  ),
+                  title: Text('Sepet',style: TextStyle(color: Colors.white),),
+                  actions: <Widget>[
+                    FlatButton(
+                      padding: EdgeInsets.all(20),
+                      child: Icon(Icons.close, color: Colors.deepOrangeAccent,),
+                      onPressed: ()=> Navigator.pop(context,false),
+                    )
+                  ],
+                  content: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      for(var i=0;i<listItems.length;i++)
+                        ListTile(
+                          title: Text(listItems[i].name.toString(), style: TextStyle(color: Colors.white),),
+                          trailing: Text(listItems[i].price.toInt().toString() + ' TL', style: TextStyle(color: Colors.white),),
+                        )
+                    ],
+                  )
+                ),
+                );
+              }
+            );
+          },
+        ),
         appBar: AppBar(
           title: Text('Menü'),
           centerTitle: true,
           backgroundColor: Colors.lightBlueAccent,
           elevation: 0,
           actions: <Widget>[
-            // Badge(
-            // position: BadgePosition.topLeft(top: 3, left: 5),
-            // badgeContent: Text('${listItems.length.toString()}'),
-            // child: IconButton(
-            //   icon: Icon(Icons.shopping_cart, size: 40,),
-            //   onPressed: () {},
-            // ),
-            // )
           ],
         ),
         backgroundColor: Colors.white,
@@ -288,39 +329,41 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                             var currentItemId = dataProducts[index][i]['id'];
                                             switches = false;
                                             if (listItems == null) {
-                                                  var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
+                                                  setState(() {
+                                                    var items = new AddItemtoShopCart(
+                                                    id: dataProducts[index][i]["id"],
+                                                    name: dataProducts[index][i]["name"],
+                                                    price: dataProducts[index][i]["price"],
+                                                    itemCount: 1,
                                                 );
-                                                listItems.add(items);
+                                                  listItems.add(items);
+                                                  });
                                             } else {
                                               bool ifExist = false;
-                                              for (var k = 0; k <
-                                                  listItems.length; k++) {
-                                                if (currentItemId ==
-                                                    listItems[k].id) {
+                                              for (var k = 0; k <listItems.length; k++) {
+                                                if (currentItemId ==listItems[k].id) {
                                                   ifExist = true;
+                                                  setState(() {
+                                                  });
                                                 }
                                               }
                                               if (ifExist) {
-                                                for (var j = 0; j <
-                                                    listItems.length; j++) {
+                                                for (var j = 0; j <listItems.length; j++) {
                                                   if (listItems[j].id ==
-                                                      currentItemId) {
-                                                    listItems[j]
+                                                      currentItemId) {listItems[j]
                                                         .itemCount++;
                                                   }
                                                 }
                                               } else {
-                                                var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
+                                                setState(() {
+                                                  var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
                                                   id: dataProducts[index][i]["id"],
                                                   name: dataProducts[index][i]["name"],
                                                   price: dataProducts[index][i]["price"],
                                                   itemCount: 1,
                                                 );
                                                 listItems.add(items);
+                                                });
                                               }
                                             }
                                           }

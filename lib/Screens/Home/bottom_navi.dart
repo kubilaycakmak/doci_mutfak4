@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var keyShared;
   bool switcha;
   Timer timer;
+  int _count;
   var user;
 
   Future<bool> _onBackPressed(){
@@ -154,5 +155,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

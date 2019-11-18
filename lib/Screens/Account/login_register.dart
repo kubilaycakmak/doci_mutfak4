@@ -821,9 +821,9 @@ String validatePhoneNumber(String value){
       ),
     );
   }
-  bool _submittable() {
-    return _agreedToTOS;
-  }
+  // bool _submittable() {
+  //   return _agreedToTOS;
+  // }
   void _setAgreedToTOS(bool newValue) {
     setState(() {
       _agreedToTOS = newValue;
