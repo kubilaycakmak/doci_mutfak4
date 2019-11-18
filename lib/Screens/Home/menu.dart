@@ -1,3 +1,5 @@
+import 'dart:ui' as prefix0;
+
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
@@ -266,7 +268,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                             Future.delayed(Duration(milliseconds: 700), () {
                                               Navigator.of(context).pop(true);
                                             });
-                                            return AlertDialog(
+                                            return BackdropFilter(
+                                              filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                              child: AlertDialog(
                                               backgroundColor: Colors.black45,
                                               shape: CircleBorder(
                                               ),
@@ -277,6 +281,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                                   Text('Eklendi', style: TextStyle(color: Colors.white),)
                                                 ],
                                               ),
+                                            ),
                                             );
                                           });
                                         if(this.mounted) {

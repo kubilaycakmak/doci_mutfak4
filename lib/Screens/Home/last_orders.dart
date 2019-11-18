@@ -47,8 +47,6 @@ class _LastOrdersState extends State<LastOrders> {
     keyShared = prefs.getString('LastKey');
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
-    if(key == ''){
-    }
   } 
 
   Future<List> _fetchData() async {
@@ -332,6 +330,9 @@ class _LastOrdersState extends State<LastOrders> {
                               SmoothStarRating(
                               allowHalfRating: false,
                               onRatingChanged: (v) {
+                                if(v <= 0){
+                                  v = 1;
+                                }
                                 taste = v;
                                 setState(() {});
                               },
@@ -348,6 +349,9 @@ class _LastOrdersState extends State<LastOrders> {
                             SmoothStarRating(
                               allowHalfRating: false,
                               onRatingChanged: (v) {
+                                if(v <= 0){
+                                  v = 1;
+                                }
                                 speed = v;
                                 setState(() {});
                               },
@@ -364,6 +368,9 @@ class _LastOrdersState extends State<LastOrders> {
                             SmoothStarRating(
                               allowHalfRating: false,
                               onRatingChanged: (v) {
+                                if(v <= 0){
+                                  v = 1;
+                                }
                                 services = v;
                                 setState(() {});
                               },
@@ -412,7 +419,7 @@ class _LastOrdersState extends State<LastOrders> {
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Text('Hız :'),
+                                        Text('Hız :     '),
                                         for(int i = 0; i< snapshot.data[index]['orderRating']["speed"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
                                       ],
                                     ),
@@ -424,7 +431,7 @@ class _LastOrdersState extends State<LastOrders> {
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text('Tad :'),
+                                        Text('Tat:      '),
                                         for(int i = 0; i< snapshot.data[index]['orderRating']["taste"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
                                       ],
                                     ),

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'dart:ui' show ImageFilter;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +23,7 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   final _countController = TextEditingController();
   User user;
+  String keyAgain;
   var user1;
   final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
@@ -30,12 +32,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   var keyShared;
   bool switcha;
 
-  @override
-  void dispose() {
-    _countController.dispose();
-    super.dispose();
-  }
-
+ 
 
     Future<http.Response> postItselfAuto(String keyJson) async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
@@ -60,14 +57,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }    
     getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    keyShared = prefs.getString('LastKey');
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
-    if(key == ''){
-      postItselfAuto(keyShared);
+    keyShared = prefs.getString('LastKey');
+    if(keyShared != ''){
       postRequestAuto(username, password);
+      postItselfAuto(keyShared);
     }
-  } 
+  }  
 
       Future<http.Response> postRequestAuto(String username, String password) async {
       Map data = {
@@ -80,10 +77,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
         authKey = json.decode(response.body);
         key = authKey["authorization"];
         if (key != '') {
-          setState(() {
-            Navigator.of(context).pushReplacementNamed('/home');
-          });
+          print('o burada');
         } else {
+          Navigator.of(context).pushReplacementNamed('/home');
         }
       }
     return response;
@@ -111,6 +107,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
   void initState() {
     super.initState();
     this.getKey();
+  }
+
+   @override
+  void dispose() {
+    _countController.dispose();
+    super.dispose();
   }
 
   @override
@@ -389,6 +391,8 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   var keyShared;
   bool noUser;
+  bool validate = false;
+  final _formKey = new GlobalKey<FormState>();
   final _addressController =new TextEditingController(text: listItems[0].address == null ? userInformations[0].address : listItems[0].address);
   final _phoneController =
   new TextEditingController(text: userInformations[0].phoneNumber);
@@ -396,6 +400,15 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final String paymentMethodsUrl =
       'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
+
+  String validatePhoneNumber(String value){
+  Pattern cellphone = r'^((?!(0))[0-9]{7,10})$';
+  RegExp regexPhone = new RegExp(cellphone);
+  if(!regexPhone.hasMatch(value))
+    return 'Ev telefonu ise 7, Cep telefonu ise 10 haneli olmalidir.';
+  else
+    return null;
+  }
 
   Future<http.Response> postItselfAuto(String keyJson) async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
@@ -627,30 +640,48 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                           ),
                         ),
                       Divider(thickness: 2,),
-                      ListTile(
-                        title: Text('Teslimat Adresi'),
-                        subtitle: TextFormField(
-                          maxLines: 2,
-                          controller: _addressController,
-                          decoration: InputDecoration(
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide.none
-                            )
+                      Form(
+                        key: _formKey,
+                        autovalidate: validate,
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text('Teslimat Adresi'),
+                                subtitle: TextFormField(
+                                  autovalidate: true,
+                                  validator: (val){
+                                    if(val == ''){
+                                      return 'Adres kısmı boş olamaz';
+                                    }
+                                  },
+                                  maxLines: 2,
+                                  controller: _addressController,
+                                  decoration: InputDecoration(
+                                    helperText: 'Başarılı ve hızlı bir teslimat için, Adresinizi açık ve anlaşılır bir şekilde giriniz.',
+                                    border: UnderlineInputBorder(
+                                      borderSide: BorderSide.none
+                                    )
+                                  ),
+                                )),
+                                Divider(thickness: 2,),
+                              ListTile(
+                                title: Text('Telefon Numarası'),
+                                subtitle: TextFormField(
+                                  autovalidate: true,
+                                  validator: validatePhoneNumber,
+                                  keyboardType: TextInputType.number,
+                                  autofocus: false,
+                                  controller: _phoneController,
+                                  decoration: InputDecoration(
+                                    helperText: 'Başında sıfır olmadan Ev ise 7, Cep ise 10 haneli olmalıdır',
+                                    border: UnderlineInputBorder(
+                                      borderSide: BorderSide.none))))
+                            ],
                           ),
-                        )),
-                        Divider(thickness: 2,),
-                      ListTile(
-                        title: Text('Telefon Numarası'),
-                        subtitle: TextFormField(
-                          keyboardType: TextInputType.number,
-                          autofocus: false,
-                          controller: _phoneController,
-                          decoration: InputDecoration(
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide.none
-                            )
-                          ),
-                        )),
+                        ),
+                      ),
                         Divider(thickness: 2,),
                       Padding(
                         padding: EdgeInsets.all(5),
@@ -761,7 +792,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 if(inside == false){
                   if(internet == true){
                     listItems.length != 0 ?
-                    //_sendOrders()
                     _onLoading()
                         :
                     showDialog(
@@ -880,7 +910,9 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   );
   new Future.delayed(new Duration(milliseconds: 2000), () {
     Navigator.pop(context); //pop dialog
-    _sendOrders();
+    if (_formKey.currentState.validate()) {
+      _sendOrders();
+    }
   });
 }
 }

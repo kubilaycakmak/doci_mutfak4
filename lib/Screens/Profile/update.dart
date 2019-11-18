@@ -18,10 +18,10 @@ String nameValidator(String value){
 }
 
 String validatePhoneNumber(String value){
-  Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
+  Pattern cellphone = r'^((?!(0))[0-9]{7,10})$';
   RegExp regexPhone = new RegExp(cellphone);
   if(!regexPhone.hasMatch(value))
-    return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
+    return 'Ev telefonu ise 7, Cep telefonu ise 10 haneli olmalidir.';
   else
     return null;
 }
@@ -127,7 +127,21 @@ class _UpdateState extends State<Update> {
         ],
       ).show();
     } else {
-      print('guncelleme de hata!');
+      Alert(
+        context: context,
+        type: AlertType.warning,
+        title: 'Bilgilerinde Hata!',
+        desc: 'Bilgilerinde bir hata var, Lütfen tekrar kontrol et!',
+        buttons: [
+          DialogButton(
+            onPressed: () {
+                postItself();
+                Navigator.pop(context,false);
+            },
+            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+          ),
+        ],
+      ).show();
     }
     return response;
   }
@@ -225,6 +239,7 @@ class _UpdateState extends State<Update> {
                       autovalidate: true,
                       decoration: InputDecoration(
                         labelText: 'Telefon numarası',
+                        helperText: 'Başında sıfır olmadan Ev ise 7, Cep ise 10 haneli olmalıdır',
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(

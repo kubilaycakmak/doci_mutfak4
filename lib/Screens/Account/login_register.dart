@@ -38,40 +38,6 @@ List num;
 
 
 
-String validateUsername(String value){
-  Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
-  RegExp regex = new RegExp(pattern);
-  if(!regex.hasMatch(value))
-    return 'Kullanici ismini duzeltiniz!';
-  else
-    return null;
-}
-
-String validatePassword(String value){
-  Pattern pattern = r'^[a-zA-Z0-9._-]{5,15}$';
-  RegExp regex = new RegExp(pattern);
-  if(!regex.hasMatch(value))
-    return 'Şifrenizi düzeltiniz';
-  else
-    return null;
-}
-String validateAnswer(String value){
- Pattern pattern = r'^[a-zA-Z0-9.-]{2,15}$';
- RegExp regex = new RegExp(pattern);
- if(!regex.hasMatch(value))
-   return 'Cevabınızı düzeltiniz';
- else
-   return null;
-}
-String validatePhoneNumber(String value){
-  Pattern cellphone = r'^((?!(0))[0-9]{7,11})$';
-  RegExp regexPhone = new RegExp(cellphone);
-  if(!regexPhone.hasMatch(value))
-    return 'Ev telefonu ise 7, Cep telefonu ise 11 haneli olmalidir.';
-  else
-    return null;
-}
-
 class LoginAndRegister extends StatefulWidget {
   @override
   _LoginAndRegisterState createState() => _LoginAndRegisterState();
@@ -99,7 +65,44 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
   bool isTrue;
   bool _agreedToTOS = true;
   bool remember = false;
+  bool isValid;
   var keyShared;
+
+  String validateUsername(String value){
+  Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
+  RegExp regex = new RegExp(pattern);
+  if(!regex.hasMatch(value))
+    return 'Kullanıcı ismini düzeltiniz!';
+  else if(isValid == false)
+    return 'Bu kullanıcı zaten mevcut!';
+  else
+    return null;
+}
+
+String validatePassword(String value){
+  Pattern pattern = r'^[a-zA-Z0-9._-]{5,15}$';
+  RegExp regex = new RegExp(pattern);
+  if(!regex.hasMatch(value))
+    return 'Şifrenizi düzeltiniz';
+  else
+    return null;
+}
+String validateAnswer(String value){
+ Pattern pattern = r'^[a-zA-Z0-9.-]{2,15}$';
+ RegExp regex = new RegExp(pattern);
+ if(!regex.hasMatch(value))
+   return 'Cevabınızı düzeltiniz';
+ else
+   return null;
+}
+String validatePhoneNumber(String value){
+  Pattern cellphone = r'^((?!(0))[0-9]{7,10})$';
+  RegExp regexPhone = new RegExp(cellphone);
+  if(!regexPhone.hasMatch(value))
+    return 'Ev telefonu ise 7, Cep telefonu ise 10 haneli olmalidir.';
+  else
+    return null;
+}
 
 
   Future<http.Response> postRequest() async {
@@ -265,6 +268,23 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
       }else{
         throw Exception('postItselfAuto');
     }
+  }
+
+  Future<bool> userCheck(String username) async{
+    var response = await http.get('http://68.183.222.16:8080/api/userAccount/check?username=$username');
+    var body = json.decode(response.body);
+    if(body == false){
+      print('bu kullanici var');
+      setState(() {
+        isValid = false;
+      });
+    }else{
+      print('kullanici alinabilir');
+      setState(() {
+        isValid = true;
+      });
+    }
+    return isValid;
   }
 
     @override
@@ -514,7 +534,12 @@ class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProvider
                               ),
                               validator: validateUsername,
                               onSaved: (String val) {
-                                username = val;
+                                setState(() {
+                                  username = val;
+                                });
+                              },
+                              onChanged: (String val){
+                                userCheck(val);
                               },
                               keyboardType: TextInputType.emailAddress,
                               style: TextStyle(
