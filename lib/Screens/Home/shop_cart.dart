@@ -127,7 +127,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       appBar: AppBar(
         title: Text('Sepetim'),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.deepOrangeAccent.shade700,
         elevation: 0,
       ),
       floatingActionButton:SizedBox(
@@ -137,7 +137,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             FloatingActionButton.extended(
-              backgroundColor: Colors.lightBlueAccent,
+              backgroundColor: Colors.deepOrangeAccent.shade700,
               label: Text('Sepeti Boşalt'),
               onPressed: (){
                 setState(() {
@@ -183,7 +183,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     Text(
                       listItems[index].itemCount.toString(),
                       style: TextStyle(
-                          color: Colors.lightBlueAccent, fontSize: 20),
+                          color: Colors.deepOrangeAccent.shade700, fontSize: 20),
                     ),
                     SizedBox(
                       width: 10,
@@ -206,7 +206,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.lightBlueAccent,
+                      color: Colors.deepOrangeAccent.shade700,
                       onPressed: (){
                         setState(() {
                           listItems[index].itemCount = 0;
@@ -218,7 +218,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.lightBlueAccent,
+                      color: Colors.deepOrangeAccent.shade700,
                       onPressed: (){
                         setState(() {
                           listItems[index].itemCount++;
@@ -229,7 +229,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.lightBlueAccent,
+                      color: Colors.deepOrangeAccent.shade700,
                       onPressed: (){
                         setState(() {
                           if(listItems[index].itemCount == 1){
@@ -272,7 +272,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 child: CupertinoButton(
                   borderRadius: BorderRadius.circular(0),
                   pressedOpacity: 0.8,
-                  color: Colors.lightBlueAccent,
+                  color: Colors.deepOrangeAccent.shade700,
                   // ignore: missing_return
                   onPressed: (){
                       if(keyShared != ''){
@@ -287,6 +287,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                              desc: 'Boş sepet onaylanamaz',
                              buttons: [
                                DialogButton(
+                                 color: Colors.deepOrangeAccent.shade700,
                                  onPressed: () => Navigator.pop(context,false),
                                  child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                ),
@@ -299,6 +300,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                              title: 'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
                              buttons: [
                                DialogButton(
+                                 color: Colors.deepOrangeAccent.shade700,
                                  onPressed: () => Navigator.pop(context,false),
                                  child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                ),
@@ -311,10 +313,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                             buttons: [
                               DialogButton(
+                                color: Colors.deepOrangeAccent.shade700,
                                 onPressed: () => Navigator.pop(context,false),
                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
                               ),
                               DialogButton(
+                                color: Colors.deepOrangeAccent.shade700,
                                 onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
                                 child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                               ),
@@ -327,10 +331,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                               buttons: [
                                 DialogButton(
+                                  color: Colors.deepOrangeAccent.shade700,
                                   onPressed: () => Navigator.pop(context,false),
                                   child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                 ),
                                 DialogButton(
+                                  color: Colors.deepOrangeAccent.shade700,
                                   onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
                                   child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
                                 ),
@@ -533,6 +539,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           desc:'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
           buttons: [
             DialogButton(
+              color: Colors.deepOrangeAccent.shade700,
               onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -563,6 +570,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           'Lütfen sipariş verebilmek için giriş yapınız.',
           buttons: [
             DialogButton(
+              color: Colors.deepOrangeAccent.shade700,
               onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -587,6 +595,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           'Lütfen sipariş verirken boş alanları doğru bir şekilde doldurunuz.',
           buttons: [
             DialogButton(
+              color: Colors.deepOrangeAccent.shade700,
               onPressed: () => Navigator.pop(context,true),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -615,7 +624,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           },
           child: Scaffold(
       appBar: AppBar(
-                backgroundColor: Colors.lightBlueAccent,
+                backgroundColor: Colors.deepOrangeAccent.shade700,
                 title: Text('Siparişi Onayla | Bitir'),
                 elevation: 0,
                 leading: IconButton(
@@ -694,21 +703,21 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                               title: Text('Nakit'),
                               value: 1,
                               groupValue: selectedPayment,
-                              activeColor: Colors.lightBlueAccent,
+                              activeColor: Colors.deepOrangeAccent.shade700,
                               onChanged: setSelectedPayment,
                             ),
                             RadioListTile(
                               title: Text('Kredi Karti'),
                               value: 2,
                               groupValue: selectedPayment,
-                              activeColor: Colors.lightBlueAccent,
+                              activeColor: Colors.deepOrangeAccent.shade700,
                               onChanged: setSelectedPayment,
                             ),
                             RadioListTile(
                               title: Text('Sodexo'),
                               value: 3,
                               groupValue: selectedPayment,
-                              activeColor: Colors.lightBlueAccent,
+                              activeColor: Colors.deepOrangeAccent.shade700,
                               onChanged: setSelectedPayment,
                             ),
                           ],
@@ -784,7 +793,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           bottomNavigationBar: SingleChildScrollView(child: CupertinoButton(
             borderRadius: BorderRadius.circular(0),
             pressedOpacity: 0.2,
-            color: Colors.lightBlueAccent,
+            color: Colors.deepOrangeAccent.shade700,
             // ignore: missing_return
             onPressed: (){
               if(key != ''){
@@ -818,6 +827,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
                     buttons: [
                       DialogButton(
+                        color: Colors.deepOrangeAccent.shade700,
                         onPressed: () => Navigator.pop(context, false),
                         child: Text('Tamam', style: TextStyle(color: Colors.white),),
                       ),
@@ -836,10 +846,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                       'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                   buttons: [
                     DialogButton(
+                      color: Colors.deepOrangeAccent.shade700,
                       onPressed: () => Navigator.pop(context, false),
                       child: Text('Tamam', style: TextStyle(color: Colors.white),),
                     ),
                     DialogButton(
+                      color: Colors.deepOrangeAccent.shade700,
                       onPressed: () =>
                           Navigator.of(context).pushReplacementNamed('/login'),
                       child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
@@ -859,10 +871,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                     'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                 buttons: [
                   DialogButton(
+                    color: Colors.deepOrangeAccent.shade700,
                     onPressed: () => Navigator.pop(context, false),
                     child: Text('Tamam', style: TextStyle(color: Colors.white),),
                   ),
                   DialogButton(
+                    color: Colors.deepOrangeAccent.shade700,
                     onPressed: () =>
                         Navigator.of(context).pushReplacementNamed('/login'),
                     child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
@@ -892,7 +906,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.lightBlueAccent,
+            color: Colors.deepOrangeAccent.shade700,
             width: 2
           )
         ),

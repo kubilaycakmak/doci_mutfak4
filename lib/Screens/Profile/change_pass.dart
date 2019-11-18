@@ -48,6 +48,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         title: 'Şifreniz başarılı bir şekilde değişmiştir',
         buttons: [
           DialogButton(
+            color: Colors.deepOrangeAccent.shade700,
             child: Text('Tamam', style: TextStyle(color: Colors.white),),
             onPressed: (){
               prefs.setString('LastPassword', _newPass.text);
@@ -64,6 +65,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         desc: 'Eski şifreniz yanlış',
         buttons: [
           DialogButton(
+            color: Colors.deepOrangeAccent.shade700,
             child: Text('Tamam', style: TextStyle(color: Colors.white),),
             onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),
           )
@@ -83,7 +85,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         child: Scaffold(
       appBar: AppBar(
         title: Text('Şifre Yenileme'),
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.deepOrangeAccent.shade700,
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
@@ -112,7 +114,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                             borderSide: BorderSide(
-                                color: Colors.lightBlueAccent
+                                color: Colors.deepOrangeAccent.shade700
                             ),
                           ),
                         ),
@@ -131,7 +133,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                           borderSide: BorderSide(
-                              color: Colors.lightBlueAccent
+                              color: Colors.deepOrangeAccent.shade700
                             ),
                           ),
                         ),
@@ -151,7 +153,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         if (_formKey.currentState.validate()) {
                             _onLoading();
                           }
-                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.lightBlueAccent,),
+                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.deepOrangeAccent.shade700,),
                   )
                 ],
               ),
@@ -172,7 +174,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.lightBlueAccent,
+            color: Colors.deepOrangeAccent.shade700,
             width: 2
           )
         ),

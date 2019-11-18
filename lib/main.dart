@@ -7,7 +7,7 @@ main() async {
 
   ErrorWidget.builder = (FlutterErrorDetails details) => Container(child:Scaffold(
     appBar: AppBar(
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Colors.deepOrangeAccent.shade700,
       title: Text('Hata'),
     ),
     body: ErrorHandlingPage()

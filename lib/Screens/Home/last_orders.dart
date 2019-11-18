@@ -1,7 +1,6 @@
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
-import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -49,7 +48,6 @@ class _LastOrdersState extends State<LastOrders> {
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
   } 
-
   Future<List> _fetchData() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
@@ -203,7 +201,7 @@ class _LastOrdersState extends State<LastOrders> {
            elevation: 0,
            title: Text('Siparişlerim'),
            centerTitle: true,
-           backgroundColor: Colors.lightBlueAccent,
+           backgroundColor: Colors.deepOrangeAccent.shade700,
          ),
          body: 
          key == null?
@@ -483,6 +481,7 @@ class _LastOrdersState extends State<LastOrders> {
                                    title: 'Sipariş başarıyla sepete eklendi',
                                    buttons: [
                                      DialogButton(
+                                       color: Colors.deepOrangeAccent.shade700,
                                        onPressed: () => Navigator.of(context).pop(),
                                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                      ),

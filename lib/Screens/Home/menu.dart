@@ -100,37 +100,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           onPressed: (){
             showDialog(
               context: context,
-              barrierDismissible: true,
-              builder: (context){
-                return BackdropFilter(
-                  filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: AlertDialog(
-                  backgroundColor: Colors.black54,
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)
-                  ),
-                  title: Text('Sepet',style: TextStyle(color: Colors.white),),
-                  actions: <Widget>[
-                    FlatButton(
-                      padding: EdgeInsets.all(20),
-                      child: Icon(Icons.close, color: Colors.deepOrangeAccent,),
-                      onPressed: ()=> Navigator.pop(context,false),
-                    )
-                  ],
-                  content: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      for(var i=0;i<listItems.length;i++)
-                        ListTile(
-                          title: Text(listItems[i].name.toString(), style: TextStyle(color: Colors.white),),
-                          trailing: Text(listItems[i].price.toInt().toString() + ' TL', style: TextStyle(color: Colors.white),),
-                        )
-                    ],
-                  )
-                ),
-                );
+              builder: (_){
+                return FastShopDialog();
               }
             );
           },
@@ -138,7 +109,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         appBar: AppBar(
           title: Text('Menü'),
           centerTitle: true,
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.deepOrangeAccent.shade700,
           elevation: 0,
           actions: <Widget>[
           ],
@@ -170,8 +141,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     },
                     title: 
                     snapshot.data[index].priority <= 0 ?
-                    Text(' KAMPANYALI ÜRÜNLER ', style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.deepOrangeAccent),):
-                    Text(snapshot.data[index].name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.lightBlueAccent),),
+                    Text(' KAMPANYALI ÜRÜNLER ', style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.blueGrey),):
+                    Text(snapshot.data[index].name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.deepOrangeAccent.shade700),),
                     contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                     dense: false,
                     subtitle: FutureBuilder<List<Types>>(
@@ -198,7 +169,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   child: VerticalDivider(
                                   thickness: 5,
                                   endIndent: 0,
-                                  color: Colors.orange,
+                                  color: Colors.blueGrey,
                                 ),
                                 )
                                 :
@@ -206,7 +177,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   child: VerticalDivider(
                                   thickness: 5,
                                   endIndent: 0,
-                                  color: Colors.lightBlueAccent,
+                                  color: Colors.black38,
                                 ),
                                 )
                                 ,
@@ -288,6 +259,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                     ),
                                     buttons: [
                                       DialogButton(
+                                        color: Colors.deepOrangeAccent.shade700,
                                         child: Text('Kapat', style: TextStyle(color: Colors.white),),
                                         onPressed: ()=> Navigator.pop(context),
                                       )
@@ -297,9 +269,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                 trailing: InkWell(
                                       child: dataProducts[index][i]['valid'].toString() == 'true' ? Container(padding: EdgeInsets.all(10),child: 
                                       snapshot.data[index].priority <= 0 ? 
-                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.deepOrangeAccent,size: 30,)
+                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.blueGrey,size: 30,)
                                       :
-                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.lightBlueAccent,size: 30,),)
+                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.deepOrangeAccent.shade700,size: 30,),)
                                        : Text(''),
                                       onTap: (){
                                         showDialog(
@@ -381,4 +353,138 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           ),),
         );
   }
+}
+
+class FastShopDialog extends StatefulWidget {
+  @override
+  _FastShopDialogState createState() => _FastShopDialogState();
+}
+
+class _FastShopDialogState extends State<FastShopDialog> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return BackdropFilter(
+      filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: AlertDialog(
+          backgroundColor: Colors.black54,
+          shape: BeveledRectangleBorder(
+              borderRadius: BorderRadius.circular(20)
+          ),
+          title: Text('Hızlı Sepet', style: TextStyle(color: Colors.white),),
+          actions: <Widget>[
+            FlatButton(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'Sepeti Al', style: TextStyle(color: Colors.deepOrangeAccent),),
+                onPressed: (){
+                        listItems.length != 0 ?
+                        Navigator.of(context).pushReplacementNamed('/endcart')
+                            :
+                        Alert(
+                          style: alertStyle,
+                          title: 'Sepet Boş',
+                          desc: 'Boş sepet onaylanamaz',
+                          buttons: [
+                            DialogButton(
+                              color: Colors.deepOrangeAccent.shade700,
+                              onPressed: () => Navigator.pop(context,false),
+                              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                            ),
+                          ], context: context,
+                        ).show();
+                      }
+            ),
+            FlatButton(
+              padding: EdgeInsets.all(20),
+              child: Icon(Icons.close, color: Colors.deepOrangeAccent,),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+
+          ],
+          content: Container(
+            width: double.maxFinite,
+            child: ListView(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                children: <Widget>[
+                  for(var i = 0; i < listItems.length; i++)
+                    ExpansionTile(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            MaterialButton(
+                              elevation: 0,
+                              minWidth: 10,
+                              color: Colors.deepOrangeAccent.shade700,
+                              onPressed: () {
+                                setState(() {
+                                  listItems[i].itemCount = 0;
+                                  listItems.removeAt(i);
+                                });
+                              },
+                              child: Icon(Icons.delete, color: Colors.white,),
+                            ),
+                            MaterialButton(
+                              elevation: 0,
+                              minWidth: 10,
+                              color: Colors.deepOrangeAccent.shade700,
+                              onPressed: () {
+                                setState(() {
+                                  listItems[i].itemCount++;
+                                });
+                              },
+                              child: Icon(
+                                Icons.add_circle, color: Colors.white,),
+                            ),
+                            MaterialButton(
+                              elevation: 0,
+                              minWidth: 10,
+                              color: Colors.deepOrangeAccent.shade700,
+                              onPressed: () {
+                                setState(() {
+                                  if (listItems[i].itemCount == 1) {
+                                    listItems[i].itemCount = 1;
+                                  } else {
+                                    listItems[i].itemCount--;
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                Icons.remove_circle, color: Colors.white,),
+                            ),
+                          ],
+                        )
+                      ],
+                      title: Text(listItems[i].itemCount.toString() + ' ' +
+                          listItems[i].name.toString(),
+                        style: TextStyle(color: Colors.white),),
+                      trailing: Text(
+                        (listItems[i].price.toInt()*listItems[i].itemCount.toInt()).toString() + ' TL',
+                        style: TextStyle(color: Colors.white),),
+                    )
+                ]
+            ),
+          )
+      ),
+    );
+  }
+  var alertStyle = AlertStyle(
+    isCloseButton: false,
+    isOverlayTapDismiss: false,
+    backgroundColor: Colors.white,
+    animationDuration: Duration(milliseconds: 500),
+    animationType: AnimationType.grow,
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(0.0),
+      side: BorderSide(
+        color: Colors.grey,
+      ),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.black,
+    ),
+  );
 }

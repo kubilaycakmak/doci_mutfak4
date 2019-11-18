@@ -108,12 +108,12 @@ class _ProfileState extends State<Profile> {
           leading: null,
           title:
               inside == false ? Text('Profilim') : Text('GIRIS YAP / YENI UYE'),
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.deepOrangeAccent.shade700,
           elevation: 0,
           centerTitle: true,
         ),
         body: Container(
-          color: Colors.lightBlueAccent,
+          color: Colors.deepOrangeAccent.shade700,
             child: inside == false
                   ? ListView(
                     children: <Widget>[
@@ -123,7 +123,7 @@ class _ProfileState extends State<Profile> {
                         },
                         child: image,
                         padding: EdgeInsets.only(bottom: 10),
-                        color: Colors.lightBlueAccent,
+                        color: Colors.deepOrangeAccent.shade700,
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
@@ -148,7 +148,7 @@ class _ProfileState extends State<Profile> {
                         shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         side: BorderSide(
-                          color: Colors.lightBlueAccent,
+                          color: Colors.deepOrangeAccent.shade700,
                           width: 1,
                           ),
                         ),

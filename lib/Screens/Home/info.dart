@@ -52,6 +52,7 @@ class _InfoState extends State<Info> {
           textDirection: TextDirection.ltr,
           children: <Widget>[
             FloatingActionButton.extended(
+              backgroundColor: Colors.black45,
               onPressed: ()=> call('02123970488'),
               label: Container(
                 child: Row(
@@ -72,11 +73,11 @@ class _InfoState extends State<Info> {
         ),
         title: Text('Hakkımızda'),
         elevation: 0,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.deepOrangeAccent.shade700,
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.lightBlueAccent,
+        color: Colors.deepOrangeAccent.shade700,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             verticalDirection: VerticalDirection.down,

@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:animated_splash/animated_splash.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
-import 'package:doci_mutfak4/Screens/Home/contact.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
 import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
@@ -53,12 +51,6 @@ class Routes{
           case '/menu':
           return MyCustomRoute(
             builder: (_) => Menu(),
-            settings: settings
-          );
-
-          case '/contact':
-          return MyCustomRoute(
-            builder: (_) => Contact(),
             settings: settings
           );
 
@@ -225,9 +217,9 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffold,
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Colors.deepOrangeAccent.shade700,
       body: Container(
-        color: Colors.lightBlueAccent,
+        color: Colors.deepOrangeAccent.shade700,
         child: AnimatedSplash(
           imagePath: 'assets/images/logo.png',
           home: SplashScreen(),

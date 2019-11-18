@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   var keyShared;
   bool switcha;
   Timer timer;
-  int _count;
   var user;
 
   Future<bool> _onBackPressed(){
@@ -136,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: BottomNavyBar(
           selectedIndex: _currentIndex,
           showElevation: false,
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.deepOrangeAccent.shade700,
           onItemSelected: (index){
             setState(() {
                _currentIndex = index;
