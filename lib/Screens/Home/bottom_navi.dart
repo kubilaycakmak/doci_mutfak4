@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: BottomNavyBar(
           selectedIndex: _currentIndex,
           showElevation: false,
-          backgroundColor: Colors.deepOrangeAccent.shade700,
+          backgroundColor: const Color.fromRGBO(0, 40, 77,1),
           onItemSelected: (index){
             setState(() {
                _currentIndex = index;

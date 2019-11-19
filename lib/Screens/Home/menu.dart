@@ -5,6 +5,8 @@ import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Model/types.dart';
+import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -14,6 +16,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var currentSelected;
 List<String> addItem;
@@ -37,7 +40,7 @@ var types;
 
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
-
+Timer timer;
 
 class Menu extends StatefulWidget {
   Menu({Key key}) : super(key: key);
@@ -51,7 +54,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   var quantity = 1;
   TabController tabController;
   String url = 'http://68.183.222.16:8080/api/dociproduct/all';
-
 
   Future<List<Types>> _fetchTypes() async {
     var response = await http
@@ -278,8 +280,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            Future.delayed(Duration(milliseconds: 700), () {
+                                            timer = Timer(Duration(milliseconds: 700), () {
                                               Navigator.of(context).pop(true);
+                                              timer.cancel();
                                             });
                                             return BackdropFilter(
                                               filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -361,7 +364,69 @@ class FastShopDialog extends StatefulWidget {
 }
 
 class _FastShopDialogState extends State<FastShopDialog> {
+  var keyShared;
+  bool inside;
+  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
 
+    Future<http.Response> postItselfAuto(String keyJson) async {
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyJson.toString(),
+    });
+    print(response.body);
+    if(response.statusCode == 200){
+        user = json.decode(response.body);
+        var userInfo = User.fromJson(user);
+        userInformations.add(userInfo);  
+        return response;
+      }else{
+        throw Exception('postItselfAuto');
+    }
+  }
+
+   Future<http.Response> postRequesAuto(String username, String password) async {
+      Map data = {
+        'username': username,
+        'password': password
+      };
+      var body = json.encode(data);
+      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
+      if (response.statusCode == 200) {
+        authKey = json.decode(response.body);
+        key = authKey["authorization"];
+        if (key != '') {
+          setState(() {
+            inside = false;
+          });
+        } else {
+          inside = true;
+        }
+      }
+    return response;
+  }
+
+  getKey() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString('LastUsername');
+    password = prefs.getString('LastPassword');
+    keyShared = prefs.getString('LastKey');
+    if(key != ''){
+      setState(() {
+        postRequesAuto(username, password);
+        postItselfAuto(keyShared);
+        print(keyShared);
+      });
+    }
+    else{
+      print('key yerinde');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    this.getKey();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -376,25 +441,84 @@ class _FastShopDialogState extends State<FastShopDialog> {
           actions: <Widget>[
             FlatButton(
               padding: EdgeInsets.all(20),
+              child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.deepOrangeAccent)),
+              onPressed: (){
+                setState(() {
+                  if(listItems.length != 0){
+                    listItems.clear();
+                  }
+                });
+              },
+            ),
+            FlatButton(
+              padding: EdgeInsets.all(20),
               child: Text(
                 'Sepeti Al', style: TextStyle(color: Colors.deepOrangeAccent),),
-                onPressed: (){
-                        listItems.length != 0 ?
-                        Navigator.of(context).pushReplacementNamed('/endcart')
-                            :
-                        Alert(
-                          style: alertStyle,
-                          title: 'Sepet Boş',
-                          desc: 'Boş sepet onaylanamaz',
-                          buttons: [
-                            DialogButton(
-                              color: Colors.deepOrangeAccent.shade700,
-                              onPressed: () => Navigator.pop(context,false),
-                              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                            ),
-                          ], context: context,
-                        ).show();
-                      }
+                onPressed: () {
+                  if (keyShared != '') {
+                    if(inside == false){
+                    listItems.length != 0 ?
+                    Navigator.of(context).pushReplacementNamed('/endcart')
+                        :
+                    Alert(
+                      style: alertStyle,
+                      title: 'Sepet Boş',
+                      desc: 'Boş sepet onaylanamaz',
+                      buttons: [
+                        DialogButton(
+                          color: Colors.deepOrangeAccent.shade700,
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('Tamam',
+                            style: TextStyle(color: Colors.white),),
+                        ),
+                      ],
+                      context: context,
+                    ).show();
+                  } else {
+                    Alert(
+                      style: alertStyle,
+                      title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                      buttons: [
+                        DialogButton(
+                          color: Colors.deepOrangeAccent.shade700,
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('Tamam', style: TextStyle(
+                              color: Colors.white),),
+                        ),
+                        DialogButton(
+                          color: Colors.deepOrangeAccent.shade700,
+                          onPressed: () =>
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/login'),
+                          child: Text('Üye girişi', style: TextStyle(
+                              color: Colors.white),),
+                        ),
+                      ], context: context,
+                    ).show();
+                  }
+                  }else {
+                    Alert(
+                      style: alertStyle,
+                      title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                      buttons: [
+                        DialogButton(
+                          color: Colors.deepOrangeAccent.shade700,
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('Tamam', style: TextStyle(
+                              color: Colors.white),),
+                        ),
+                        DialogButton(
+                          color: Colors.deepOrangeAccent.shade700,
+                          onPressed: () =>
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/login'),
+                          child: Text('Üye girişi', style: TextStyle(
+                              color: Colors.white),),
+                        ),
+                      ], context: context,
+                    ).show();
+                  }
+                }
             ),
             FlatButton(
               padding: EdgeInsets.all(20),
