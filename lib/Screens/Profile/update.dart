@@ -9,7 +9,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 
 String nameValidator(String value){
-  Pattern pattern = r'^[a-zA-Z0-9. ğüşöçİĞÜŞÖÇ]{5,20}$';
+  Pattern pattern = r'^[a-zA-Z0-9. ğüşöçİĞÜŞÖÇ]{2,20}$';
   RegExp regex = new RegExp(pattern);
   if(!regex.hasMatch(value))
     return 'Adınızı düzeltiniz';

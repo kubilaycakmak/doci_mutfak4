@@ -90,6 +90,12 @@ class Routes{
             settings: settings,
           );
 
+          case '/entry':
+          return MyCustomRoute(
+            builder: (_) => EntryScreen(),
+            settings: settings,
+          );
+
           case '/update':
           return MyCustomRoute(
             builder: (_) => Update(),
@@ -142,13 +148,14 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
         print(keyShared);
         postRequestAuto(username, password);
         postItselfAuto(keyShared);
-        switcha = true;
+        switcha = false;
       });
     }
     else{
       setState(() {
-        switcha = false;
+        switcha = true;
         logout();
+        //Navigator.of(context).pushReplacementNamed('/entry');
       });
     }
     print(switcha);

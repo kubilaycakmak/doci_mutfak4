@@ -1,4 +1,6 @@
 // import 'package:connectivity/connectivity.dart';
+import 'dart:io';
+
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/profile.dart';
@@ -88,7 +90,7 @@ String validatePassword(String value){
     return null;
 }
 String validateAnswer(String value){
- Pattern pattern = r'^[a-zA-Z0-9.-]{2,15}$';
+ Pattern pattern = r'^[a-zA-Z0-9 .-]{2,15}$';
  RegExp regex = new RegExp(pattern);
  if(!regex.hasMatch(value))
    return 'Cevabınızı düzeltiniz';
@@ -723,7 +725,6 @@ String validatePhoneNumber(String value){
                             ),
                             TextFormField(
                               controller: _answer,
-                              maxLength: null,
                               decoration: InputDecoration(
                                 labelText: "* Cevap",
                                 fillColor: Colors.white,
@@ -733,7 +734,7 @@ String validatePhoneNumber(String value){
                                 ),
                               ),
                               validator: validateAnswer,
-                              keyboardType: TextInputType.multiline,
+                              keyboardType: TextInputType.text,
                               style: TextStyle(
                                 fontFamily: "Poppins",
                               ),
@@ -979,12 +980,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(0, 40, 77,1),
-        title: Text('Şifremi unuttum'),
-        centerTitle: true,
-        leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),),
+    return WillPopScope(
+      onWillPop: (){
+          Navigator.of(context).pushReplacementNamed('/home');
+          print('aq');
+        },
+        child: Scaffold(
+          appBar: AppBar(
+          backgroundColor: Color.fromRGBO(0, 40, 77,1),
+          title: Text('Şifremi unuttum'),
+          centerTitle: true,
+          leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),),
       ),
       body: Container(
         child: ListView(
@@ -1053,7 +1059,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
