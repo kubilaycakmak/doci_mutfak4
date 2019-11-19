@@ -54,7 +54,7 @@ class _UpdateState extends State<Update> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             width: 2
           )
         ),
@@ -117,7 +117,7 @@ class _UpdateState extends State<Update> {
         desc: 'Bir sonraki girişinde bilgilerin güncellenmiş olacak',
         buttons: [
           DialogButton(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             onPressed: () {
                 postItself();
                 Navigator.of(context)
@@ -135,7 +135,7 @@ class _UpdateState extends State<Update> {
         desc: 'Bilgilerinde bir hata var, Lütfen tekrar kontrol et!',
         buttons: [
           DialogButton(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             onPressed: () {
                 postItself();
                 Navigator.pop(context,false);
@@ -165,7 +165,7 @@ class _UpdateState extends State<Update> {
         },
         child: Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent.shade700,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
         title: Text('Bilgileri Güncelle'),
         centerTitle: true,
         leading: IconButton(
@@ -206,7 +206,7 @@ class _UpdateState extends State<Update> {
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent.shade700
+                              color: Color.fromRGBO(0, 40, 77,1),
                           ),
                         ),
                       ),
@@ -226,7 +226,7 @@ class _UpdateState extends State<Update> {
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent.shade700
+                              color: Color.fromRGBO(0, 40, 77,1),
                           ),
                         ),
                       ),
@@ -245,7 +245,7 @@ class _UpdateState extends State<Update> {
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent.shade700
+                              color: Color.fromRGBO(0, 40, 77,1),
                           ),
                         ),
                       ),
@@ -265,7 +265,7 @@ class _UpdateState extends State<Update> {
                         fillColor: Colors.white,
                         border: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent.shade700
+                              color: Color.fromRGBO(0, 40, 77,1),
                           ),
                         ),
                       ),
@@ -282,7 +282,7 @@ class _UpdateState extends State<Update> {
                             _onLoading();
                           }
                         }, child: Text('Güncelle', style: TextStyle(color: Colors.white),)
-                        ,color: Colors.deepOrangeAccent.shade700
+                        ,color: Color.fromRGBO(0, 40, 77,1),
                       )
                     ),
                   ],

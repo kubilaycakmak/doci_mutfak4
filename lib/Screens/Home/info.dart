@@ -42,7 +42,6 @@ class _InfoState extends State<Info> {
         // ignore: missing_return
         onWillPop: (){
           Navigator.of(context).pushReplacementNamed('/home');
-          print('aq');
         },
       child : Scaffold(
         floatingActionButton: Column(
@@ -52,7 +51,7 @@ class _InfoState extends State<Info> {
           textDirection: TextDirection.ltr,
           children: <Widget>[
             FloatingActionButton.extended(
-              backgroundColor: Colors.black45,
+              backgroundColor: Colors.yellow.shade900,
               onPressed: ()=> call('02123970488'),
               label: Container(
                 child: Row(
@@ -73,23 +72,18 @@ class _InfoState extends State<Info> {
         ),
         title: Text('Hakkımızda'),
         elevation: 0,
-        backgroundColor: Colors.deepOrangeAccent.shade700,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.deepOrangeAccent.shade700,
+        color: Color.fromRGBO(0, 40, 77,1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             verticalDirection: VerticalDirection.down,
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-//              GoogleMap(
-//                mapType: MapType.hybrid,
-//                onMapCreated: (GoogleMapController controller) {
-//                  _controller.complete(controller);
-//                }, initialCameraPosition: null,
-//              ),
+              SizedBox(height: 20,),
               Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),

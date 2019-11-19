@@ -201,7 +201,7 @@ class _LastOrdersState extends State<LastOrders> {
            elevation: 0,
            title: Text('Siparişlerim'),
            centerTitle: true,
-           backgroundColor: Colors.deepOrangeAccent.shade700,
+           backgroundColor: Color.fromRGBO(0, 40, 77,1),
          ),
          body: 
          key == null?
@@ -481,7 +481,7 @@ class _LastOrdersState extends State<LastOrders> {
                                    title: 'Sipariş başarıyla sepete eklendi',
                                    buttons: [
                                      DialogButton(
-                                       color: Colors.deepOrangeAccent.shade700,
+                                       color: Color.fromRGBO(0, 40, 77,1),
                                        onPressed: () => Navigator.of(context).pop(),
                                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                      ),

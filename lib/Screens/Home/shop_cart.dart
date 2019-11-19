@@ -127,17 +127,26 @@ class _ShoppingCartState extends State<ShoppingCart> {
       appBar: AppBar(
         title: Text('Sepetim'),
         centerTitle: true,
-        backgroundColor: Colors.deepOrangeAccent.shade700,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
         elevation: 0,
       ),
       floatingActionButton:SizedBox(
-      height: 50,
-      width: SizeConfig.blockSizeHorizontal*100,
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+      height: SizeConfig.blockSizeHorizontal*40,
+      child: Column(
           children: <Widget>[
             FloatingActionButton.extended(
-              backgroundColor: Colors.deepOrangeAccent.shade700,
+              heroTag: "btnTutar",
+              backgroundColor: Colors.white70,
+              onPressed: null,
+              label: Text(
+                  "Tutar: " + finalPrice.toInt().toString() + " TL",
+                  style: TextStyle(fontSize: 15,color: Colors.black),
+                ),
+            ),
+            SizedBox(height: 10,),
+            FloatingActionButton.extended(
+              heroTag: "btnEmpty",
+              backgroundColor: Color.fromRGBO(0, 40, 77,1),
               label: Text('Sepeti Boşalt'),
               onPressed: (){
                 setState(() {
@@ -151,6 +160,82 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 }
                 });
               },
+            ),
+            SizedBox(height: 10,),
+            FloatingActionButton.extended(
+              heroTag: "btnAccept",
+              label: Text('Sepeti Onayla'),
+              backgroundColor: Color.fromRGBO(0, 40, 77,1),
+              onPressed: (){
+                      if(keyShared != ''){
+                        if(inside == false){
+                         if(internet == true){
+                           listItems.length != 0 ?
+                           Navigator.of(context).pushReplacementNamed('/endcart')
+                               :
+                           Alert(
+                             style: alertStyle,
+                             title: 'Sepet Boş',
+                             desc: 'Boş sepet onaylanamaz',
+                             buttons: [
+                               DialogButton(
+                                 color: Color.fromRGBO(0, 40, 77,1),
+                                 onPressed: () => Navigator.pop(context,false),
+                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                               ),
+                             ], context: context,
+                           ).show();
+                         }
+                         else{
+                           return Alert(
+                             style: alertStyle,
+                             title: 'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
+                             buttons: [
+                               DialogButton(
+                                 color: Color.fromRGBO(0, 40, 77,1),
+                                 onPressed: () => Navigator.pop(context,false),
+                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                               ),
+                             ], context: context,
+                           ).show();
+                         }
+                        }else{
+                          return Alert(
+                            style: alertStyle,
+                            title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                            buttons: [
+                              DialogButton(
+                                color: Color.fromRGBO(0, 40, 77,1),
+                                onPressed: () => Navigator.pop(context,false),
+                                child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                              ),
+                              DialogButton(
+                                color: Color.fromRGBO(0, 40, 77,1),
+                                onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                                child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
+                              ),
+                            ], context: context,
+                          ).show();
+                        }
+                      }else{
+                          return Alert(
+                            style: alertStyle,
+                              title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                              buttons: [
+                                DialogButton(
+                                  color: Color.fromRGBO(0, 40, 77,1),
+                                  onPressed: () => Navigator.pop(context,false),
+                                  child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                                ),
+                                DialogButton(
+                                  color: Color.fromRGBO(0, 40, 77,1),
+                                  onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                                  child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
+                                ),
+                              ], context: context,
+                            ).show();
+                      }
+                  },
             ),
           ]),
       ),
@@ -183,7 +268,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     Text(
                       listItems[index].itemCount.toString(),
                       style: TextStyle(
-                          color: Colors.deepOrangeAccent.shade700, fontSize: 20),
+                          color: Color.fromRGBO(0, 40, 77,1), fontSize: 20),
                     ),
                     SizedBox(
                       width: 10,
@@ -206,7 +291,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.deepOrangeAccent.shade700,
+                      color: Color.fromRGBO(0, 40, 77,1),
                       onPressed: (){
                         setState(() {
                           listItems[index].itemCount = 0;
@@ -218,7 +303,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.deepOrangeAccent.shade700,
+                      color: Color.fromRGBO(0, 40, 77,1),
                       onPressed: (){
                         setState(() {
                           listItems[index].itemCount++;
@@ -229,7 +314,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     MaterialButton(
                       elevation: 0,
                       minWidth: 10,
-                      color: Colors.deepOrangeAccent.shade700,
+                      color: Color.fromRGBO(0, 40, 77,1),
                       onPressed: (){
                         setState(() {
                           if(listItems[index].itemCount == 1){
@@ -249,113 +334,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
           },
         ),
       ),
-      bottomNavigationBar: Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: ListTile(
-                leading: Icon(Icons.shopping_basket),
-                title: Text(
-                  "Tutar: ",
-                  style: TextStyle(fontSize: 15),
-                ),
-                subtitle: Text(
-                  finalPrice.toInt().toString() + " TL",
-                  style: TextStyle(fontSize: 18),
-                ),
-                ),
-              )
-            ),
-              Expanded(
-                child: CupertinoButton(
-                  borderRadius: BorderRadius.circular(0),
-                  pressedOpacity: 0.8,
-                  color: Colors.deepOrangeAccent.shade700,
-                  // ignore: missing_return
-                  onPressed: (){
-                      if(keyShared != ''){
-                        if(inside == false){
-                         if(internet == true){
-                           listItems.length != 0 ?
-                           Navigator.of(context).pushReplacementNamed('/endcart')
-                               :
-                           Alert(
-                             style: alertStyle,
-                             title: 'Sepet Boş',
-                             desc: 'Boş sepet onaylanamaz',
-                             buttons: [
-                               DialogButton(
-                                 color: Colors.deepOrangeAccent.shade700,
-                                 onPressed: () => Navigator.pop(context,false),
-                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                               ),
-                             ], context: context,
-                           ).show();
-                         }
-                         else{
-                           return Alert(
-                             style: alertStyle,
-                             title: 'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
-                             buttons: [
-                               DialogButton(
-                                 color: Colors.deepOrangeAccent.shade700,
-                                 onPressed: () => Navigator.pop(context,false),
-                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                               ),
-                             ], context: context,
-                           ).show();
-                         }
-                        }else{
-                          return Alert(
-                            style: alertStyle,
-                            title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                            buttons: [
-                              DialogButton(
-                                color: Colors.deepOrangeAccent.shade700,
-                                onPressed: () => Navigator.pop(context,false),
-                                child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                              ),
-                              DialogButton(
-                                color: Colors.deepOrangeAccent.shade700,
-                                onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
-                              ),
-                            ], context: context,
-                          ).show();
-                        }
-                      }else{
-                          return Alert(
-                            style: alertStyle,
-                              title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                              buttons: [
-                                DialogButton(
-                                  color: Colors.deepOrangeAccent.shade700,
-                                  onPressed: () => Navigator.pop(context,false),
-                                  child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                                ),
-                                DialogButton(
-                                  color: Colors.deepOrangeAccent.shade700,
-                                  onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                                  child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
-                                ),
-                              ], context: context,
-                            ).show();
-                      }
-                  },
-                  child: Text('Sepeti Onayla',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white
-                  ),
-                  ),
-                  padding: EdgeInsets.all(25),
-                ),
-              )
-            ],
-          ),
-      ),
+
     );
   }
   var alertStyle = AlertStyle(
@@ -539,7 +518,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           desc:'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -570,7 +549,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           'Lütfen sipariş verebilmek için giriş yapınız.',
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -595,7 +574,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           'Lütfen sipariş verirken boş alanları doğru bir şekilde doldurunuz.',
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.pop(context,true),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -624,7 +603,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           },
           child: Scaffold(
       appBar: AppBar(
-                backgroundColor: Colors.deepOrangeAccent.shade700,
+                backgroundColor: Color.fromRGBO(0, 40, 77,1),
                 title: Text('Siparişi Onayla | Bitir'),
                 elevation: 0,
                 leading: IconButton(
@@ -703,21 +682,21 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                               title: Text('Nakit'),
                               value: 1,
                               groupValue: selectedPayment,
-                              activeColor: Colors.deepOrangeAccent.shade700,
+                              activeColor: Color.fromRGBO(0, 40, 77,1),
                               onChanged: setSelectedPayment,
                             ),
                             RadioListTile(
                               title: Text('Kredi Karti'),
                               value: 2,
                               groupValue: selectedPayment,
-                              activeColor: Colors.deepOrangeAccent.shade700,
+                              activeColor: Color.fromRGBO(0, 40, 77,1),
                               onChanged: setSelectedPayment,
                             ),
                             RadioListTile(
                               title: Text('Sodexo'),
                               value: 3,
                               groupValue: selectedPayment,
-                              activeColor: Colors.deepOrangeAccent.shade700,
+                              activeColor: Color.fromRGBO(0, 40, 77,1),
                               onChanged: setSelectedPayment,
                             ),
                           ],
@@ -793,7 +772,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
           bottomNavigationBar: SingleChildScrollView(child: CupertinoButton(
             borderRadius: BorderRadius.circular(0),
             pressedOpacity: 0.2,
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             // ignore: missing_return
             onPressed: (){
               if(key != ''){
@@ -827,7 +806,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
                     buttons: [
                       DialogButton(
-                        color: Colors.deepOrangeAccent.shade700,
+                        color: Color.fromRGBO(0, 40, 77,1),
                         onPressed: () => Navigator.pop(context, false),
                         child: Text('Tamam', style: TextStyle(color: Colors.white),),
                       ),
@@ -846,12 +825,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                       'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                   buttons: [
                     DialogButton(
-                      color: Colors.deepOrangeAccent.shade700,
+                      color: Color.fromRGBO(0, 40, 77,1),
                       onPressed: () => Navigator.pop(context, false),
                       child: Text('Tamam', style: TextStyle(color: Colors.white),),
                     ),
                     DialogButton(
-                      color: Colors.deepOrangeAccent.shade700,
+                      color: Color.fromRGBO(0, 40, 77,1),
                       onPressed: () =>
                           Navigator.of(context).pushReplacementNamed('/login'),
                       child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
@@ -871,12 +850,12 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                     'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                 buttons: [
                   DialogButton(
-                    color: Colors.deepOrangeAccent.shade700,
+                    color: Color.fromRGBO(0, 40, 77,1),
                     onPressed: () => Navigator.pop(context, false),
                     child: Text('Tamam', style: TextStyle(color: Colors.white),),
                   ),
                   DialogButton(
-                    color: Colors.deepOrangeAccent.shade700,
+                    color: Color.fromRGBO(0, 40, 77,1),
                     onPressed: () =>
                         Navigator.of(context).pushReplacementNamed('/login'),
                     child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
@@ -906,7 +885,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             width: 2
           )
         ),

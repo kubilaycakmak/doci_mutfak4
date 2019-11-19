@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
           title: '',
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.of(context).pop(),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
@@ -44,13 +44,13 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkInternetConnectivity();
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.deepOrangeAccent.shade700,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
         label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20, color: Colors.white), ),
         onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
       ),
       bottomNavigationBar: Container(
         height: SizeConfig.blockSizeVertical*10,
-        color: Colors.deepOrangeAccent.shade700,
+        color: Color.fromRGBO(0, 40, 77,1),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
       
       decoration: BoxDecoration(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             image: DecorationImage(
             image: backgroundImage,
             alignment: Alignment.topCenter,

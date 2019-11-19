@@ -137,12 +137,12 @@ String validatePhoneNumber(String value){
           desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.pop(context,false),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             ),
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
               child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
             ),
@@ -321,7 +321,7 @@ String validatePhoneNumber(String value){
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             width: 2
           )
         ),
@@ -387,7 +387,7 @@ String validatePhoneNumber(String value){
             child: AppBar(
               elevation: 0,
               bottom: tabBarItem,
-              backgroundColor: Colors.deepOrangeAccent.shade700,
+              backgroundColor: Color.fromRGBO(0, 40, 77,1),
             ),
           ),
           resizeToAvoidBottomInset: false,
@@ -396,7 +396,7 @@ String validatePhoneNumber(String value){
             controller: tabController,
             children: <Widget>[
               Container(
-                color: Colors.deepOrangeAccent.shade700,
+                color: Color.fromRGBO(0, 40, 77,1),
                 child: ListView(
                   children: <Widget>[
                     Padding(
@@ -469,12 +469,12 @@ String validatePhoneNumber(String value){
                                     desc: "Lütfen giriş yapabilmek için, boşlukları doldurunuz.",
                                     buttons: [
                                       DialogButton(
-                                        color: Colors.deepOrangeAccent.shade700,
+                                        color: Color.fromRGBO(0, 40, 77,1),
                                         onPressed: () => Navigator.pop(context,false),
                                         child: Text('Tamam', style: TextStyle(color: Colors.white),),
                                       ),
                                       DialogButton(
-                                        color: Colors.deepOrangeAccent.shade700,
+                                        color: Color.fromRGBO(0, 40, 77,1),
                                         onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
                                         child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
                                       ),
@@ -488,7 +488,7 @@ String validatePhoneNumber(String value){
                                 'Giriş Yap',
                                 style: TextStyle(color: Colors.white),
                               ),
-                              color: Colors.deepOrangeAccent.shade700,
+                              color: Color.fromRGBO(0, 40, 77,1),
                             ),
                             SizedBox(height: SizeConfig.blockSizeVertical*2,),
                             FlatButton(
@@ -783,7 +783,7 @@ String validatePhoneNumber(String value){
                                 title: 'Başarıyla kayıt oldunuz!',
                                 buttons: [
                                   DialogButton(
-                                    color: Colors.deepOrangeAccent.shade700,
+                                    color: Color.fromRGBO(0, 40, 77,1),
                                     onPressed: () => Navigator.of(context)
                                         .pushReplacementNamed('/login'),
                                     child: Text('Giriş sayfası',style: TextStyle(color: Colors.white),),
@@ -801,7 +801,7 @@ String validatePhoneNumber(String value){
                                 title: 'Şifreler aynı değil',
                                 buttons: [
                                   DialogButton(
-                                    color: Colors.deepOrangeAccent.shade700,
+                                    color: Color.fromRGBO(0, 40, 77,1),
                                     onPressed: () => Navigator.pop(context,false),
                                     child: Text('Tamam',style: TextStyle(color: Colors.white),),
                                   ),
@@ -815,7 +815,7 @@ String validatePhoneNumber(String value){
                           }
                         },
                         child: Text('Yeni Üye', style: TextStyle(color: Colors.white),),
-                        color: Colors.deepOrangeAccent.shade700,
+                        color: Color.fromRGBO(0, 40, 77,1),
                       ),
                     ),
                   ],
@@ -877,7 +877,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: Colors.deepOrangeAccent.shade700,
+            color: Color.fromRGBO(0, 40, 77,1),
             width: 2
           )
         ),
@@ -935,7 +935,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       ),
       buttons: [
         DialogButton(
-          color: Colors.deepOrangeAccent.shade700,
+          color: Color.fromRGBO(0, 40, 77,1),
           onPressed: ()=> Navigator.pop(context,false),
           child: Text('Tamam', style: TextStyle(color: Colors.white),),
         )
@@ -966,7 +966,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           title: 'Bu kullanıcı bulunamadı.',
           buttons: [
             DialogButton(
-              color: Colors.deepOrangeAccent.shade700,
+              color: Color.fromRGBO(0, 40, 77,1),
               child: Text('Tamam', style: TextStyle(color: Colors.white),),
             onPressed: ()=>Navigator.pop(context,false),
             )
@@ -981,7 +981,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent.shade700,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
         title: Text('Şifremi unuttum'),
         centerTitle: true,
         leading: IconButton(icon: Icon(Icons.arrow_back_ios),onPressed: ()=> Navigator.of(context).pushReplacementNamed('/home'),),
@@ -1019,7 +1019,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       // ignore: missing_return
                       onPressed: (){
                           forgetPassRequest();
-                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.deepOrangeAccent.shade700,),
+                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Color.fromRGBO(0, 40, 77,1),),
                   )
                 ] 
                 :
@@ -1045,7 +1045,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       // ignore: missing_return
                       onPressed: (){
                           _onLoading();
-                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Colors.deepOrangeAccent.shade700,),
+                      }, child: Text('Onayla', style: TextStyle(color: Colors.white),),color: Color.fromRGBO(0, 40, 77,1),),
                   )
                 ]
               ),

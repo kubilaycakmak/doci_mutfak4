@@ -86,10 +86,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print(headerList);
     SizeConfig().init(context);
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
+          heroTag: "btnshop",
           elevation: 0,
           backgroundColor: Colors.deepOrangeAccent,
           label: Badge(
@@ -111,7 +111,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         appBar: AppBar(
           title: Text('Menü'),
           centerTitle: true,
-          backgroundColor: Colors.deepOrangeAccent.shade700,
+          backgroundColor: Color.fromRGBO(0, 40, 77,1),
           elevation: 0,
           actions: <Widget>[
           ],
@@ -139,12 +139,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   return ListTile(
                     isThreeLine: true,
                     onTap: (){
-                      print('asd');
                     },
                     title: 
                     snapshot.data[index].priority <= 0 ?
                     Text(' KAMPANYALI ÜRÜNLER ', style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.blueGrey),):
-                    Text(snapshot.data[index].name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.deepOrangeAccent.shade700),),
+                    Text(snapshot.data[index].name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Color.fromRGBO(0, 40, 77,1)),),
                     contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                     dense: false,
                     subtitle: FutureBuilder<List<Types>>(
@@ -261,7 +260,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                     ),
                                     buttons: [
                                       DialogButton(
-                                        color: Colors.deepOrangeAccent.shade700,
+                                        color: Color.fromRGBO(0, 40, 77,1),
                                         child: Text('Kapat', style: TextStyle(color: Colors.white),),
                                         onPressed: ()=> Navigator.pop(context),
                                       )
@@ -273,7 +272,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                       snapshot.data[index].priority <= 0 ? 
                                       Icon(FontAwesomeIcons.plusSquare, color: Colors.blueGrey,size: 30,)
                                       :
-                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.deepOrangeAccent.shade700,size: 30,),)
+                                      Icon(FontAwesomeIcons.plusSquare, color: Color.fromRGBO(0, 40, 77,1),size: 30,),)
                                        : Text(''),
                                       onTap: (){
                                         showDialog(
@@ -372,7 +371,6 @@ class _FastShopDialogState extends State<FastShopDialog> {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": keyJson.toString(),
     });
-    print(response.body);
     if(response.statusCode == 200){
         user = json.decode(response.body);
         var userInfo = User.fromJson(user);
@@ -413,11 +411,9 @@ class _FastShopDialogState extends State<FastShopDialog> {
       setState(() {
         postRequesAuto(username, password);
         postItselfAuto(keyShared);
-        print(keyShared);
       });
     }
     else{
-      print('key yerinde');
     }
   }
 
@@ -466,7 +462,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                       desc: 'Boş sepet onaylanamaz',
                       buttons: [
                         DialogButton(
-                          color: Colors.deepOrangeAccent.shade700,
+                          color: Color.fromRGBO(0, 40, 77,1),
                           onPressed: () => Navigator.pop(context, false),
                           child: Text('Tamam',
                             style: TextStyle(color: Colors.white),),
@@ -480,13 +476,13 @@ class _FastShopDialogState extends State<FastShopDialog> {
                       title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                       buttons: [
                         DialogButton(
-                          color: Colors.deepOrangeAccent.shade700,
+                          color: Color.fromRGBO(0, 40, 77,1),
                           onPressed: () => Navigator.pop(context, false),
                           child: Text('Tamam', style: TextStyle(
                               color: Colors.white),),
                         ),
                         DialogButton(
-                          color: Colors.deepOrangeAccent.shade700,
+                          color: Color.fromRGBO(0, 40, 77,1),
                           onPressed: () =>
                               Navigator.of(context)
                                   .pushReplacementNamed('/login'),
@@ -502,13 +498,13 @@ class _FastShopDialogState extends State<FastShopDialog> {
                       title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
                       buttons: [
                         DialogButton(
-                          color: Colors.deepOrangeAccent.shade700,
+                          color: Color.fromRGBO(0, 40, 77,1),
                           onPressed: () => Navigator.pop(context, false),
                           child: Text('Tamam', style: TextStyle(
                               color: Colors.white),),
                         ),
                         DialogButton(
-                          color: Colors.deepOrangeAccent.shade700,
+                          color: Color.fromRGBO(0, 40, 77,1),
                           onPressed: () =>
                               Navigator.of(context)
                                   .pushReplacementNamed('/login'),
@@ -542,7 +538,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Colors.deepOrangeAccent.shade700,
+                              color: Color.fromRGBO(0, 40, 77,1),
                               onPressed: () {
                                 setState(() {
                                   listItems[i].itemCount = 0;
@@ -554,7 +550,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Colors.deepOrangeAccent.shade700,
+                              color: Color.fromRGBO(0, 40, 77,1),
                               onPressed: () {
                                 setState(() {
                                   listItems[i].itemCount++;
@@ -566,7 +562,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Colors.deepOrangeAccent.shade700,
+                              color: Color.fromRGBO(0, 40, 77,1),
                               onPressed: () {
                                 setState(() {
                                   if (listItems[i].itemCount == 1) {
