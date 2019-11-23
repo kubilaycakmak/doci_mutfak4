@@ -2,9 +2,10 @@ import 'package:doci_mutfak4/Routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 main() async {
-
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   ErrorWidget.builder = (FlutterErrorDetails details) => Container(child:Scaffold(
     appBar: AppBar(
       backgroundColor: Colors.deepOrangeAccent.shade700,
@@ -21,6 +22,8 @@ class ErrorHandlingPage extends StatefulWidget {
   @override
   _ErrorHandlingPageState createState() => _ErrorHandlingPageState();
 }
+
+
 
 class _ErrorHandlingPageState extends State<ErrorHandlingPage> {
   @override

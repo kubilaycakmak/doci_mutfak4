@@ -1,15 +1,16 @@
-import 'dart:convert' as JSON;
-import 'dart:convert';
+import 'dart:async';
+
+import 'package:doci_mutfak4/Connection/api_calls.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
+import 'package:doci_mutfak4/Model/user.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:doci_mutfak4/Screens/Profile/profile.dart';
+import 'package:doci_mutfak4/Validation/val.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,67 +23,10 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   final _countController = TextEditingController();
   User user;
-  String keyAgain;
   var user1;
-  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-  bool noUser;
   bool internet = true;
-  var keyShared;
   bool switcha;
-
- 
-
-    Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
-    });
-    print(response.body);
-    if(response.statusCode == 200){
-        noUser = false;
-        var user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-      }else{
-        //Navigator.of(context).pushReplacementNamed('/login');
-        setState(() {
-          noUser = true;
-        });
-        print(noUser);
-        throw Exception('postItselfAuto');
-    }
-    
-  }    
-    getKey() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    username = prefs.getString('LastUsername');
-    password = prefs.getString('LastPassword');
-    keyShared = prefs.getString('LastKey');
-    if(keyShared != ''){
-      postRequestAuto(username, password);
-      postItselfAuto(keyShared);
-    }
-  }  
-
-      Future<http.Response> postRequestAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          print('o burada');
-        } else {
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
-      }
-    return response;
-  }
+  Timer t;
 
   void _showToast(BuildContext context, String desc) {
     final scaffold = Scaffold.of(context);
@@ -105,7 +49,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   void initState() {
     super.initState();
-    this.getKey();
+    getKey();
   }
 
    @override
@@ -131,7 +75,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         elevation: 0,
       ),
       floatingActionButton:SizedBox(
-      height: SizeConfig.blockSizeHorizontal*40,
+      height: SizeConfig.blockSizeVertical*22,
       child: Column(
           children: <Widget>[
             FloatingActionButton.extended(
@@ -167,11 +111,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
               label: Text('Sepeti Onayla'),
               backgroundColor: Color.fromRGBO(0, 40, 77,1),
               onPressed: (){
-                      if(keyShared != ''){
+                      if(key != ''){
                         if(inside == false){
-                         if(internet == true){
                            listItems.length != 0 ?
-                           Navigator.of(context).pushReplacementNamed('/endcart')
+                           sendOrderToFinishPage()
                                :
                            Alert(
                              style: alertStyle,
@@ -185,20 +128,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                ),
                              ], context: context,
                            ).show();
-                         }
-                         else{
-                           return Alert(
-                             style: alertStyle,
-                             title: 'Sipariş verebilmeniz için, İnternet bağlantınız olması gerekmektedir.',
-                             buttons: [
-                               DialogButton(
-                                 color: Color.fromRGBO(0, 40, 77,1),
-                                 onPressed: () => Navigator.pop(context,false),
-                                 child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                               ),
-                             ], context: context,
-                           ).show();
-                         }
                         }else{
                           return Alert(
                             style: alertStyle,
@@ -217,7 +146,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             ], context: context,
                           ).show();
                         }
-                      }else{
+                      }else if(keyShared != ''){
+                        postRequestAuto(context, username, password);
+                        postItselfAuto(keyShared);
+                        Navigator.of(context).pushReplacementNamed('/endcart');
+                      }
+                      else{
                           return Alert(
                             style: alertStyle,
                               title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
@@ -241,6 +175,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       ),
       body: Container(
         child: ListView.builder(
+          padding: EdgeInsets.all(20),
           itemCount: listItems.length,
           itemBuilder: (context, index) {
             return Dismissible(
@@ -337,6 +272,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
     );
   }
+  sendOrderToFinishPage(){
+    onLoad(context,'Lüften Bekleyiniz..');
+      t = new Timer(Duration(milliseconds: 500), (){
+      t.cancel();
+      Navigator.of(context).pushReplacementNamed('/endcart');
+    }
+  );
+  }
   var alertStyle = AlertStyle(
     isCloseButton: false,
     isOverlayTapDismiss: false,
@@ -372,7 +315,6 @@ class EndOfTheShoppingCart extends StatefulWidget {
   _EndOfTheShoppingCartState createState() => _EndOfTheShoppingCartState();
 }
 class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
   var keyShared;
   bool noUser;
   bool validate = false;
@@ -380,41 +322,10 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
   final _addressController =new TextEditingController(text: listItems[0].address == null ? userInformations[0].address : listItems[0].address);
   final _phoneController =
   new TextEditingController(text: userInformations[0].phoneNumber);
-  final String orderCreate = 'http://68.183.222.16:8080/api/order/create';
-  final String paymentMethodsUrl =
-      'http://68.183.222.16:8080/api/paymentmethod/all';
   var note = TextEditingController();
+  int selectedPayment;
+  Timer t;
 
-  String validatePhoneNumber(String value){
-  Pattern cellphone = r'^((?!(0))[0-9]{7,10})$';
-  RegExp regexPhone = new RegExp(cellphone);
-  if(!regexPhone.hasMatch(value))
-    return 'Ev telefonu ise 7, Cep telefonu ise 10 haneli olmalidir.';
-  else
-    return null;
-  }
-
-  Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
-    });
-    print(response.body);
-    if(response.statusCode == 200){
-        noUser = false;
-        var user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-      }else{
-        //Navigator.of(context).pushReplacementNamed('/login');
-        setState(() {
-          noUser = true;
-        });
-        print(noUser);
-        throw Exception('postItselfAuto');
-    }
-    
-  }    
     getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     keyShared = prefs.getString('LastKey');
@@ -422,57 +333,15 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
     password = prefs.getString('LastPassword');
     if(key == ''){
       postItselfAuto(keyShared);
-      postRequestAuto(username, password);
+      postRequestAuto(context, username, password);
     }
   } 
-
-      Future<http.Response> postRequestAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          setState(() {
-            Navigator.of(context).pushReplacementNamed('/home');
-          });
-        } else {
-        }
-      }
-    return response;
-  }
-
-
-    Future<http.Response> postItself() async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": key,
-    });
-    setState(() {
-      user = json.decode(response.body);
-    });
-    var userInfo = new User(
-        id: user["value"]["id"],
-        name: user["value"]["name"],
-        lastname: user["value"]["lastname"],
-        phoneNumber: user["value"]["phoneNumber"],
-        address: user["value"]["address"],
-        created: user["value"]["created"]);
-    userInformations.add(userInfo);
-    return response;
-  }
-
-  int selectedPayment;
 
   @override
   void initState() {
     super.initState();
     setState(() {
       this.getKey();
-      this.postItself();
     });
     selectedPayment = 1;
   }
@@ -483,109 +352,6 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
     });
   }
 
-    Future<http.Response> _sendOrders() async {
-    Map payment = {
-      'id': selectedPayment
-    };
-    var id;
-    List listId= new List();
-    for(int i=0;i<listItems.length;i++){
-       id = {
-        'dociProduct': {
-          'id': listItems[i].id
-        },
-        'quantity': listItems[i].itemCount
-      };
-       listId.add(id);
-    }
-    Order or = Order(listId, note.text, payment,_addressController.text, _phoneController.text);
-    var body = JSON.jsonEncode(or.toJson());
-    var response = await http.post(Uri.encodeFull(orderCreate),
-        headers: {
-          "content-type" : "application/json",
-          "accept": "application/json",
-          "authorization": key,
-        },
-        body: body);
-        print(body);
-
-    if (response.statusCode == 201) {
-        print(' Response Body : ' + response.body);
-        listItems.clear();
-         Alert(
-          type: AlertType.success,
-          title: 'Siparişiniz Onaylandı',
-          desc:'Sepetinizdeki ürünler hazırlanıyor, kısa bir süre içerisinde siparişinizi teslim edeceğiz.',
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/home'),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ],
-          context: context,
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-            isCloseButton: false,
-            isOverlayTapDismiss: false,
-          )
-        ).show();
-
-    } else if(response.statusCode == 401){
-      if(username != null && password !=null ){
-        postRequestAuto(username, password);
-        postItselfAuto(keyShared);
-      }else{
-        setState(() {
-        return Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          type: AlertType.error,
-          title: 'Hata',
-          desc:
-          'Lütfen sipariş verebilmek için giriş yapınız.',
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/login'),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ],
-          context: context,
-        ).show();
-      });
-      throw Exception('Failed to fetch sendOrders');
-      }
-      
-    }
-    else {
-      setState(() {
-        return Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          type: AlertType.error,
-          title: 'Hata',
-          desc:
-          'Lütfen sipariş verirken boş alanları doğru bir şekilde doldurunuz.',
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.pop(context,true),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ],
-          context: context,
-        ).show();
-      });
-      throw Exception('Failed to fetch sendOrders');
-    } 
-    return response;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -779,7 +545,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                 if(inside == false){
                   if(internet == true){
                     listItems.length != 0 ?
-                    _onLoading()
+                      sendOrderSmallFucntion(context)
                         :
                     showDialog(
                         context: context,
@@ -875,56 +641,16 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
             ),)
         ));
   }
-  void _onLoading() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.black38,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: Color.fromRGBO(0, 40, 77,1),
-            width: 2
-          )
-        ),
-        title: Column(
-          children: <Widget>[
-            CircularProgressIndicator(
-            ),
-            SizedBox(height: 5,),
-            Text('İşleminiz Sürüyor...', style: TextStyle(color: Colors.white),)
-          ],
-        ),
-      );
-    },
-  );
-  new Future.delayed(new Duration(milliseconds: 2000), () {
-    Navigator.pop(context); //pop dialog
-    if (_formKey.currentState.validate()) {
-      _sendOrders();
+  sendOrderSmallFucntion(BuildContext context){
+  onLoad(context,'Sipariş Gönderiliyor..');
+  t = new Timer(Duration(milliseconds: 2500), (){
+      sendOrderFunc(context, selectedPayment, _addressController, _phoneController, note);
+      t.cancel();
+      Navigator.pop(context);
     }
-  });
-}
+  );
 }
 
-//@JsonSerializable()
-class Order{
-  var product;
-  String note;
-  Map payment;
-  String address;
-  String phoneNumber;
-
-  Order(this.product, this.note, this.payment, this.address, this.phoneNumber);
-
-  Map<String, dynamic> toJson() =>
-      {
-        'products': product,
-        'note': note,
-        'paymentMethod':payment,
-        'address':address,
-        'phoneNumber':phoneNumber
-      };
 }
+
+

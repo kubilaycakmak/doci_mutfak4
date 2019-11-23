@@ -1,9 +1,10 @@
-// import 'package:connectivity/connectivity.dart';
-import 'dart:io';
-
+import 'package:doci_mutfak4/Connection/api.dart';
+import 'package:doci_mutfak4/Connection/api_calls.dart';
+import 'package:doci_mutfak4/Model/question.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
-import 'package:doci_mutfak4/Screens/Account/user.dart';
-import 'package:doci_mutfak4/Screens/Home/profile.dart';
+import 'package:doci_mutfak4/Model/user.dart';
+import 'package:doci_mutfak4/Screens/Profile/profile.dart';
+import 'package:doci_mutfak4/Validation/val.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -11,7 +12,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 TabController tabController;
 final _formKey = new GlobalKey<FormState>();
@@ -38,310 +38,47 @@ int statusValidator;
 bool lock;
 List num;
 
-
-
 class LoginAndRegister extends StatefulWidget {
   @override
   _LoginAndRegisterState createState() => _LoginAndRegisterState();
 }
-
 class _LoginAndRegisterState extends State<LoginAndRegister> with TickerProviderStateMixin {
 
-  Questions currentQuestion;
-  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-  final String securityQuestions = 'http://68.183.222.16:8080/api/securityQuestion/all';
-  final String registerCheck = 'http://68.183.222.16:8080/api/userAccount/create';
-  final String changePass = 'http://68.183.222.16:8080/api/userAccount/changePassword ';
-  final String sendOrder = 'http://68.183.222.16:8080/api/order/create';
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _username = TextEditingController();
-  final _password = TextEditingController();
-  final _password2 = TextEditingController();
-  final _name = TextEditingController();
-  final _lastname = TextEditingController();
-  final _phoneNumber = TextEditingController();
-  final _address = TextEditingController();
-  final _answer = TextEditingController();
-  bool isTrue;
-  bool _agreedToTOS = true;
-  bool remember = false;
-  bool isValid;
-  var keyShared;
+Questions currentQuestion;
+Timer t;
+final _usernameController = TextEditingController();
+final _passwordController = TextEditingController();
+final _username = TextEditingController();
+final _password = TextEditingController();
+final _password2 = TextEditingController();
+final _name = TextEditingController();
+final _lastname = TextEditingController();
+final _phoneNumber = TextEditingController();
+final _address = TextEditingController();
+final _answer = TextEditingController();
+bool isTrue;
+bool _agreedToTOS = true;
+bool remember = false;
 
-  String validateUsername(String value){
-  Pattern pattern = r'^[a-zA-Z][a-zA-Z0-9._-]{3,15}$';
-  RegExp regex = new RegExp(pattern);
-  if(!regex.hasMatch(value))
-    return 'Kullanıcı ismini düzeltiniz!';
-  else if(isValid == false)
-    return 'Bu kullanıcı zaten mevcut!';
-  else
-    return null;
-}
+var textStyle = TextStyle(
+  fontSize: 12.0,
+  color: Colors.white,
+  fontFamily: 'OpenSans',
+  fontWeight: FontWeight.w600);
 
-String validatePassword(String value){
-  Pattern pattern = r'^[a-zA-Z0-9._-]{5,15}$';
-  RegExp regex = new RegExp(pattern);
-  if(!regex.hasMatch(value))
-    return 'Şifrenizi düzeltiniz';
-  else
-    return null;
-}
-String validateAnswer(String value){
- Pattern pattern = r'^[a-zA-Z0-9 .-]{2,15}$';
- RegExp regex = new RegExp(pattern);
- if(!regex.hasMatch(value))
-   return 'Cevabınızı düzeltiniz';
- else
-   return null;
-}
-String validatePhoneNumber(String value){
-  Pattern cellphone = r'^((?!(0))[0-9]{7,10})$';
-  RegExp regexPhone = new RegExp(cellphone);
-  if(!regexPhone.hasMatch(value))
-    return 'Ev telefonu ise 7, Cep telefonu ise 10 haneli olmalidir.';
-  else
-    return null;
-}
+Future<List<Questions>> _fetchQuestion() async{
+  var response = await http.get(securityQuestions);
+  if(response.statusCode == 200){
+    final items = json.decode(response.body).cast<Map<String,dynamic>>();
+    List<Questions> listQuestions = items.map<Questions>((json){
+      return Questions.fromJson(json);
+    }).toList();
 
-
-  Future<http.Response> postRequest() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    Map data = {
-      'username': _usernameController.text,
-      'password': _passwordController.text
-    };
-    var body = json.encode(data);
-    var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      authKey = json.decode(response.body);
-      key = authKey["authorization"];
-      await preferences.setString('LastKey', key);
-      await preferences.setString('LastUsername', _usernameController.text);
-      await preferences.setString('LastPassword', _passwordController.text);
-      print(' From Shared ' + preferences.getString('LastKey'));
-      if (key != '') {
-        inside = false;
-        Navigator.of(context).pushReplacementNamed('/home');
-        postItself();
-      }else{
-        print('alamadik');
-        Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          type: AlertType.warning,
-          title: 'Kullanıcı adı ve ya Şifre yanlış',
-          desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.pop(context,false),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
-              child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
-            ),
-          ], context: context,
-        ).show();
-      }
-    }else if(response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 500){
-      setState(() {
-        key = null;
-        Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          context: context,
-          title: 'Server Hatasi',
-          desc: 'Serverimiz suan da bakimdadir, lutfen daha sonra tekrar deneyiniz.',
-          buttons: [
-          ]
-        ).show();
-      });
-    }
-    print(response.body);
-    return response;
+    return listQuestions;
   }
-
- Future<http.Response> postRequesAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          setState(() {
-            inside = false;
-            Navigator.of(context).pushReplacementNamed('/home');
-          });
-        } else {
-          inside = true;
-        }
-      }
-    return response;
+  else{
+    throw Exception('Failed to load internet');
   }
-
-  Future<List<Questions>> _fetchQuestions() async{
-    var response = await http.get(securityQuestions);
-    if(response.statusCode == 200){
-      final items = json.decode(response.body).cast<Map<String,dynamic>>();
-      List<Questions> listQuestions = items.map<Questions>((json){
-        return Questions.fromJson(json);
-      }).toList();
-
-      return listQuestions;
-    }
-    else{
-      throw Exception('Failed to load internet');
-    }
-  }
-
-  Future<http.Response> postRegisterRequest() async{
-    Map data =
-      {
-        "username": _username.text,
-        "password": _password.text,
-        "user": {
-        "name": _name.text,
-            "lastname": _lastname.text,
-            "phoneNumber": _phoneNumber.text,
-            "address": _address.text
-        },
-        "securityQuestion": {
-          "id": setQuestion
-        },
-        "answer": _answer.text
-    };
-
-    var body = json.encode(data);
-    print(data);
-    var response = await http.post(registerCheck,
-      headers: {
-        "Content-Type":"application/json"
-      },
-      body: body
-    );
-      statusValidator = response.statusCode;
-      return response;
-  }
-
-  getKey() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    keyShared = prefs.getString('LastKey');
-    username = prefs.getString('LastUsername');
-    password = prefs.getString('LastPassword');
-  } 
-
-  Future<http.Response> postItself() async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": key,
-    });
-
-    if(response.statusCode == 200){
-      user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-    }else{
-      throw Exception('postItself');
-    }
-  }
-
-    Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
-    });
-    print(response.body);
-    if(response.statusCode == 200){
-        user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-      }else{
-        throw Exception('postItselfAuto');
-    }
-  }
-
-  Future<bool> userCheck(String username) async{
-    var response = await http.get('http://68.183.222.16:8080/api/userAccount/check?username=$username');
-    var body = json.decode(response.body);
-    if(body == false){
-      print('bu kullanici var');
-      setState(() {
-        isValid = false;
-      });
-    }else{
-      print('kullanici alinabilir');
-      setState(() {
-        isValid = true;
-      });
-    }
-    return isValid;
-  }
-
-    @override
-  void initState() { 
-    super.initState();
-    getKey();
-    print(keyShared);
-    if(keyShared != null){
-      setState(() {
-        postRequesAuto(username, password);
-        postItselfAuto(key);
-      });
-    }else{
-      setState(() {
-        print('hahaha');
-      });
-    }
-  }
-  var textStyle = TextStyle(
-    fontSize: 12.0,
-    color: Colors.white,
-    fontFamily: 'OpenSans',
-    fontWeight: FontWeight.w600);
-
-  void _onLoading() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.black38,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: Color.fromRGBO(0, 40, 77,1),
-            width: 2
-          )
-        ),
-        title: Column(
-          children: <Widget>[
-            CircularProgressIndicator(
-            ),
-            SizedBox(height: 5,),
-            Text('Giriş Yapılıyor...', style: TextStyle(color: Colors.white),)
-          ],
-        ),
-      );
-    },
-  );
-  new Future.delayed(new Duration(milliseconds: 2000), () {
-    Navigator.pop(context); //pop dialog
-    postRequest();
-  });
 }
 
   @override
@@ -483,7 +220,13 @@ String validatePhoneNumber(String value){
                                     ], context: context,
                                   ).show();
                                 }else{
-                                  _onLoading();
+                                  onLoad(context, 'Giriş Yapılıyor..');
+                                  t = new Timer(Duration(milliseconds: 1500), (){
+                                    postRequest(context, _usernameController, _passwordController);
+                                    t.cancel();
+                                    Navigator.pop(context);
+                                  }
+                                );
                                 }
                               },
                               child: Text(
@@ -687,7 +430,7 @@ String validatePhoneNumber(String value){
                             Column(
                               children: <Widget>[
                                 FutureBuilder<List<Questions>>(
-                                  future: _fetchQuestions(),
+                                  future: _fetchQuestion(),
                                   builder: (BuildContext context,
                                       AsyncSnapshot<List<Questions>> snapshot) {
                                     if (!snapshot.hasData)
@@ -773,7 +516,15 @@ String validatePhoneNumber(String value){
                           if (_formKey.currentState.validate()) {
                             if(_password.text == _password2.text){
                               _formKey.currentState.save();
-                              postRegisterRequest();
+                              postRegisterRequest(
+                                _username,
+                                _password,
+                                _name,
+                                _lastname,
+                                _phoneNumber,
+                                _address,
+                                _answer
+                              );
                               Alert(
                                 style: AlertStyle(
                                   animationDuration: Duration(milliseconds: 500),
@@ -837,19 +588,6 @@ String validatePhoneNumber(String value){
     });
   }
 }
-class Questions{
-  int id;
-  String question;
-
-  Questions({this.id, this.question});
-
-  factory Questions.fromJson(Map<String, dynamic> json){
-    return Questions(
-      id: json['id'],
-      question: json['question']
-    );
-  }
-}
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -857,6 +595,7 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
+  Timer t;
   final _forgetUsername = TextEditingController();
   final _forgetAnswer = TextEditingController();
   var _question;
@@ -893,10 +632,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       );
     },
   );
-  new Future.delayed(new Duration(milliseconds: 2000), () {
+  t = new Timer(Duration(milliseconds: 1000), (){
     Navigator.pop(context); //pop dialog
     getQuestion();
   });
+    
 }
 
   Future<http.Response> forgetPassRequest() async{
@@ -982,8 +722,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: (){
-          Navigator.of(context).pushReplacementNamed('/home');
-          print('aq');
+          return Navigator.of(context).pushReplacementNamed('/home');
         },
         child: Scaffold(
           appBar: AppBar(

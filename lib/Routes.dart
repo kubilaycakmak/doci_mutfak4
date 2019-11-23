@@ -1,19 +1,16 @@
-import 'dart:convert';
 import 'package:animated_splash/animated_splash.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Home/Info.dart';
 import 'package:doci_mutfak4/Screens/Home/bottom_navi.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
-import 'package:doci_mutfak4/Screens/Home/profile.dart';
-import 'package:doci_mutfak4/Screens/Home/shop_cart.dart';
 import 'package:doci_mutfak4/Screens/Profile/change_pass.dart';
-import 'package:doci_mutfak4/Screens/splashScreen.dart';
+import 'package:doci_mutfak4/Screens/Profile/info.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Screens/Account/user.dart';
-import 'Screens/Home/shop_cart.dart';
+import 'Connection/api_calls.dart';
+import 'Screens/Profile/profile.dart';
 import 'Screens/Profile/update.dart';
+import 'Screens/ShopCart/shop_cart.dart';
+import 'splashScreen.dart';
 
 class Routes{
   Routes(){
@@ -122,21 +119,21 @@ class EntryScreen extends StatefulWidget {
 }
 
 class _EntryScreenState extends State<EntryScreen> {
+Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
+static bool switcha;
 var keyShared;
 var username;
 var password;
-static bool switcha;
 GlobalKey _scaffold = GlobalKey();
 
 Function duringSplash = () {
-    if (switcha == false) {
-      return 2;
-    } else {
-      return 1;
-    } 
-  };
+  if (switcha == false) {
+    return 2;
+  } else {
+    return 1;
+  } 
+};
 
-Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
 
   getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -145,8 +142,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     keyShared = prefs.getString('LastKey');
     if(keyShared != ''){
       setState(() {
-        print(keyShared);
-        postRequestAuto(username, password);
+        postRequestAuto(context,username, password);
         postItselfAuto(keyShared);
         switcha = false;
       });
@@ -160,8 +156,7 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
     }
     print(switcha);
   } 
-
-    logout() async{
+  logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('LastKey', '');
       prefs.setString('LastUsername', '');
@@ -170,72 +165,32 @@ Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScree
       switcha = false;
   }
 
-  
-
-  Future<http.Response> postRequestAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          setState(() {
-            inside = false;
-            Navigator.of(context).pushReplacementNamed('/home');
-          });
-        } else {
-          inside = true;
-        }
-      }
-    return response;
-  }
-
-  Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull('http://68.183.222.16:8080/api/user/itself'), headers: {
-      "authorization": keyJson,
-    });
-
-    if(response.statusCode == 200){
-        user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        print(userInformations[0].name);
-        return response;
-      }else{
-        throw Exception('postItselfAuto');
-    }
-  } 
-  @override
+    @override
   void initState() { 
     super.initState();
     this.getKey();
-
   }
   @override
   void dispose() {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffold,
-      backgroundColor: Colors.deepOrangeAccent.shade700,
-      body: Container(
-        color: Colors.deepOrangeAccent.shade700,
-        child: AnimatedSplash(
-          imagePath: 'assets/images/logo.png',
-          home: SplashScreen(),
-          duration: 2500,
-          customFunction: duringSplash,
-          type: AnimatedSplashType.BackgroundProcess,
-          outputAndHome: returnValueAndHomeScreen,
-        ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    key: _scaffold,
+    backgroundColor: Colors.deepOrangeAccent.shade700,
+    body: Container(
+      color: Colors.deepOrangeAccent.shade700,
+      child: AnimatedSplash(
+        imagePath: 'assets/images/logo.png',
+        home: SplashScreen(),
+        duration: 2500,
+        customFunction: duringSplash,
+        type: AnimatedSplashType.BackgroundProcess,
+        outputAndHome: returnValueAndHomeScreen,
       ),
-    );
-  }
+    ),
+  );
+}
 }

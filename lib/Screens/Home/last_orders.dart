@@ -1,20 +1,35 @@
+import 'package:doci_mutfak4/Connection/api.dart';
+import 'package:doci_mutfak4/Connection/api_calls.dart';
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
-
 import 'menu.dart';
 
 var backgroundImage = new AssetImage('assets/images/sepetbos.png');
 var image = new Image(image: backgroundImage);
+
+List productItems;
+List orderCount;
+bool orderStatus;
+double taste = 3;
+double rating = 0;
+double speed = 3;
+String keyAgain;
+List starCount;
+double services = 3;
+var keyShared;
+var selectedId;
+bool noUser;
+bool finishRaiting = false;
+var _commentController = new TextEditingController();
 
 class LastOrders extends StatefulWidget {
   LastOrders({Key key}) : super(key: key);
@@ -24,31 +39,9 @@ class LastOrders extends StatefulWidget {
 }
 
 class _LastOrdersState extends State<LastOrders> {
-  final String orderUrl = 'http://68.183.222.16:8080/api/order/user';
-  List productItems;
-  final String loginCheckUrl = 'http://68.183.222.16:8080/api/userAccount/login';
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-  List orderCount;
-  bool orderStatus;
-  double taste = 3;
-  double rating = 0;
-  double speed = 3;
-  String keyAgain;
-  List starCount;
-  double services = 3;
-  var keyShared;
-  var selectedId;
-  bool noUser;
-  bool finishRaiting = false;
-  var _commentController = new TextEditingController();
-    
-    getKey() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    keyShared = prefs.getString('LastKey');
-    username = prefs.getString('LastUsername');
-    password = prefs.getString('LastPassword');
-  } 
-  Future<List> _fetchData() async {
+
+// ignore: missing_return
+Future<List> _fetchData() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": key,
@@ -65,7 +58,7 @@ class _LastOrdersState extends State<LastOrders> {
     }else if(
       response.statusCode == 401){
         if(username != null){
-          postRequestAuto(username, password);
+          postRequestAuto(context, username, password);
           postItselfAuto(key);
         }else{
           print('username');
@@ -77,80 +70,6 @@ class _LastOrdersState extends State<LastOrders> {
     }
   }
 
-    Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
-    });
-    print(response.body);
-    if(response.statusCode == 200){
-        noUser = false;
-        user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-      }else{
-        //Navigator.of(context).pushReplacementNamed('/login');
-        setState(() {
-          noUser = true;
-        });
-        print(noUser);
-        throw Exception('postItselfAuto');
-    }
-  }
-
-    Future<http.Response> postRequestAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          setState(() {
-            Navigator.of(context).pushReplacementNamed('/home');
-          });
-        } else {
-        }
-      }
-    return response;
-  }
-  // ignore: missing_return
-  Future<http.Response> _fetchRaiting() async{
-    Map data =
-    {
-        "taste": taste.toInt(),
-        "speed": speed.toInt(),
-        "service": services.toInt(),
-        "comment": _commentController.text
-    };
-    var body = json.encode(data);
-    print(body);
-    var response = await http.put(Uri.encodeFull('http://68.183.222.16:8080/api/order/rate?orderId=$selectedId'),
-      headers: {
-        "Authorization": key,
-        "content-Type": "application/json"
-      },
-      body: body
-      );
-      print('selected Id : ' + selectedId.toString());
-
-      print('response body ' + response.body);
-      
-      if(response.statusCode == 201){
-        setState(() {
-          finishRaiting = true;
-        });
-        
-      }else{
-        setState(() {
-          finishRaiting = false;
-        });
-        throw Exception('failed to load raiting');
-      }
-  }
   Future<List> _fetchData1() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
@@ -173,22 +92,53 @@ class _LastOrdersState extends State<LastOrders> {
     }
   }
 
+      // ignore: missing_return
+  Future<http.Response> _fetchRaiting() async{
+    Map data =
+    {
+        "taste": taste.toInt(),
+        "speed": speed.toInt(),
+        "service": services.toInt(),
+        "comment": _commentController.text
+    };
+    var body = json.encode(data);
+    print(body);
+    var response = await http.put(Uri.encodeFull(ratingUrl),
+      headers: {
+        "Authorization": key,
+        "content-Type": "application/json"
+      },
+      body: body
+      );
+      print('selected Id : ' + selectedId.toString());
+
+      print('response body ' + response.body);
+      
+      if(response.statusCode == 201){
+        setState(() {
+          finishRaiting = true;
+        });
+        
+      }else{
+        setState(() {
+          finishRaiting = false;
+        });
+        throw Exception('failed to load raiting');
+      }
+  }
+  
+
   @override
   void initState() {
     super.initState();
     setState(() {
-      this.getKey();
-      this._fetchData();
-      this._fetchData1();
-      keyAgain = key;
+      getKey();
     });
   }
 
   @override
   void dispose() { 
-    this.getKey();
-    this._fetchData();
-    this._fetchData1();
+    getKey();
     super.dispose();
   }
   var star = Icon(Icons.star);
@@ -267,7 +217,9 @@ class _LastOrdersState extends State<LastOrders> {
                    itemCount: orderCount.length,
                    itemBuilder: (BuildContext context, int index){
                      return Card(
+                       color: Color.fromRGBO(0, 40, 77,0.9),
                        child: ExpansionTile(
+                         trailing: Icon(FontAwesomeIcons.arrowAltCircleDown, color: Colors.white,),
                          onExpansionChanged: (val){
                            _commentController.text = '';
                          },
@@ -276,6 +228,7 @@ class _LastOrdersState extends State<LastOrders> {
                              .replaceAll('Feb','Şubat').replaceAll('Mar', 'Mart').replaceAll('Ap','Nisan').replaceAll('May','Mayıs')
                              .replaceAll('June','Haziran').replaceAll('July', 'Temmuz').replaceAll('Agu','Ağustos').replaceAll('Sep','Eylül')
                              .replaceAll('AM','').replaceAll('PM', '')
+                         ,style: TextStyle(color: Colors.white),
                          ),
                          children: <Widget>[
                            FutureBuilder<List>(
@@ -309,16 +262,16 @@ class _LastOrdersState extends State<LastOrders> {
                              },
                            ),
                            ListTile(
-                             title: Text('Toplam ödenen :'),
-                             subtitle: Text(snapshot.data[index]['price'].toInt().toString() + ' TL', style: TextStyle(fontSize: 30),),
+                             title: Text('Toplam ödenen :',style: TextStyle(color: Colors.white),),
+                             subtitle: Text(snapshot.data[index]['price'].toInt().toString() + ' TL', style: TextStyle(color: Colors.white,fontSize: 30),),
                            ),
                            ListTile(
-                             title: Text('Sipariş Adresi : '),
-                             subtitle: Text(snapshot.data[index]['address'].toString()),
+                             title: Text('Sipariş Adresi : ',style: TextStyle(color: Colors.white),),
+                             subtitle: Text(snapshot.data[index]['address'].toString(),style: TextStyle(color: Colors.white),),
                            ),
                            ListTile(
-                             title: Text('Sipariş Notu : '),
-                             subtitle: Text(snapshot.data[index]['note'].toString()),
+                             title: Text('Sipariş Notu : ',style: TextStyle(color: Colors.white),),
+                             subtitle: Text(snapshot.data[index]['note'].toString(),style: TextStyle(color: Colors.white),),
                            ),
                            Column(
                             children: 
@@ -412,25 +365,25 @@ class _LastOrdersState extends State<LastOrders> {
                           ),
                             ] : <Widget>[
                               ListTile(
-                                title: Text('Oylamanız :'),
+                                title: Text('Oylamanız :',style: TextStyle(color: Colors.white),),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Text('Hız :     '),
+                                        Text('Hız :     ',style: TextStyle(color: Colors.white),),
                                         for(int i = 0; i< snapshot.data[index]['orderRating']["speed"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
                                       ],
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text('Servis :'),
+                                        Text('Servis :',style: TextStyle(color: Colors.white),),
                                         for(int i = 0; i< snapshot.data[index]['orderRating']["service"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
                                       ],
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text('Tat:      '),
+                                        Text('Tat:      ',style: TextStyle(color: Colors.white),),
                                         for(int i = 0; i< snapshot.data[index]['orderRating']["taste"].toInt(); i++) Icon(Icons.star, color: Colors.orangeAccent,),
                                       ],
                                     ),
@@ -438,16 +391,16 @@ class _LastOrdersState extends State<LastOrders> {
                                 ),
                               ),
                               ListTile(
-                                title: Text('Yorumunuz :'),
+                                title: Text('Yorumunuz :',style: TextStyle(color: Colors.white),),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(snapshot.data[index]['orderRating']['comment'].toString()),
+                                    Text(snapshot.data[index]['orderRating']['comment'].toString(),style: TextStyle(color: Colors.white),),
                                   ],
                                 ),
                               ),
                             ] : <Widget>[
-                              Text("Siparişi oylayabilmeniz için, restaurant'ın siparişi onaylaması gerekmektedir", textAlign: TextAlign.center,)
+                              Text("Siparişi oylayabilmeniz için, restaurant'ın siparişi onaylaması gerekmektedir", textAlign: TextAlign.center,style: TextStyle(color: Colors.white),)
                             ],
                           ),
                           Divider(

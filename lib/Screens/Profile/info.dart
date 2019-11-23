@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:doci_mutfak4/Connection/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,7 +20,6 @@ class _InfoState extends State<Info> {
   void call(String number) => launch("tel:$number");
   void map(String url) => UrlLauncher.launch('url:$url');
   String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
-  final String isOpen = 'http://68.183.222.16:8080/api/time/isopen';
   bool isOpened;
 
   Future<bool> storeOpenorNot() async{

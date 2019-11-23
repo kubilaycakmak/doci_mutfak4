@@ -1,12 +1,12 @@
 import 'dart:ui' as prefix0;
-
 import 'package:badges/badges.dart';
+import 'package:doci_mutfak4/Connection/api.dart';
+import 'package:doci_mutfak4/Connection/api_calls.dart';
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Model/products.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:doci_mutfak4/Model/types.dart';
-import 'package:doci_mutfak4/Screens/Account/login_register.dart';
-import 'package:doci_mutfak4/Screens/Account/user.dart';
+import 'package:doci_mutfak4/Screens/Profile/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -16,7 +16,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 var currentSelected;
 List<String> addItem;
@@ -35,8 +34,6 @@ var itemOfProducts;
 Products products;
 AnimationController c ;
 bool door = false;
-List headerList;
-var types;
 
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage);
@@ -48,25 +45,24 @@ class Menu extends StatefulWidget {
   _MenuState createState() => _MenuState();
 }
 
-class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
-
+class _MenuState extends State<Menu>{
+  List type;
   List dataProducts;
   var quantity = 1;
   TabController tabController;
-  String url = 'http://68.183.222.16:8080/api/dociproduct/all';
+  var response;
 
-  Future<List<Types>> _fetchTypes() async {
-    var response = await http
-        .get(Uri.encodeFull(url), headers: {"Accept": 'application/json'});
+
+  Future<List<Types>> _fetchTypes() async{
+    if(response==null){
+      response = await http.get(Uri.encodeFull(menuUrl), headers: {"Accept": 'application/json'});
+    }
     if (response.statusCode == 200) {
       final items = json.decode(response.body);
-      types = items;
-      headerList = items['types'];
       List<Types> listOfTypes = items["types"].map<Types>((json) {
         return Types.fromJson(json);
       }).toList();
       dataProducts = items["products"];
-      
       return listOfTypes;
     } else {
       throw Exception('Failed to get Types');
@@ -74,7 +70,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   }
 
   @override
-  // ignore: must_call_super
   void initState() {
     super.initState();
   }
@@ -83,6 +78,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   void dispose() {
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +114,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         ),
         backgroundColor: Colors.white,
         body: Container(
+
           child: FutureBuilder<List<Types>>(
               future: _fetchTypes(),
                 builder: (BuildContext context, AsyncSnapshot<List<Types>> snapshot) {
@@ -241,6 +238,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   ],
                                 ),
                                 onTap: (){
+                                  // ignore: unnecessary_statements
                                   dataProducts[index][i]['description'].toString() == '' ? null : Alert(
                                     context: context,
                                     title: dataProducts[index][i]['name'].toString(),
@@ -279,21 +277,22 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
-                                            timer = Timer(Duration(milliseconds: 700), () {
-                                              Navigator.of(context).pop(true);
+                                            timer = Timer(Duration(milliseconds: 800), () {
+                                              Navigator.of(context).pop(false);
                                               timer.cancel();
                                             });
                                             return BackdropFilter(
-                                              filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                              filter: prefix0.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                               child: AlertDialog(
+                                              elevation: 3,
                                               backgroundColor: Colors.black45,
                                               shape: CircleBorder(
                                               ),
                                               title: Column(
                                                 children: <Widget>[
                                                   Icon(Icons.check, color: Colors.green, size: 70,),
-                                                  SizedBox(height: 5,),
-                                                  Text('Eklendi', style: TextStyle(color: Colors.white),)
+                                                  SizedBox(height: 10,),
+                                                  Text('Ekleniyor..', style: TextStyle(color: Colors.white),)
                                                 ],
                                               ),
                                             ),
@@ -363,65 +362,10 @@ class FastShopDialog extends StatefulWidget {
 }
 
 class _FastShopDialogState extends State<FastShopDialog> {
-  var keyShared;
-  bool inside;
-  final String getUserItself = 'http://68.183.222.16:8080/api/user/itself';
-
-    Future<http.Response> postItselfAuto(String keyJson) async {
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
-    });
-    if(response.statusCode == 200){
-        user = json.decode(response.body);
-        var userInfo = User.fromJson(user);
-        userInformations.add(userInfo);  
-        return response;
-      }else{
-        throw Exception('postItselfAuto');
-    }
-  }
-
-   Future<http.Response> postRequesAuto(String username, String password) async {
-      Map data = {
-        'username': username,
-        'password': password
-      };
-      var body = json.encode(data);
-      var response = await http.post('http://68.183.222.16:8080/api/userAccount/login', headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        authKey = json.decode(response.body);
-        key = authKey["authorization"];
-        if (key != '') {
-          setState(() {
-            inside = false;
-          });
-        } else {
-          inside = true;
-        }
-      }
-    return response;
-  }
-
-  getKey() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    username = prefs.getString('LastUsername');
-    password = prefs.getString('LastPassword');
-    keyShared = prefs.getString('LastKey');
-    if(key != ''){
-      setState(() {
-        postRequesAuto(username, password);
-        postItselfAuto(keyShared);
-      });
-    }
-    else{
-    }
-  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    this.getKey();
   }
 
   @override
@@ -437,7 +381,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
           actions: <Widget>[
             FlatButton(
               padding: EdgeInsets.all(20),
-              child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.deepOrangeAccent)),
+              child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.white)),
               onPressed: (){
                 setState(() {
                   if(listItems.length != 0){
@@ -449,7 +393,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
             FlatButton(
               padding: EdgeInsets.all(20),
               child: Text(
-                'Sepeti Al', style: TextStyle(color: Colors.deepOrangeAccent),),
+                'Sepeti Al', style: TextStyle(color: Colors.white),),
                 onPressed: () {
                   if (keyShared != '') {
                     if(inside == false){
@@ -528,7 +472,9 @@ class _FastShopDialogState extends State<FastShopDialog> {
             child: ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                children: <Widget>[
+                children: 
+                listItems.length != 0 ? 
+                <Widget>[
                   for(var i = 0; i < listItems.length; i++)
                     ExpansionTile(
                       children: <Widget>[
@@ -538,7 +484,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Color.fromRGBO(0, 40, 77,1),
+                              color: Colors.transparent,
                               onPressed: () {
                                 setState(() {
                                   listItems[i].itemCount = 0;
@@ -550,7 +496,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Color.fromRGBO(0, 40, 77,1),
+                              color: Colors.transparent,
                               onPressed: () {
                                 setState(() {
                                   listItems[i].itemCount++;
@@ -562,7 +508,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                             MaterialButton(
                               elevation: 0,
                               minWidth: 10,
-                              color: Color.fromRGBO(0, 40, 77,1),
+                              color: Colors.transparent,
                               onPressed: () {
                                 setState(() {
                                   if (listItems[i].itemCount == 1) {
@@ -585,6 +531,9 @@ class _FastShopDialogState extends State<FastShopDialog> {
                         (listItems[i].price.toInt()*listItems[i].itemCount.toInt()).toString() + ' TL',
                         style: TextStyle(color: Colors.white),),
                     )
+                ] : 
+                <Widget>[
+                  Center(child: Text('Sepet Boş..', style: TextStyle(color: Colors.white),),)
                 ]
             ),
           )
