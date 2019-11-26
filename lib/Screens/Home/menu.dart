@@ -52,7 +52,6 @@ class _MenuState extends State<Menu>{
   TabController tabController;
   var response;
 
-
   Future<List<Types>> _fetchTypes() async{
     if(response==null){
       response = await http.get(Uri.encodeFull(menuUrl), headers: {"Accept": 'application/json'});
@@ -78,7 +77,6 @@ class _MenuState extends State<Menu>{
   void dispose() {
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -247,11 +245,11 @@ class _MenuState extends State<Menu>{
                                       animationDuration: Duration(milliseconds: 500),
                                       animationType: AnimationType.grow,
                                       titleStyle: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800
                                       ),
                                       descStyle: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w300
                                       ),
                                       isCloseButton: false,
@@ -373,13 +371,17 @@ class _FastShopDialogState extends State<FastShopDialog> {
     return BackdropFilter(
       filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       child: AlertDialog(
+        elevation: 1,
           backgroundColor: Colors.black54,
           shape: BeveledRectangleBorder(
               borderRadius: BorderRadius.circular(20)
           ),
           title: Text('Hızlı Sepet', style: TextStyle(color: Colors.white),),
+          contentPadding: EdgeInsets.all(20),
           actions: <Widget>[
-            FlatButton(
+            Row(
+              children: <Widget>[
+                FlatButton(
               padding: EdgeInsets.all(20),
               child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.white)),
               onPressed: (){
@@ -464,6 +466,8 @@ class _FastShopDialogState extends State<FastShopDialog> {
               padding: EdgeInsets.all(20),
               child: Icon(Icons.close, color: Colors.deepOrangeAccent,),
               onPressed: () => Navigator.pop(context, false),
+            ),
+              ],
             ),
 
           ],

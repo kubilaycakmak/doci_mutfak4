@@ -277,7 +277,7 @@ Future<List> _fetchData() async {
                             children: 
                             snapshot.data[index]['status'] == false ?
                             snapshot.data[index]['orderRating'] == null ? <Widget>[
-                              Text('Tat'),
+                              Text('Tat', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),),
                               SizedBox(height: 5,),
                               SmoothStarRating(
                               allowHalfRating: false,
@@ -292,11 +292,11 @@ Future<List> _fetchData() async {
                               rating: taste,
                               size: 40.0,
                               color: Colors.yellow[600],
-                              borderColor: Colors.black26,
+                              borderColor: Colors.white38,
                               spacing:3.0
                             ),
                             SizedBox(height: 5,),
-                            Text('Hiz'),
+                            Text('Hiz', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),),
                             SizedBox(height: 5,),
                             SmoothStarRating(
                               allowHalfRating: false,
@@ -311,11 +311,11 @@ Future<List> _fetchData() async {
                               rating: speed,
                               size: 40.0,
                               color: Colors.yellow[600],
-                              borderColor: Colors.black26,
+                              borderColor: Colors.white38,
                               spacing:3.0
                             ),
                             SizedBox(height: 5,),
-                            Text('Servis'),
+                            Text('Servis', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),),
                             SizedBox(height: 5,),
                             SmoothStarRating(
                               allowHalfRating: false,
@@ -330,20 +330,26 @@ Future<List> _fetchData() async {
                               rating: services,
                               size: 40.0,
                               color: Colors.yellow[600],
-                              borderColor: Colors.black26,
+                              borderColor: Colors.white38,
                               spacing:3.0
                             ),
                             SizedBox(height: 10,),
                             TextFormField(
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
                               maxLines: 3,
                               controller: _commentController,
                               decoration: InputDecoration(
                                 labelText: 'Yorumunuz',
-                                labelStyle: TextStyle(backgroundColor: Colors.yellow[700], color: Colors.white, fontSize: 20, letterSpacing: 1.3),
+                                prefixIcon: Icon(Icons.comment, color: Colors.yellow[900],),
+                                labelStyle: TextStyle(backgroundColor: Colors.yellow[900], color: Colors.white, fontSize: 20, letterSpacing: 1.3),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(2),
+                                  borderSide: BorderSide(
+                                    color: Colors.white
+                                  ),
                                 )
                               ),
+                              cursorColor: Colors.white,
                             ),
                             SizedBox(height: 10,),
                             CupertinoButton(

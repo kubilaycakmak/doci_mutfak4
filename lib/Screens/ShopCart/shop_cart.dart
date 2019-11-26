@@ -75,7 +75,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         elevation: 0,
       ),
       floatingActionButton:SizedBox(
-      height: SizeConfig.blockSizeVertical*22,
+      height: SizeConfig.blockSizeVertical*30,
       child: Column(
           children: <Widget>[
             FloatingActionButton.extended(

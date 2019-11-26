@@ -1,4 +1,5 @@
 import 'package:doci_mutfak4/Connection/api_calls.dart';
+import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
@@ -7,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 bool inside = true;
 var statusCode;
 var backgroundImage = new AssetImage('assets/images/logo.png');
-var image = new Image(image: backgroundImage);
+var image = new Image(image: backgroundImage,height: SizeConfig.blockSizeVertical*10,);
 class Profile extends StatefulWidget {
   const Profile({Key key}) : super(key: key);
   @override
