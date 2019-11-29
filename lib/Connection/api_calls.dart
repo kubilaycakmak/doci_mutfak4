@@ -5,7 +5,6 @@ import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Profile/profile.dart';
 import 'package:doci_mutfak4/Screens/Profile/update.dart';
-import 'package:doci_mutfak4/Screens/ShopCart/shop_cart.dart';
 import 'package:doci_mutfak4/Validation/val.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
