@@ -159,29 +159,37 @@ class _MenuState extends State<Menu>{
                             itemCount: dataProducts[index].length,
                             itemBuilder: (BuildContext context, int i){
                                 return ListTile(
+                                contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
                                 leading: 
-                                snapshot.data[index].priority <= 0 ?
-                                Container(
+                                  snapshot.data[index].priority <= 0 ?
+                                  Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 0.0),
+                                  margin: EdgeInsets.symmetric(horizontal: 0.0),
                                   child: VerticalDivider(
                                   thickness: 5,
                                   endIndent: 0,
-                                  color: Colors.blueGrey,
+                                  color: Colors.redAccent,
                                 ),
                                 )
                                 :
                                 Container(
-                                  child: VerticalDivider(
+                                  padding: EdgeInsets.symmetric(horizontal: 0.0),
+                                  margin: EdgeInsets.symmetric(horizontal: 0.0),
+                                  child: 
+                                  VerticalDivider(
+                                    indent: 1,
                                   thickness: 5,
                                   endIndent: 0,
-                                  color: Colors.black38,
+                                  color: Colors.deepOrangeAccent,
                                 ),
                                 )
                                 ,
-                                title: Text(dataProducts[index][i]['name'].toString(),),
+                                title: Text(dataProducts[index][i]['name'].toString()),
                                 subtitle: Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: 
-                                  
                                   dataProducts[index][i]['valid'].toString() == 'true' ?
                                   <Widget>[
                                     currentSelected.toString() == dataProducts[index][i].toString() ?
@@ -227,8 +235,6 @@ class _MenuState extends State<Menu>{
                                           FontWeight.w400),) ,
                                     ),
                                     SizedBox(width: 5,),
-                                    dataProducts[index][i]['description'].toString() != '' ? 
-                                    Text('Açıklama için tıkla', style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12),) : Text(''),
                                   ] : <Widget>[
                                     Card(child: Text('Bu ürün stokta yok  ', style: TextStyle(color: Colors.white, fontSize: 15), textAlign: TextAlign.center,),
                                             color: Colors.red, elevation: 3, ),
@@ -246,7 +252,7 @@ class _MenuState extends State<Menu>{
                                       animationType: AnimationType.grow,
                                       titleStyle: TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.w800
+                                        fontWeight: FontWeight.w600
                                       ),
                                       descStyle: TextStyle(
                                         fontSize: 16,
@@ -264,82 +270,84 @@ class _MenuState extends State<Menu>{
                                   ).show();
                                 },
                                 trailing: InkWell(
-                                      child: dataProducts[index][i]['valid'].toString() == 'true' ? Container(padding: EdgeInsets.all(10),child: 
-                                      snapshot.data[index].priority <= 0 ? 
-                                      Icon(FontAwesomeIcons.plusSquare, color: Colors.blueGrey,size: 30,)
-                                      :
-                                      Icon(FontAwesomeIcons.plusSquare, color: Color.fromRGBO(0, 40, 77,1),size: 30,),)
-                                       : Text(''),
-                                      onTap: (){
-                                        showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (context) {
-                                            timer = Timer(Duration(milliseconds: 800), () {
-                                              Navigator.of(context).pop(false);
-                                              timer.cancel();
-                                            });
-                                            return BackdropFilter(
-                                              filter: prefix0.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                              child: AlertDialog(
-                                              elevation: 3,
-                                              backgroundColor: Colors.black45,
-                                              shape: CircleBorder(
-                                              ),
-                                              title: Column(
-                                                children: <Widget>[
-                                                  Icon(Icons.check, color: Colors.green, size: 70,),
-                                                  SizedBox(height: 10,),
-                                                  Text('Ekleniyor..', style: TextStyle(color: Colors.white),)
-                                                ],
-                                              ),
-                                            ),
+                                  customBorder: CircleBorder(), 
+                                  enableFeedback: true,  
+                                  child: dataProducts[index][i]['valid'].toString() == 'true' ? Container(padding: EdgeInsets.all(10),child: 
+                                  snapshot.data[index].priority <= 0 ? 
+                                  Icon(FontAwesomeIcons.plusSquare, color: Colors.blueGrey,size: 30,)
+                                  :
+                                  Icon(FontAwesomeIcons.plusSquare, color: Color.fromRGBO(0, 40, 77,1),size: 30,),)
+                                    : Text(''),
+                                  onTap: (){
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        timer = Timer(Duration(milliseconds: 800), () {
+                                          Navigator.of(context).pop(false);
+                                          timer.cancel();
+                                        });
+                                        return BackdropFilter(
+                                          filter: prefix0.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                          child: AlertDialog(
+                                          elevation: 3,
+                                          backgroundColor: Colors.black45,
+                                          shape: CircleBorder(
+                                          ),
+                                          title: Column(
+                                            children: <Widget>[
+                                              Icon(Icons.check, color: Colors.green, size: 70,),
+                                              SizedBox(height: 10,),
+                                              Text('Ekleniyor..', style: TextStyle(color: Colors.white),)
+                                            ],
+                                          ),
+                                        ),
+                                        );
+                                      });
+                                    if(this.mounted) {
+                                        var currentItemId = dataProducts[index][i]['id'];
+                                        switches = false;
+                                        if (listItems == null) {
+                                              setState(() {
+                                                var items = new AddItemtoShopCart(
+                                                id: dataProducts[index][i]["id"],
+                                                name: dataProducts[index][i]["name"],
+                                                price: dataProducts[index][i]["price"],
+                                                itemCount: 1,
                                             );
-                                          });
-                                        if(this.mounted) {
-                                            var currentItemId = dataProducts[index][i]['id'];
-                                            switches = false;
-                                            if (listItems == null) {
-                                                  setState(() {
-                                                    var items = new AddItemtoShopCart(
-                                                    id: dataProducts[index][i]["id"],
-                                                    name: dataProducts[index][i]["name"],
-                                                    price: dataProducts[index][i]["price"],
-                                                    itemCount: 1,
-                                                );
-                                                  listItems.add(items);
-                                                  });
-                                            } else {
-                                              bool ifExist = false;
-                                              for (var k = 0; k <listItems.length; k++) {
-                                                if (currentItemId ==listItems[k].id) {
-                                                  ifExist = true;
-                                                  setState(() {
-                                                  });
-                                                }
-                                              }
-                                              if (ifExist) {
-                                                for (var j = 0; j <listItems.length; j++) {
-                                                  if (listItems[j].id ==
-                                                      currentItemId) {listItems[j]
-                                                        .itemCount++;
-                                                  }
-                                                }
-                                              } else {
-                                                setState(() {
-                                                  var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
-                                                  id: dataProducts[index][i]["id"],
-                                                  name: dataProducts[index][i]["name"],
-                                                  price: dataProducts[index][i]["price"],
-                                                  itemCount: 1,
-                                                );
-                                                listItems.add(items);
-                                                });
-                                              }
+                                              listItems.add(items);
+                                              });
+                                        } else {
+                                          bool ifExist = false;
+                                          for (var k = 0; k <listItems.length; k++) {
+                                            if (currentItemId ==listItems[k].id) {
+                                              ifExist = true;
+                                              setState(() {
+                                              });
                                             }
                                           }
-                                        },
-                                      ),
+                                          if (ifExist) {
+                                            for (var j = 0; j <listItems.length; j++) {
+                                              if (listItems[j].id ==
+                                                  currentItemId) {listItems[j]
+                                                    .itemCount++;
+                                              }
+                                            }
+                                          } else {
+                                            setState(() {
+                                              var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
+                                              id: dataProducts[index][i]["id"],
+                                              name: dataProducts[index][i]["name"],
+                                              price: dataProducts[index][i]["price"],
+                                              itemCount: 1,
+                                            );
+                                            listItems.add(items);
+                                            });
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
                               );
                             },
                           );
@@ -374,15 +382,20 @@ class _FastShopDialogState extends State<FastShopDialog> {
         elevation: 1,
           backgroundColor: Colors.black54,
           shape: BeveledRectangleBorder(
-              borderRadius: BorderRadius.circular(20)
+              borderRadius: BorderRadius.circular(25),
+              side: BorderSide(
+                color: Colors.deepOrangeAccent,
+                style: BorderStyle.solid,
+                width: 0.7
+              )
           ),
           title: Text('Hızlı Sepet', style: TextStyle(color: Colors.white),),
-          contentPadding: EdgeInsets.all(20),
+          contentPadding: EdgeInsets.all(5),
           actions: <Widget>[
             Row(
               children: <Widget>[
                 FlatButton(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.symmetric(horizontal: 15),
               child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.white)),
               onPressed: (){
                 setState(() {
@@ -393,7 +406,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
               },
             ),
             FlatButton(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 'Sepeti Al', style: TextStyle(color: Colors.white),),
                 onPressed: () {
@@ -461,11 +474,6 @@ class _FastShopDialogState extends State<FastShopDialog> {
                     ).show();
                   }
                 }
-            ),
-            FlatButton(
-              padding: EdgeInsets.all(20),
-              child: Icon(Icons.close, color: Colors.deepOrangeAccent,),
-              onPressed: () => Navigator.pop(context, false),
             ),
               ],
             ),
@@ -537,7 +545,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                     )
                 ] : 
                 <Widget>[
-                  Center(child: Text('Sepet Boş..', style: TextStyle(color: Colors.white),),)
+                  Center(child: Text('Sepet Boş, Ekranın dışına basarak çıkabilirsiniz.', style: TextStyle(color: Colors.white, fontSize: 13),textAlign: TextAlign.center,),)
                 ]
             ),
           )

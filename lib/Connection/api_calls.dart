@@ -5,7 +5,6 @@ import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Profile/profile.dart';
 import 'package:doci_mutfak4/Screens/Profile/update.dart';
-import 'package:doci_mutfak4/Screens/ShopCart/shop_cart.dart';
 import 'package:doci_mutfak4/Validation/val.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
 var keyShared;
-bool isEnter = false;
 
 Future<http.Response> postUpdate(BuildContext context) async {
   Map data = {
@@ -68,10 +66,9 @@ Future<http.Response> postUpdate(BuildContext context) async {
   return response;
 }
 
-
 Future<http.Response> postItself(BuildContext context) async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": key,
+      "authorization": keyShared,
     });
     if(response.statusCode == 200){
       user = json.decode(response.body);  
@@ -92,9 +89,9 @@ Future<http.Response> postItself(BuildContext context) async {
     return response;
   }
 
-  Future<http.Response> postItselfAuto(String keyJson) async {
+  Future<http.Response> postItselfAuto(String keyShared) async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyJson.toString(),
+      "authorization": keyShared.toString(),
     });
     if(response.statusCode == 200){
       user = json.decode(response.body);
@@ -130,22 +127,24 @@ Future<http.Response> postItself(BuildContext context) async {
     };
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       authKey = json.decode(response.body);
       key = authKey["authorization"];
       await preferences.setString('LastKey', key);
       await preferences.setString('LastUsername', _usernameController.text);
       await preferences.setString('LastPassword', _passwordController.text);
+      keyShared = preferences.getString('LastKey');
+      username = preferences.getString('LastUsername');
+      password = preferences.getString('LastPassword');
+      print(preferences.getString('LastKey'));
+      print(preferences.getString('LastUsername'));
+      print(preferences.getString('LastPassword'));
       if (key != '') {
-        isEnter = true;
         inside = false;
         Navigator.of(context).pushReplacementNamed('/home');
         postItself(context);
       }else{
-        isEnter = false;
         inside = true;
-        print('alamadik');
         Alert(
           style: AlertStyle(
             animationDuration: Duration(milliseconds: 500),
@@ -182,7 +181,6 @@ Future<http.Response> postItself(BuildContext context) async {
           ]
         ).show();
     }
-    print(response.body);
     return inside;
   }
 
@@ -200,7 +198,6 @@ Future<http.Response> postItself(BuildContext context) async {
     key = authKey["authorization"];
     prefs.setString('LastKey', key);
     inside = false;
-    Navigator.of(context).pushReplacementNamed('/home');
   }
   else if(response.statusCode == 405 || response.statusCode == 401 || response.statusCode == 500){
       print('error on postRequestAuto');

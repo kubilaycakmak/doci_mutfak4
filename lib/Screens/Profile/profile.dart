@@ -6,7 +6,6 @@ import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool inside = true;
-var statusCode;
 var backgroundImage = new AssetImage('assets/images/logo.png');
 var image = new Image(image: backgroundImage,height: SizeConfig.blockSizeVertical*10,);
 class Profile extends StatefulWidget {
@@ -16,8 +15,6 @@ class Profile extends StatefulWidget {
   
 }
 class _ProfileState extends State<Profile> {
-  
-  var keyShared;
   String name;
 
   logout() async{
@@ -89,18 +86,33 @@ class _ProfileState extends State<Profile> {
                               subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
                               leading: Icon(Icons.info_outline),
                               onTap: () {
-                                setState(() {
-                                  postItself(context);
-                                });
-                                Navigator.of(context).pushReplacementNamed('/update');
+                                if(keyShared != null){
+                                  if(keyShared == null){
+                                    postItself(context);
+                                  }
+                                  Navigator.of(context).pushReplacementNamed('/update');
+                                }else{
+                                  if(username != null && password != null){
+                                    postRequestAuto(context, username, password);
+                                    Navigator.of(context).pushReplacementNamed('/update');
+                                  }else{
+                                    Navigator.of(context).pushReplacementNamed('/splash');
+                                  }
+                                }
                               },
                             ),
                             ListTile(
                               title: Text('Şifremi değiştir'),
                               subtitle: Text('Sifre işlemleri'),
                               leading: Icon(Icons.lock_outline),
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed('/change'),
+                              onTap: () {
+                                if(keyShared != null){
+                                  postItself(context);
+                                  Navigator.of(context).pushReplacementNamed('/change');
+                                }else{
+                                  Navigator.of(context).pushReplacementNamed('/splash');
+                                }
+                              } 
                             ),
                             ListTile(
                               title: Text('Hakkımızda'),
