@@ -222,9 +222,8 @@ Future<List<Questions>> _fetchQuestion() async{
                                 }else{
                                   onLoad(context, 'Giriş Yapılıyor..');
                                   t = new Timer(Duration(milliseconds: 1500), (){
-                                    postRequest(context, _usernameController, _passwordController);
+                                    postRequest(context, _usernameController.text, _passwordController.text, '/home');
                                     t.cancel();
-                                    Navigator.pop(context);
                                   }
                                 );
                                 }

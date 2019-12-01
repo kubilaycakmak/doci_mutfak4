@@ -9,12 +9,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'menu.dart';
 
 var backgroundImage = new AssetImage('assets/images/sepetbos.png');
-var image = new Image(image: backgroundImage);
+var image = new Image(image: backgroundImage, fit: BoxFit.fitWidth,);
 
 List productItems;
 List orderCount;
@@ -25,7 +26,6 @@ double speed = 3;
 String keyAgain;
 List starCount;
 double services = 3;
-var keyShared;
 var selectedId;
 bool noUser;
 bool finishRaiting = false;
@@ -44,7 +44,7 @@ class _LastOrdersState extends State<LastOrders> {
 Future<List> _fetchData() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
-          "authorization": key,
+          "authorization": keyShared,
         });
     if(response.statusCode == 200){
         final item = json.decode(response.body);
@@ -58,13 +58,13 @@ Future<List> _fetchData() async {
     }else if(
       response.statusCode == 401){
         if(username != null){
-          postRequestAuto(context, username, password);
-          postItselfAuto(key);
+          setState(() {
+            postItself(context, '');
+          });
         }else{
           print('username');
         }
     }
-    
     else{
       throw Exception('Failed to get products');
     }
@@ -73,7 +73,7 @@ Future<List> _fetchData() async {
   Future<List> _fetchData1() async {
     var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
-          "authorization": key,
+          "authorization": keyShared,
         });
     if(response.statusCode == 200){
       final item = json.decode(response.body);
@@ -94,6 +94,8 @@ Future<List> _fetchData() async {
 
       // ignore: missing_return
   Future<http.Response> _fetchRaiting() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    keyShared = prefs.getString('LastKey');
     Map data =
     {
         "taste": taste.toInt(),
@@ -103,26 +105,22 @@ Future<List> _fetchData() async {
     };
     var body = json.encode(data);
     print(body);
+    getKey();
+    key = prefs.getString('LastKey');
     var response = await http.put(Uri.encodeFull(ratingUrl),
       headers: {
-        "Authorization": key,
+        "authorization": key,
         "content-Type": "application/json"
       },
       body: body
       );
       print('selected Id : ' + selectedId.toString());
-
       print('response body ' + response.body);
-      
       if(response.statusCode == 201){
-        setState(() {
-          finishRaiting = true;
-        });
-        
+        finishRaiting = true;
       }else{
-        setState(() {
-          finishRaiting = false;
-        });
+        finishRaiting = false;
+        print('key burada: ' + keyShared);
         throw Exception('failed to load raiting');
       }
   }
@@ -131,9 +129,7 @@ Future<List> _fetchData() async {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      getKey();
-    });
+    getKey();
   }
 
   @override
@@ -158,6 +154,7 @@ Future<List> _fetchData() async {
          Container(
            child: ListView(
              children: <Widget>[
+               SizedBox(height: SizeConfig.blockSizeVertical * 14,),
                image,
                SizedBox(height: 20,),
                Container(
@@ -167,8 +164,9 @@ Future<List> _fetchData() async {
                ,
                SizedBox(height: 20,),
                Container(
+                 height: 70,
                  child: FlatButton(
-                   child: Text('Girişe git'),
+                   child: Text('Girişe git', style: TextStyle(fontSize: 30, color: Color.fromRGBO(0, 40, 77,1)),),
                    onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
                  ),
                )
@@ -356,15 +354,8 @@ Future<List> _fetchData() async {
                             child: Text('    Siparişi Oyla    '),
                             onPressed: (){
                               setState(() {
-                                selectedId = orderCount[index]['id'];
+                                 selectedId = orderCount[index]['id'];
                                 _fetchRaiting();
-                                if(finishRaiting == false){
-                                  print('oylama bitmemis');
-                                }
-                                else{
-                                  print('oylama bitmis');
-                                }
-                                print(selectedId);
                               });
                             },
                             color: Colors.yellow[800],

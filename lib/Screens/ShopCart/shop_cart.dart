@@ -77,7 +77,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         elevation: 0,
       ),
       bottomNavigationBar: Container(
-        color: Color.fromRGBO(0, 40, 77,1),
+        color: Color.fromRGBO(0, 40, 77,0.9),
         height: SizeConfig.blockSizeVertical * 8,
         child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -107,6 +107,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
             child: Text('Sepeti Onayla',
                     style: TextStyle(fontSize: 15,color: Colors.white),), 
             onPressed: (){
+              postItself(context, '');
               if(key != ''){
                 if(inside == false){
                   listItems.length != 0 ?
@@ -403,7 +404,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                           child: Column(
                             children: <Widget>[
                               ListTile(
-                                title: Text('Teslimat Adresi'),
+                                title: Text('Teslimat Adresi', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
                                 subtitle: TextFormField(
                                   autovalidate: true,
                                   validator: (val){
@@ -422,7 +423,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                                 )),
                                 Divider(thickness: 2,),
                               ListTile(
-                                title: Text('Telefon Numarası'),
+                                title: Text('Telefon Numarası', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
                                 subtitle: TextFormField(
                                   autovalidate: true,
                                   validator: validatePhoneNumber,
@@ -440,7 +441,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         Divider(thickness: 2,),
                       Padding(
                         padding: EdgeInsets.all(5),
-                        child: Text('Odeme yontemleri', textAlign: TextAlign.center,),
+                        child: Text('Ödeme Yöntemleri', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
                       ),
                       Divider(thickness: 2,),
                        Column(
@@ -472,7 +473,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                         Divider(thickness: 2,),
                       Padding(
                         padding: EdgeInsets.all(5),
-                        child: Text('Siparis Ozeti', textAlign: TextAlign.center,),
+                        child: Text('Sipariş Özeti', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
                       ),
                       Divider(thickness: 2,),
                         ListView.builder(
@@ -484,7 +485,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             return ListTile(
                               title: Text(
                                 listItems[index].name,
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(fontSize: 15),
                               ),
                               trailing: Text(
                                 ((listItems[index].price) *
@@ -492,7 +493,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                                     .toInt()
                                     .toString() +
                                     ' TL',
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                               ),
                               leading: InkWell(
                                 child: Text(
@@ -508,9 +509,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                           padding: EdgeInsets.all(20),
                           child: Text(
                             'Tutar : ' + finalPrice.toInt().toString() + ' TL',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
                           ),
                         ),
                         Divider(thickness: 2,),

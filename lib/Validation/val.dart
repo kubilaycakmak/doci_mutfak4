@@ -41,7 +41,7 @@ bool isValid;
   }
 
   String nameValidator(String value){
-  Pattern pattern = r'^[a-zA-Z0-9. ğüşöçİĞÜŞÖÇ]{2,20}$';
+  Pattern pattern = r'^[a-zA-Z0-9. ğüşöçıİĞÜŞÖÇ]{2,20}$';
   RegExp regex = new RegExp(pattern);
   if(!regex.hasMatch(value))
     return 'Adınızı düzeltiniz';

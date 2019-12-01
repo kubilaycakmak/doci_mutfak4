@@ -24,7 +24,7 @@ class Routes{
           case '/register':
           return MyCustomRoute(
             builder: (_) => LoginAndRegister(),
-            settings: settings
+            settings: settings,
           );
 
           case '/info':
@@ -105,9 +105,7 @@ class Routes{
   }
 }
 
-
 class MyCustomRoute<T> extends MaterialPageRoute<T>{
-  
   MyCustomRoute({WidgetBuilder builder, RouteSettings settings})
     : super(builder: builder, settings: settings);
 }
@@ -120,10 +118,11 @@ class EntryScreen extends StatefulWidget {
 
 class _EntryScreenState extends State<EntryScreen> {
 Map<dynamic, Widget> returnValueAndHomeScreen = {1: HomeScreen(), 2: SplashScreen()};
-static bool switcha;
+
 var keyShared;
 var username;
 var password;
+static bool switcha;
 GlobalKey _scaffold = GlobalKey();
 
 Function duringSplash = () {
@@ -134,27 +133,34 @@ Function duringSplash = () {
   } 
 };
 
-
   getKey() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     username = prefs.getString('LastUsername');
     password = prefs.getString('LastPassword');
     keyShared = prefs.getString('LastKey');
-    if(keyShared != ''){
+    if(username == null || username == ''){
       setState(() {
-        postRequestAuto(context,username, password);
-        postItselfAuto(keyShared);
         switcha = false;
       });
-    }
-    else{
+    }else{
       setState(() {
         switcha = true;
-        logout();
-        //Navigator.of(context).pushReplacementNamed('/entry');
       });
     }
-    print(switcha);
+    // if(keyShared != ''){
+    //   setState(() {
+    //     postRequestAuto(context,username, password);
+    //     postItselfAuto(keyShared);
+    //     switcha = false;
+    //   });
+    // }
+    // else{
+    //   setState(() {
+    //     switcha = true;
+    //     logout();
+    //     //Navigator.of(context).pushReplacementNamed('/entry');
+    //   });
+    // }
   } 
   logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();

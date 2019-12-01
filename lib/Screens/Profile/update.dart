@@ -26,7 +26,6 @@ class _UpdateState extends State<Update> {
   @override
   void initState() { 
     super.initState();
-    postItself(context);
   }
 
   @override
@@ -36,7 +35,6 @@ class _UpdateState extends State<Update> {
         // ignore: missing_return
         onWillPop: (){
           Navigator.of(context).pushReplacementNamed('/home');
-          print('aq');
         },
         child: Scaffold(
       appBar: AppBar(

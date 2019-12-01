@@ -80,6 +80,7 @@ class _MenuState extends State<Menu>{
 
   @override
   Widget build(BuildContext context) {
+    
     SizeConfig().init(context);
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
@@ -90,8 +91,12 @@ class _MenuState extends State<Menu>{
             animationType: BadgeAnimationType.scale,
             badgeColor: Colors.white,
             elevation: 4,
-            badgeContent: Text(listItems.length.toString()),
-            child: Icon(FontAwesomeIcons.shoppingBasket, size: 25,color: Colors.white,),
+            badgeContent: listItems.length != 0 ?
+            Text('${listItems.length}')
+            :
+            null
+            ,
+            child: Icon(FontAwesomeIcons.shoppingBasket, size: 30,color: Colors.white,),
           ),
           onPressed: (){
             showDialog(
@@ -112,7 +117,6 @@ class _MenuState extends State<Menu>{
         ),
         backgroundColor: Colors.white,
         body: Container(
-
           child: FutureBuilder<List<Types>>(
               future: _fetchTypes(),
                 builder: (BuildContext context, AsyncSnapshot<List<Types>> snapshot) {
@@ -133,8 +137,6 @@ class _MenuState extends State<Menu>{
               itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     isThreeLine: true,
-                    onTap: (){
-                    },
                     title: 
                     snapshot.data[index].priority <= 0 ?
                     Text(' KAMPANYALI ÜRÜNLER ', style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.blueGrey),):
@@ -304,61 +306,62 @@ class _MenuState extends State<Menu>{
                                         ),
                                         );
                                       });
-                                    if(this.mounted) {
-                                        var currentItemId = dataProducts[index][i]['id'];
-                                        switches = false;
-                                        if (listItems == null) {
-                                              setState(() {
-                                                var items = new AddItemtoShopCart(
-                                                id: dataProducts[index][i]["id"],
-                                                name: dataProducts[index][i]["name"],
-                                                price: dataProducts[index][i]["price"],
-                                                itemCount: 1,
-                                            );
-                                              listItems.add(items);
-                                              });
-                                        } else {
-                                          bool ifExist = false;
-                                          for (var k = 0; k <listItems.length; k++) {
-                                            if (currentItemId ==listItems[k].id) {
-                                              ifExist = true;
-                                              setState(() {
-                                              });
-                                            }
-                                          }
-                                          if (ifExist) {
-                                            for (var j = 0; j <listItems.length; j++) {
-                                              if (listItems[j].id ==
-                                                  currentItemId) {listItems[j]
-                                                    .itemCount++;
-                                              }
-                                            }
-                                          } else {
-                                            setState(() {
-                                              var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
-                                              id: dataProducts[index][i]["id"],
-                                              name: dataProducts[index][i]["name"],
-                                              price: dataProducts[index][i]["price"],
-                                              itemCount: 1,
-                                            );
-                                            listItems.add(items);
-                                            });
-                                          }
-                                        }
-                                      }
-                                    },
-                                  ),
+                      if(this.mounted) {
+                          var currentItemId = dataProducts[index][i]['id'];
+                          switches = false;
+                          if (listItems == null) {
+                                setState(() {
+                                  var items = new AddItemtoShopCart(
+                                  id: dataProducts[index][i]["id"],
+                                  name: dataProducts[index][i]["name"],
+                                  price: dataProducts[index][i]["price"],
+                                  itemCount: 1,
                               );
-                            },
+                                listItems.add(items);
+                                });
+                                } else {
+                                  bool ifExist = false;
+                                  for (var k = 0; k <listItems.length; k++) {
+                                    if (currentItemId ==listItems[k].id) {
+                                      ifExist = true;
+                                      setState(() {
+                                      });
+                                    }
+                                  }
+                                  if (ifExist) {
+                                    for (var j = 0; j <listItems.length; j++) {
+                                      if (listItems[j].id ==
+                                          currentItemId) {listItems[j]
+                                            .itemCount++;
+                                      }
+                                    }
+                                    } else {
+                                      setState(() {
+                                        var items = new AddItemtoShopCart( // var items = new AddItemtoShopCart(
+                                        id: dataProducts[index][i]["id"],
+                                        name: dataProducts[index][i]["name"],
+                                        price: dataProducts[index][i]["price"],
+                                        itemCount: 1,
+                                        );
+                                        listItems.add(items);
+                                      });
+                                    }
+                                  }
+                                }
+                              },
+                            ),
                           );
-                      },
-                    ),
+                        },
+                      );
+                    },
+                  ),
                 );
               },
             );
-              },
-          ),),
-        );
+          },
+        ),
+      ),
+    );
   }
 }
 
@@ -379,7 +382,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
     return BackdropFilter(
       filter: prefix0.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
       child: AlertDialog(
-        elevation: 1,
+        elevation: 0,
           backgroundColor: Colors.black54,
           shape: BeveledRectangleBorder(
               borderRadius: BorderRadius.circular(25),
@@ -398,11 +401,11 @@ class _FastShopDialogState extends State<FastShopDialog> {
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: Text('Sepeti Boşalt', style: TextStyle(color: Colors.white)),
               onPressed: (){
-                setState(() {
                   if(listItems.length != 0){
-                    listItems.clear();
+                    setState(() {
+                      listItems.clear();
+                    });
                   }
-                });
               },
             ),
             FlatButton(
@@ -410,6 +413,9 @@ class _FastShopDialogState extends State<FastShopDialog> {
               child: Text(
                 'Sepeti Al', style: TextStyle(color: Colors.white),),
                 onPressed: () {
+                  if(inside != true){
+                    postItself(context, '');
+                  }
                   if (keyShared != '') {
                     if(inside == false){
                     listItems.length != 0 ?

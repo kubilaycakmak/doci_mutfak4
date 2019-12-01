@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:doci_mutfak4/Model/order.dart';
 import 'package:doci_mutfak4/Model/user.dart';
+import 'package:doci_mutfak4/Routes.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Profile/profile.dart';
@@ -37,9 +38,7 @@ Future<http.Response> postUpdate(BuildContext context) async {
         DialogButton(
           color: Color.fromRGBO(0, 40, 77,1),
           onPressed: () {
-            postItself(context);
-            Navigator.of(context)
-                .pushReplacementNamed('/home');
+            postItself(context, '/home');
           },
           child: Text('Ana Ekrana don', style: TextStyle(color: Colors.white),),
         ),
@@ -55,8 +54,7 @@ Future<http.Response> postUpdate(BuildContext context) async {
         DialogButton(
           color: Color.fromRGBO(0, 40, 77,1),
           onPressed: () {
-            postItself(context);
-            Navigator.pop(context,false);
+            postItself(context, '/back');
           },
           child: Text('Tamam', style: TextStyle(color: Colors.white),),
         ),
@@ -66,11 +64,13 @@ Future<http.Response> postUpdate(BuildContext context) async {
   return response;
 }
 
-Future<http.Response> postItself(BuildContext context) async {
+Future<http.Response> postItself(BuildContext context, String route) async {
+    getKey();
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyShared,
+      "authorization": keyShared.toString(),
     });
     if(response.statusCode == 200){
+      print('200');
       user = json.decode(response.body);  
       var userInfo = new User(
         id: user["value"]["id"],
@@ -81,10 +81,38 @@ Future<http.Response> postItself(BuildContext context) async {
         created: user["value"]["created"]);
       userInformations.clear();
       userInformations.add(userInfo);
+      Navigator.of(context).pushReplacementNamed(route);
     }else if(response.statusCode == 401){
-      if(keyShared != null){
-        postRequestAuto(context, username, password);
-      }
+      print('401');
+      print(route);
+      postRequest(context, username, password, route);
+      //postRequestAuto(context, username, password);
+    }
+    return response;
+  }
+
+  Future<http.Response> postItselfEntry(BuildContext context, String route) async {
+    getKey();
+    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
+      "authorization": keyShared.toString(),
+    });
+    if(response.statusCode == 200){
+      print('200');
+      user = json.decode(response.body);  
+      var userInfo = new User(
+        id: user["value"]["id"],
+        name: user["value"]["name"],
+        lastname: user["value"]["lastname"],
+        phoneNumber: user["value"]["phoneNumber"],
+        address: user["value"]["address"],
+        created: user["value"]["created"]);
+      userInformations.clear();
+      userInformations.add(userInfo);
+      Navigator.of(context).pushReplacementNamed(route);
+    }else if(response.statusCode == 401){
+      print('401');
+      print(route);
+      //postRequestAuto(context, username, password);
     }
     return response;
   }
@@ -118,21 +146,23 @@ Future<http.Response> postItself(BuildContext context) async {
 
   Future<bool> postRequest(
       BuildContext context,
-      TextEditingController _usernameController,
-      TextEditingController _passwordController) async {
+      String username,
+      String password,
+      String route
+      ) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     Map data = {
-      'username': _usernameController.text,
-      'password': _passwordController.text
+      'username': username.toString(),
+      'password': password.toString()
     };
     var body = json.encode(data);
     var response = await http.post(loginCheckUrl,headers: {"Content-Type": "application/json"}, body: body);
     if (response.statusCode == 200) {
       authKey = json.decode(response.body);
       key = authKey["authorization"];
-      await preferences.setString('LastKey', key);
-      await preferences.setString('LastUsername', _usernameController.text);
-      await preferences.setString('LastPassword', _passwordController.text);
+      preferences.setString('LastKey', key);
+      preferences.setString('LastUsername', username);
+      preferences.setString('LastPassword', password);
       keyShared = preferences.getString('LastKey');
       username = preferences.getString('LastUsername');
       password = preferences.getString('LastPassword');
@@ -141,9 +171,11 @@ Future<http.Response> postItself(BuildContext context) async {
       print(preferences.getString('LastPassword'));
       if (key != '') {
         inside = false;
-        Navigator.of(context).pushReplacementNamed('/home');
-        postItself(context);
+        //Navigator.of(context).pushReplacementNamed(route);
+        print('object demek burasi');
+        postItself(context, route);
       }else{
+        print('object1');
         inside = true;
         Alert(
           style: AlertStyle(
@@ -194,12 +226,13 @@ Future<http.Response> postItself(BuildContext context) async {
   var response = await http.post(loginCheckUrl, headers: {"Content-Type": "application/json"}, body: body);
 
   if (response.statusCode == 200) {
-    authKey = json.decode(response.body);
-    key = authKey["authorization"];
-    prefs.setString('LastKey', key);
+    print('200 post');
+    var authKey = json.decode(response.body);
+    prefs.setString('LastKey', authKey["authorization"]);
     inside = false;
   }
   else if(response.statusCode == 405 || response.statusCode == 401 || response.statusCode == 500){
+      print('400 post');
       print('error on postRequestAuto');
       inside = true;
   }

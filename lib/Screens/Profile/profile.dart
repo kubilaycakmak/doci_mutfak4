@@ -86,19 +86,7 @@ class _ProfileState extends State<Profile> {
                               subtitle: Text('Ad - Soyad - Adres - Telefon numarası'),
                               leading: Icon(Icons.info_outline),
                               onTap: () {
-                                if(keyShared != null){
-                                  if(keyShared == null){
-                                    postItself(context);
-                                  }
-                                  Navigator.of(context).pushReplacementNamed('/update');
-                                }else{
-                                  if(username != null && password != null){
-                                    postRequestAuto(context, username, password);
-                                    Navigator.of(context).pushReplacementNamed('/update');
-                                  }else{
-                                    Navigator.of(context).pushReplacementNamed('/splash');
-                                  }
-                                }
+                                postItself(context, '/update');
                               },
                             ),
                             ListTile(
@@ -107,10 +95,7 @@ class _ProfileState extends State<Profile> {
                               leading: Icon(Icons.lock_outline),
                               onTap: () {
                                 if(keyShared != null){
-                                  postItself(context);
-                                  Navigator.of(context).pushReplacementNamed('/change');
-                                }else{
-                                  Navigator.of(context).pushReplacementNamed('/splash');
+                                  postItself(context, '/change');
                                 }
                               } 
                             ),
