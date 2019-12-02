@@ -145,6 +145,7 @@ Function duringSplash = () {
     }else{
       setState(() {
         switcha = true;
+        postItself(context, '');
       });
     }
     // if(keyShared != ''){

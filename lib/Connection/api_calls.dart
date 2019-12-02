@@ -91,32 +91,6 @@ Future<http.Response> postItself(BuildContext context, String route) async {
     return response;
   }
 
-  Future<http.Response> postItselfEntry(BuildContext context, String route) async {
-    getKey();
-    var response = await http.get(Uri.encodeFull(getUserItself), headers: {
-      "authorization": keyShared.toString(),
-    });
-    if(response.statusCode == 200){
-      print('200');
-      user = json.decode(response.body);  
-      var userInfo = new User(
-        id: user["value"]["id"],
-        name: user["value"]["name"],
-        lastname: user["value"]["lastname"],
-        phoneNumber: user["value"]["phoneNumber"],
-        address: user["value"]["address"],
-        created: user["value"]["created"]);
-      userInformations.clear();
-      userInformations.add(userInfo);
-      Navigator.of(context).pushReplacementNamed(route);
-    }else if(response.statusCode == 401){
-      print('401');
-      print(route);
-      //postRequestAuto(context, username, password);
-    }
-    return response;
-  }
-
   Future<http.Response> postItselfAuto(String keyShared) async {
     var response = await http.get(Uri.encodeFull(getUserItself), headers: {
       "authorization": keyShared.toString(),
@@ -172,10 +146,8 @@ Future<http.Response> postItself(BuildContext context, String route) async {
       if (key != '') {
         inside = false;
         //Navigator.of(context).pushReplacementNamed(route);
-        print('object demek burasi');
         postItself(context, route);
       }else{
-        print('object1');
         inside = true;
         Alert(
           style: AlertStyle(

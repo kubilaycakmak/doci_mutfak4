@@ -154,7 +154,7 @@ Future<List> _fetchData() async {
          Container(
            child: ListView(
              children: <Widget>[
-               SizedBox(height: SizeConfig.blockSizeVertical * 14,),
+               SizedBox(height: (SizeConfig.blockSizeVertical * SizeConfig.blockSizeHorizontal) * 3,),
                image,
                SizedBox(height: 20,),
                Container(
