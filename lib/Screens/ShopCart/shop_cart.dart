@@ -79,7 +79,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         backgroundColor: Color.fromRGBO(0, 40, 77,1),
         elevation: 0,
       ),
-      floatingActionButton: SizeConfig.blockSizeHorizontal < 3.3 ?
+      floatingActionButton: SizeConfig.blockSizeHorizontal < 3.8 ?
       FloatingActionButton.extended(
         elevation: 2,
         highlightElevation: 20,
@@ -93,9 +93,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
         height: SizeConfig.blockSizeVertical * 8,
         child: SizedBox(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizeConfig.blockSizeHorizontal > 3.3 ?
+              SizeConfig.blockSizeHorizontal > 3.8 ?
               Row(
                 children: <Widget>[
                   FlatButton(
@@ -109,8 +108,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 ],
               ):
               Text(''),
-              FlatButton(child: Text('Sepeti Boşalt',
-              textAlign: TextAlign.center,
+              FlatButton(
+                child: Text('Sepeti Boşalt',
+                textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13,color: Colors.white),), onPressed: (){
                 setState(() {
                   if(listItems.length != 0){
@@ -130,7 +130,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 13,color: Colors.white),), 
                 onPressed: (){
-                  if(username != null && password != null){
+                  if(username != null && password != null || keyShared != null){
                     postItself(context, '');
                   if(key != ''){
                     if(inside == false){

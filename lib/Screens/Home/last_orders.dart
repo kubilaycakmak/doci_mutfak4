@@ -63,8 +63,9 @@ Future<List> _fetchData() async {
         return orderCount;
     }else if(
       response.statusCode == 401){
-        if(username != null){
+        if(username != null && keyShared != null){
           setState(() {
+            print('fistik');
             postItself(context, '');
           });
         }else{

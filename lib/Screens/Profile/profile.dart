@@ -22,8 +22,10 @@ class _ProfileState extends State<Profile> {
       prefs.setString('LastKey', '');
       prefs.setString('LastUsername', '');
       prefs.setString('LastPassword', '');
-      key = null;
-      keyShared = null;
+      setState(() {
+        key = null;
+        keyShared = null;
+      });
   }
 
   @override

@@ -177,18 +177,11 @@ Future<http.Response> postItself(BuildContext context, String route) async {
       }
     }else if(response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 500){
         key = null;
-        Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          context: context,
-          title: 'Server Hatasi',
-          desc: 'Serverimiz suan da bakimdadir, lutfen daha sonra tekrar deneyiniz.',
-          buttons: [
-          ]
-        ).show();
     }
+    username = null;
+    password = null;
+    keyShared = null;
+    Navigator.of(context).pushReplacementNamed('/login');
     return inside;
   }
 

@@ -1,4 +1,3 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:flutter/material.dart';
 
@@ -16,37 +15,39 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool internet = true;
 
-  _checkInternetConnectivity() async{
-    var result = await Connectivity().checkConnectivity();
-    if(result == ConnectivityResult.none){
-      internet = false;
-       return Alert(
-          context:context,
-          type: AlertType.error,
-          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
-              'bağlantısı gereklidir.',
-          title: '',
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
-            ),
-          ]
-      ).show();
-    }
-    internet = true;
-  }
+  // _checkInternetConnectivity() async{
+  //   var result = await Connectivity().checkConnectivity();
+  //   if(result == ConnectivityResult.none){
+  //     internet = false;
+  //      return Alert(
+  //         context:context,
+  //         type: AlertType.error,
+  //         desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+  //             'bağlantısı gereklidir.',
+  //         title: '',
+  //         buttons: [
+  //           DialogButton(
+  //             color: Color.fromRGBO(0, 40, 77,1),
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: Text('Tamam', style: TextStyle(color: Colors.white),),
+  //           ),
+  //         ]
+  //     ).show();
+  //   }
+  //   internet = true;
+  // }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    _checkInternetConnectivity();
+    //_checkInternetConnectivity();
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Color.fromRGBO(0, 40, 77,1),
         label: Text('Misafir olarak devam et', style: TextStyle(fontSize: 20, color: Colors.white), ),
-        onPressed: () => internet == false ? _checkInternetConnectivity() : Navigator.of(context).pushReplacementNamed("/home"),
+        onPressed: () => internet == false ? 
+        //_checkInternetConnectivity() 
+        null : Navigator.of(context).pushReplacementNamed("/home"),
       ),
       bottomNavigationBar: Container(
         height: SizeConfig.blockSizeVertical*10,
@@ -62,7 +63,9 @@ class _SplashScreenState extends State<SplashScreen> {
             ButtonTheme(
               child: FlatButton(
                   onPressed: () {
-                    internet == false ? _checkInternetConnectivity() :
+                    internet == false ? 
+                    //_checkInternetConnectivity() 
+                    null :
                     Navigator.of(context).pushReplacementNamed("/register");
                   },
                 textColor: Colors.white,
@@ -81,7 +84,10 @@ class _SplashScreenState extends State<SplashScreen> {
           ButtonTheme(
               child: FlatButton(
                 onPressed: () {
-                  internet == false ? _checkInternetConnectivity() :
+                  internet == false ? 
+                  //_checkInternetConnectivity() 
+                  null
+                  :
                   Navigator.of(context).pushReplacementNamed("/login");
                 },
                 textColor: Colors.white,
