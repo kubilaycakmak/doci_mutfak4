@@ -69,105 +69,148 @@ class _ShoppingCartState extends State<ShoppingCart> {
         }
       });
     SizeConfig().init(context);
+    print(SizeConfig.blockSizeHorizontal);
     return Scaffold(
       appBar: AppBar(
         title: Text('Sepetim'),
+        actions: <Widget>[
+        ],
         centerTitle: true,
         backgroundColor: Color.fromRGBO(0, 40, 77,1),
         elevation: 0,
       ),
+      floatingActionButton: SizeConfig.blockSizeHorizontal < 3.3 ?
+      FloatingActionButton.extended(
+        elevation: 2,
+        highlightElevation: 20,
+        onPressed: null,
+        backgroundColor: Color.fromRGBO(0, 40, 77,1),
+        label: Text('Tutar: ' + finalPrice.toInt().toString() + " TL",textAlign: TextAlign.end,style: TextStyle(fontSize: 18,color: Colors.white, fontWeight: FontWeight.w600),),
+      ):
+      null, 
       bottomNavigationBar: Container(
         color: Color.fromRGBO(0, 40, 77,0.9),
         height: SizeConfig.blockSizeVertical * 8,
-        child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FlatButton(child: Text(
-            "Tutar: " + finalPrice.toInt().toString() + " TL",
-            style: TextStyle(fontSize: 15,color: Colors.white),
-          ), onPressed: null,),
-          VerticalDivider(
-            color: Colors.white,
-          ),
-          FlatButton(child: Text('Sepeti Boşalt',
-              style: TextStyle(fontSize: 15,color: Colors.white),), onPressed: (){
-            setState(() {
-              if(listItems.length != 0){
-                listItems.clear();
-                _showToast(context,
-                    "Sepet Boşaltıldı!");
-              }else{
-            }
-            });
-          },),
-          VerticalDivider(
-            color: Colors.white,
-          ),
-          FlatButton(
-            child: Text('Sepeti Onayla',
-                    style: TextStyle(fontSize: 15,color: Colors.white),), 
-            onPressed: (){
-              postItself(context, '');
-              if(key != ''){
-                if(inside == false){
-                  listItems.length != 0 ?
-                  sendOrderToFinishPage()
-                      :
-                  Alert(
-                    style: alertStyle,
-                    title: 'Sepet Boş',
-                    desc: 'Boş sepet onaylanamaz',
-                    buttons: [
-                      DialogButton(
-                        color: Color.fromRGBO(0, 40, 77,1),
-                        onPressed: () => Navigator.pop(context,false),
-                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                      ),
-                    ], context: context,
-                  ).show();
-                }else{
-                  return Alert(
-                    style: alertStyle,
-                    title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                    buttons: [
-                      DialogButton(
-                        color: Color.fromRGBO(0, 40, 77,1),
-                        onPressed: () => Navigator.pop(context,false),
-                        child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                      ),
-                      DialogButton(
-                        color: Color.fromRGBO(0, 40, 77,1),
-                        onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                        child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
-                      ),
-                    ], context: context,
-                  ).show();
+        child: SizedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizeConfig.blockSizeHorizontal > 3.3 ?
+              Row(
+                children: <Widget>[
+                  FlatButton(
+                    onPressed: null,
+                    child: Text('Tutar: ' + finalPrice.toInt().toString() + " TL",textAlign: TextAlign.end,style: TextStyle(fontSize: 18,color: Colors.white, fontWeight: FontWeight.w600),),
+                  ),
+                  VerticalDivider(
+                    color: Colors.white,
+                    thickness: 0.2,
+                  ),
+                ],
+              ):
+              Text(''),
+              FlatButton(child: Text('Sepeti Boşalt',
+              textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13,color: Colors.white),), onPressed: (){
+                setState(() {
+                  if(listItems.length != 0){
+                    listItems.clear();
+                    _showToast(context,
+                        "Sepet Boşaltıldı!");
+                  }else{
                 }
-              }else if(keyShared != ''){
-                postRequestAuto(context, username, password);
-                postItselfAuto(keyShared);
-                Navigator.of(context).pushReplacementNamed('/endcart');
-              }
-              else{
-                  return Alert(
-                    style: alertStyle,
-                      title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
-                      buttons: [
-                        DialogButton(
-                          color: Color.fromRGBO(0, 40, 77,1),
-                          onPressed: () => Navigator.pop(context,false),
-                          child: Text('Tamam', style: TextStyle(color: Colors.white),),
-                        ),
-                        DialogButton(
-                          color: Color.fromRGBO(0, 40, 77,1),
-                          onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
-                          child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
-                        ),
-                      ], context: context,
-                    ).show();
-              }
-          },),
-      ],),
+                });
+              },),
+              VerticalDivider(
+                color: Colors.white,
+                thickness: 0.2,
+              ),
+              FlatButton(
+                child: Text('Sepeti Onayla',
+                textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 13,color: Colors.white),), 
+                onPressed: (){
+                  if(username != null && password != null){
+                    postItself(context, '');
+                  if(key != ''){
+                    if(inside == false){
+                      listItems.length != 0 ?
+                      sendOrderToFinishPage()
+                          :
+                      Alert(
+                        style: alertStyle,
+                        title: 'Sepet Boş',
+                        desc: 'Boş sepet onaylanamaz',
+                        buttons: [
+                          DialogButton(
+                            color: Color.fromRGBO(0, 40, 77,1),
+                            onPressed: () => Navigator.pop(context,false),
+                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                          ),
+                        ], context: context,
+                      ).show();
+                    }else{
+                      return Alert(
+                        style: alertStyle,
+                        title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                        buttons: [
+                          DialogButton(
+                            color: Color.fromRGBO(0, 40, 77,1),
+                            onPressed: () => Navigator.pop(context,false),
+                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                          ),
+                          DialogButton(
+                            color: Color.fromRGBO(0, 40, 77,1),
+                            onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                            child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
+                          ),
+                        ], context: context,
+                      ).show();
+                    }
+                  }else if(keyShared != ''){
+                    postRequestAuto(context, username, password);
+                    postItselfAuto(keyShared);
+                    Navigator.of(context).pushReplacementNamed('/endcart');
+                  }
+                  else{
+                      return Alert(
+                        style: alertStyle,
+                          title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                          buttons: [
+                            DialogButton(
+                              color: Color.fromRGBO(0, 40, 77,1),
+                              onPressed: () => Navigator.pop(context,false),
+                              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                            ),
+                            DialogButton(
+                              color: Color.fromRGBO(0, 40, 77,1),
+                              onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                              child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
+                            ),
+                          ], context: context,
+                        ).show();
+                    }
+                  }else{
+                    return Alert(
+                        style: alertStyle,
+                        title: 'Siparişi başarılı bir şekilde verebilmeniz için, üye girişi yapmalısınız.',
+                        buttons: [
+                          DialogButton(
+                            color: Color.fromRGBO(0, 40, 77,1),
+                            onPressed: () => Navigator.pop(context,false),
+                            child: Text('Tamam', style: TextStyle(color: Colors.white),),
+                          ),
+                          DialogButton(
+                            color: Color.fromRGBO(0, 40, 77,1),
+                            onPressed: ()=> Navigator.of(context).pushReplacementNamed('/login'),
+                            child: Text('Üye girişi', style: TextStyle(color: Colors.white),),
+                          ),
+                        ], context: context,
+                      ).show();
+                  }
+              },),
+          ],),
+        )
       ),
       body: 
       listItems.length != 0 ?
@@ -505,14 +548,14 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                           },
                         ),
                         Divider(thickness: 2,),
-                 Container(
+                        Container(
                           padding: EdgeInsets.all(20),
                           child: Text(
                             'Tutar : ' + finalPrice.toInt().toString() + ' TL',
                             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
                           ),
                         ),
-                        Divider(thickness: 2,),
+                        Divider(thickness: 1,),
                         Container(
                           margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
                           child: TextFormField(
@@ -533,7 +576,7 @@ class _EndOfTheShoppingCartState extends State<EndOfTheShoppingCart> {
                             ),
                           ),
                         ),
-                        Divider(thickness: 2,),
+                        Divider(thickness: 1,),
                     ],
                   )),
           bottomNavigationBar: SingleChildScrollView(child: CupertinoButton(

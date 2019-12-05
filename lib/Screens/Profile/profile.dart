@@ -23,6 +23,7 @@ class _ProfileState extends State<Profile> {
       prefs.setString('LastUsername', '');
       prefs.setString('LastPassword', '');
       key = null;
+      keyShared = null;
   }
 
   @override
@@ -60,7 +61,7 @@ class _ProfileState extends State<Profile> {
                         child: Center(
                           heightFactor: 2,
                           child: Text(
-                            name == null ? "Hoşgeldin" :
+                            name == null ? "Hoşgeldiniz" :
                             "Hoşgeldin $name",
                             style: TextStyle(fontSize: 20),
                           ),

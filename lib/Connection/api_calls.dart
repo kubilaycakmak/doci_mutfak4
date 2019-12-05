@@ -149,27 +149,31 @@ Future<http.Response> postItself(BuildContext context, String route) async {
         postItself(context, route);
       }else{
         inside = true;
-        Alert(
-          style: AlertStyle(
-            animationDuration: Duration(milliseconds: 500),
-            animationType: AnimationType.grow,
-          ),
-          type: AlertType.warning,
-          title: 'Kullanıcı adı ve ya Şifre yanlış',
-          desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
-          buttons: [
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.pop(context,false),
-              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+        if(username != null && password !=null){
+          Alert(
+            style: AlertStyle(
+              animationDuration: Duration(milliseconds: 500),
+              animationType: AnimationType.grow,
             ),
-            DialogButton(
-              color: Color.fromRGBO(0, 40, 77,1),
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
-              child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
-            ),
-          ], context: context,
-        ).show();
+            type: AlertType.warning,
+            title: 'Kullanıcı adı ve ya Şifre yanlış',
+            desc: "Şifrenizi unuttuysanız, şifremi unuttum'a tıklayarak şifrenizi yenileyebilirsiniz.",
+            buttons: [
+              DialogButton(
+                color: Color.fromRGBO(0, 40, 77,1),
+                onPressed: () => Navigator.pop(context,false),
+                child: Text('Tamam', style: TextStyle(color: Colors.white),),
+              ),
+              DialogButton(
+                color: Color.fromRGBO(0, 40, 77,1),
+                onPressed: () => Navigator.of(context).pushReplacementNamed('/forget'),
+                child: Text('Şifremi unuttum', style: TextStyle(color: Colors.white),),
+              ),
+            ], context: context,
+          ).show();
+        }else{
+          print('username yok');
+        }
       }
     }else if(response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 500){
         key = null;

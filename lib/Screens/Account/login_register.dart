@@ -223,6 +223,7 @@ Future<List<Questions>> _fetchQuestion() async{
                                   onLoad(context, 'Giriş Yapılıyor..');
                                   t = new Timer(Duration(milliseconds: 1500), (){
                                     postRequest(context, _usernameController.text, _passwordController.text, '/home');
+                                    Navigator.pop(context,false);
                                     t.cancel();
                                   }
                                 );
@@ -740,7 +741,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 _question != null ?
                 <Widget>[
                   SizedBox(height: 20,),
-                  Text('Soru : $_question'),
+                  Text('Soru : $_question', style: TextStyle(
+                    letterSpacing: 2,
+                    fontSize: 20,
+                    
+                  ),),
                   SizedBox(height: 20,),
                   TextFormField(
                     controller: _forgetAnswer,

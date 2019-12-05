@@ -29,7 +29,9 @@ double services = 3;
 var selectedId;
 bool noUser;
 bool finishRaiting = false;
+List dataProducts;
 var _commentController = new TextEditingController();
+var response;
 
 class LastOrders extends StatefulWidget {
   LastOrders({Key key}) : super(key: key);
@@ -40,12 +42,15 @@ class LastOrders extends StatefulWidget {
 
 class _LastOrdersState extends State<LastOrders> {
 
+
 // ignore: missing_return
 Future<List> _fetchData() async {
-    var response = await http.get(Uri.encodeFull(orderUrl),
-        headers: {
-          "authorization": keyShared,
-        });
+  if(response ==null){
+    response = await http.get(Uri.encodeFull(orderUrl),
+      headers: {
+        "authorization": keyShared,
+      });
+  }
     if(response.statusCode == 200){
         final item = json.decode(response.body);
         orderCount = item;
@@ -54,6 +59,7 @@ Future<List> _fetchData() async {
         }else{
             orderStatus = false;
         }
+        print(orderCount[0]['products'][0]['dociProduct']['valid']);
         return orderCount;
     }else if(
       response.statusCode == 401){
@@ -71,10 +77,12 @@ Future<List> _fetchData() async {
   }
 
   Future<List> _fetchData1() async {
-    var response = await http.get(Uri.encodeFull(orderUrl),
+    if(response == null){
+      response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": keyShared,
         });
+    }
     if(response.statusCode == 200){
       final item = json.decode(response.body);
       orderCount = item;
@@ -250,9 +258,13 @@ Future<List> _fetchData() async {
                                            Text(orderCount[index]['products'][i]['quantity'].toString(), style: TextStyle(color: Colors.blue),),
                                            SizedBox(width: 10,),
                                            Text(orderCount[index]['products'][i]['dociProduct']['name'].toString()),
+                                           SizedBox(width: 10,),
+                                           orderCount[index]['products'][i]['dociProduct']['valid'] == true ?
+                                           Text('') : Card(color: Colors.red,child: Text('Stokta yok', style: TextStyle(color: Colors.white,letterSpacing: 1),),elevation: 8,)
                                          ],
                                        ),
-                                       trailing: Text((orderCount[index]['products'][i]['dociProduct']['price'].toInt()*orderCount[index]['products'][i]['quantity']).toString() + ' TL'),
+                                       trailing:
+                                           Text((orderCount[index]['products'][i]['dociProduct']['price'].toInt()*orderCount[index]['products'][i]['quantity']).toString() + ' TL'),
                                      ),
                                    );
                                  },
@@ -408,7 +420,8 @@ Future<List> _fetchData() async {
                                setState(() {
                                  listItems.clear();
                                  for(var i=0;i<orderCount[index]['products'].length;i++){
-                                   var items = new AddItemtoShopCart(
+                                   if(orderCount[index]['products'][i]['dociProduct']['valid'] == true || orderCount[index]['products'][i]['dociProduct']['valid'] == true){
+                                    var items = new AddItemtoShopCart(
                                      id: orderCount[index]['products'][i]['dociProduct']['id'],
                                      name: orderCount[index]['products'][i]['dociProduct']['name'],
                                      price: orderCount[index]['products'][i]['dociProduct']['price'],
@@ -418,6 +431,7 @@ Future<List> _fetchData() async {
                                    );
                                    print(items.address);
                                    listItems.add(items);
+                                   }
                                  }
                                  Alert(
                                    context:context,
@@ -429,6 +443,7 @@ Future<List> _fetchData() async {
                                     isOverlayTapDismiss: false,
                                   ),
                                    title: 'Sipariş başarıyla sepete eklendi',
+                                   desc: 'Eğer stokta olmayan bir ürün var ise, sepete eklenmeyecektir.',
                                    buttons: [
                                      DialogButton(
                                        color: Color.fromRGBO(0, 40, 77,1),
