@@ -2,6 +2,7 @@ import 'package:doci_mutfak4/Connection/api.dart';
 import 'package:doci_mutfak4/Connection/api_calls.dart';
 import 'package:doci_mutfak4/Model/item_to_cart.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
+import 'package:doci_mutfak4/Validation/val.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,12 +46,10 @@ class _LastOrdersState extends State<LastOrders> {
 
 // ignore: missing_return
 Future<List> _fetchData() async {
-  if(response ==null){
-    response = await http.get(Uri.encodeFull(orderUrl),
+   var response = await http.get(Uri.encodeFull(orderUrl),
       headers: {
         "authorization": keyShared,
       });
-  }
     if(response.statusCode == 200){
         final item = json.decode(response.body);
         orderCount = item;
@@ -77,12 +76,10 @@ Future<List> _fetchData() async {
   }
 
   Future<List> _fetchData1() async {
-    if(response == null){
-      response = await http.get(Uri.encodeFull(orderUrl),
+    var response = await http.get(Uri.encodeFull(orderUrl),
         headers: {
           "authorization": keyShared,
         });
-    }
     if(response.statusCode == 200){
       final item = json.decode(response.body);
       orderCount = item;
@@ -113,22 +110,26 @@ Future<List> _fetchData() async {
     };
     var body = json.encode(data);
     print(body);
-    getKey();
-    key = prefs.getString('LastKey');
-    var response = await http.put(Uri.encodeFull(ratingUrl),
+    var response = await http.put(Uri.encodeFull('http://68.183.222.16:8080/api/order/rate?orderId=$selectedId'),
       headers: {
-        "authorization": key,
+        "authorization": keyShared,
         "content-Type": "application/json"
       },
       body: body
       );
-      print('selected Id : ' + selectedId.toString());
-      print('response body ' + response.body);
       if(response.statusCode == 201){
-        finishRaiting = true;
-      }else{
-        finishRaiting = false;
-        print('key burada: ' + keyShared);
+        setState(() {
+          finishRaiting = true;
+        });
+      }else if(response.statusCode == 400){
+        setState(() {
+          finishRaiting = true;
+        });
+      }
+      else{
+        setState(() {
+          finishRaiting = false;
+        });
         throw Exception('failed to load raiting');
       }
   }
@@ -286,7 +287,8 @@ Future<List> _fetchData() async {
                            Column(
                             children: 
                             snapshot.data[index]['status'] == false ?
-                            snapshot.data[index]['orderRating'] == null ? <Widget>[
+                            snapshot.data[index]['orderRating'] == null ? 
+                            <Widget>[
                               Text('Tat', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),),
                               SizedBox(height: 5,),
                               SmoothStarRating(
@@ -367,12 +369,19 @@ Future<List> _fetchData() async {
                             onPressed: (){
                               setState(() {
                                  selectedId = orderCount[index]['id'];
-                                _fetchRaiting();
+                                 print(selectedId);
+                                 onLoad(context, 'Lütfen bekleyiniz');
+                                 t = new Timer(Duration(milliseconds: 1000), (){
+                                   _fetchRaiting();
+                                  t.cancel();
+                                  Navigator.of(context).pop();
+                              });
                               });
                             },
                             color: Colors.yellow[800],
                           ),
-                            ] : <Widget>[
+                            ] : 
+                            <Widget>[
                               ListTile(
                                 title: Text('Oylamanız :',style: TextStyle(color: Colors.white),),
                                 subtitle: Column(

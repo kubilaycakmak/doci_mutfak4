@@ -138,8 +138,6 @@ class _MenuState extends State<Menu>{
                   return ListTile(
                     isThreeLine: true,
                     title: 
-                    snapshot.data[index].priority <= 0 ?
-                    Text(' KAMPANYALI ÜRÜNLER ', style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Colors.blueGrey),):
                     Text(snapshot.data[index].name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, color: Color.fromRGBO(0, 40, 77,1)),),
                     contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                     dense: false,
