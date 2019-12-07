@@ -1,4 +1,4 @@
-package com.example.doci_mutfak4
+package com.kubilayckmk.doci_mutfak4
 
 import android.os.Bundle
 

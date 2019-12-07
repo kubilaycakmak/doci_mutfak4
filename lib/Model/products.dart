@@ -1,26 +1,31 @@
 class Products{
-  int id;
-  String name;
-  String desc;
-  double priceWithoutNoDiscount;
-  double price;
-  List dociProductTypes;
-  bool isValid;
-  String created;
+  List<Product> products;
+  Products({List products});
+}
+  
+  class Product {
+    int id;
+    String name;
+    String desc;
+    double priceWithoutNoDiscount;
+    double price;
+    List dociProductTypes;
+    bool isValid;
+    String created;
 
-  Products({
-    this.id,
-    this.name,
-    this.desc,
-    this.priceWithoutNoDiscount,
-    this.price,
-    this.dociProductTypes,
-    this.isValid,
-    this.created
-  });
+    Product({
+      this.id,
+      this.name,
+      this.desc,
+      this.priceWithoutNoDiscount,
+      this.price,
+      this.dociProductTypes,
+      this.isValid,
+      this.created
+    });
 
-  factory Products.fromJson(Map<String, dynamic> json){
-    return Products(
+  factory Product.fromJson(Map<String, dynamic> json){
+    return Product(
       id: json['id'],
       name: json['name'],
       desc: json['description'],
