@@ -148,20 +148,6 @@ Function duringSplash = () {
         postItself(context, '');
       });
     }
-    // if(keyShared != ''){
-    //   setState(() {
-    //     postRequestAuto(context,username, password);
-    //     postItselfAuto(keyShared);
-    //     switcha = false;
-    //   });
-    // }
-    // else{
-    //   setState(() {
-    //     switcha = true;
-    //     logout();
-    //     //Navigator.of(context).pushReplacementNamed('/entry');
-    //   });
-    // }
   } 
   logout() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();

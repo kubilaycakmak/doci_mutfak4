@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:doci_mutfak4/Model/size_config.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    //_checkInternetConnectivity();
+    _checkInternetConnectivity();
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Color.fromRGBO(0, 40, 77,1),
@@ -85,8 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: FlatButton(
                 onPressed: () {
                   internet == false ? 
-                  //_checkInternetConnectivity() 
-                  null
+                  _checkInternetConnectivity() 
                   :
                   Navigator.of(context).pushReplacementNamed("/login");
                 },
@@ -143,5 +143,26 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+    _checkInternetConnectivity() async{
+    var result = await Connectivity().checkConnectivity();
+    if(result == ConnectivityResult.none){
+      internet = false;
+       return Alert(
+          context:context,
+          type: AlertType.error,
+          desc: 'Şu an herhangi bir internet bağlantınız bulunmamaktadır. Uygulamayı kullanabilmeniz için internet '
+              'bağlantısı gereklidir.',
+          title: '',
+          buttons: [
+            DialogButton(
+              color: Color.fromRGBO(0, 40, 77,1),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Tamam', style: TextStyle(color: Colors.white),),
+            ),
+          ]
+      ).show();
+    }
+    internet = true;
   }
 }

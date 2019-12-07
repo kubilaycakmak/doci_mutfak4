@@ -24,12 +24,11 @@ dependencies:
   rflutter_alert: ^1.0.2
   url_launcher: ^5.0.3
   bottom_navy_bar: 5.2.0
+  connectivity: ^0.4.5+7
   badges: ^1.1.0
   animated_splash: 1.0.0
   shared_preferences: ^0.5.1+2
   smooth_star_rating: 1.0.3
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
