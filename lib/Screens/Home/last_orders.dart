@@ -121,12 +121,7 @@ Future<List> _fetchData() async {
         setState(() {
           finishRaiting = true;
         });
-      }else if(response.statusCode == 400){
-        setState(() {
-          finishRaiting = true;
-        });
-      }
-      else{
+      }else{
         setState(() {
           finishRaiting = false;
         });
