@@ -106,13 +106,11 @@ Future<http.Response> postItself(BuildContext context, String route) async {
   }
 
   Future<bool> userCheck(String username) async{
-    var response = await http.get(userCheckUrl);
+    var response = await http.get('http://68.183.222.16:8080/api/userAccount/check?username=$username');
     var body = json.decode(response.body);
     if(body == false){
-      print('bu kullanici var');
         isValid = false;
     }else{
-      print('kullanici alinabilir');
         isValid = true;
     }
     return isValid;

@@ -392,7 +392,7 @@ Future<List<Questions>> _fetchQuestion() async{
               color: Colors.black,
               fontSize: 20,
             ),
-            prefix: IconButton(
+            prefixIcon: IconButton(
             icon: Icon(Icons.info),
             onPressed: (){
                return Alert(
@@ -437,7 +437,7 @@ Future<List<Questions>> _fetchQuestion() async{
                   context: context,
                   builder: (context){
                     if(isValid == false){
-                      return CupertinoAlertDialog(
+                      return AlertDialog(
                         title: Text('Kullanıcı adı mevcut'),
                         content: Text('Lütfen başka bir kullanıcı adı giriniz.',style: TextStyle(fontSize: 16),),
                         actions: <Widget>[
@@ -449,7 +449,7 @@ Future<List<Questions>> _fetchQuestion() async{
                       );
                     }else{
                       if(_username.text != ''){
-                        return CupertinoAlertDialog(
+                        return AlertDialog(
                           title: Text('Mükemmel!'),
                           content: Text('Bu kullanıcı adı ile devam edebilirsiniz.',style: TextStyle(fontSize: 16),),
                           actions: <Widget>[
@@ -460,7 +460,7 @@ Future<List<Questions>> _fetchQuestion() async{
                           ],
                         );
                       }else{
-                        return CupertinoAlertDialog(
+                        return AlertDialog(
                           title: Text('Kullanıcı adı giriniz.'),
                           actions: <Widget>[
                             FlatButton(
@@ -474,7 +474,7 @@ Future<List<Questions>> _fetchQuestion() async{
                   }
                 );
               }, 
-              child: Text('Doğrulama'),)
+              child: Text('Doğrulama'))
           ],
         ),
         TextFormField(
@@ -491,7 +491,7 @@ Future<List<Questions>> _fetchQuestion() async{
               color: Colors.black,
               fontSize: 20,
             ),
-            prefix: IconButton(
+            prefixIcon: IconButton(
             icon: Icon(Icons.info),
             onPressed: (){
                return Alert(
@@ -535,7 +535,7 @@ Future<List<Questions>> _fetchQuestion() async{
               color: Colors.black,
               fontSize: 20,
             ),
-            prefix: IconButton(
+            prefixIcon: IconButton(
             icon: Icon(Icons.info),
             onPressed: (){
                return Alert(
@@ -572,7 +572,7 @@ Future<List<Questions>> _fetchQuestion() async{
           controller: _name,
           style: TextStyle(fontSize: 20, color: Colors.black),
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             filled: true,
             fillColor: Colors.black12,
             labelText: 'Ad',
@@ -597,7 +597,7 @@ Future<List<Questions>> _fetchQuestion() async{
           controller: _lastname,
           style: TextStyle(fontSize: 20, color: Colors.black),
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             filled: true,
             fillColor: Colors.black12,
             labelText: 'Soyad',
@@ -634,7 +634,7 @@ Future<List<Questions>> _fetchQuestion() async{
               color: Colors.black,
               fontSize: 20,
             ),
-            prefix: IconButton(
+            prefixIcon: IconButton(
             icon: Icon(Icons.info),
             onPressed: (){
                return Alert(
@@ -678,7 +678,7 @@ Future<List<Questions>> _fetchQuestion() async{
               color: Colors.black,
               fontSize: 20,
             ),
-            prefix: IconButton(
+            prefixIcon: IconButton(
             icon: Icon(Icons.info),
             onPressed: (){
                return Alert(

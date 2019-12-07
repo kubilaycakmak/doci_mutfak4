@@ -80,7 +80,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         backgroundColor: Color.fromRGBO(0, 40, 77,1),
         elevation: 0,
       ),
-      floatingActionButton: SizeConfig.blockSizeHorizontal < 3.3 ?
+      floatingActionButton: SizeConfig.blockSizeHorizontal < 3.8 ?
       FloatingActionButton.extended(
         elevation: 2,
         highlightElevation: 20,
@@ -96,7 +96,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizeConfig.blockSizeHorizontal > 3.3 ?
+              SizeConfig.blockSizeHorizontal > 3.8 ?
               Row(
                 children: <Widget>[
                   FlatButton(
