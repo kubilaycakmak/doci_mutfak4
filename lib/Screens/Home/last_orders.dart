@@ -67,7 +67,6 @@ Future<List> _fetchData() async {
             postItself(context, '');
           });
         }else{
-          print('username');
         }
     }
     else{

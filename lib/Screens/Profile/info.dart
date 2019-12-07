@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'dart:ui';
-import 'package:doci_mutfak4/Connection/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:doci_mutfak4/Connection/api_calls.dart';
 class Info extends StatefulWidget {
   Info({Key key}) : super(key: key);
 
@@ -20,18 +17,12 @@ class _InfoState extends State<Info> {
   void call(String number) => launch("tel:$number");
   void map(String url) => UrlLauncher.launch('url:$url');
   String googleMapsApiKey = 'AIzaSyDPmrcF0KrfLKnTd-zDjj4IqNF3_sYGap8';
-  bool isOpened;
 
-  Future<bool> storeOpenorNot() async{
-    var response = await http.get(isOpen);
-    var body = json.decode(response.body);
-    isOpened = body;
-    return isOpened;
-  }
+  
   @override
   void initState() {
     super.initState();
-    this.storeOpenorNot(); 
+    storeOpenorNot(); 
   }
 
   @override

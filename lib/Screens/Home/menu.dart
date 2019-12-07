@@ -414,6 +414,7 @@ class _FastShopDialogState extends State<FastShopDialog> {
                   if(inside != true){
                     postItself(context, '');
                   }
+                  if(isOpened == true){
                   if (keyShared != '') {
                     if(inside == false){
                     listItems.length != 0 ?
@@ -475,6 +476,17 @@ class _FastShopDialogState extends State<FastShopDialog> {
                               color: Colors.white),),
                         ),
                       ], context: context,
+                    ).show();
+                  }}else{
+                    Alert(
+                      context: context,
+                      title: 'Dükkan kapalı',
+                      desc: 'Gün içi 9 - 11 arası çalışmaktayız, anlayışınız için teşekkürler.',
+                      buttons: [
+                        DialogButton(onPressed: ()=>Navigator.of(context).pop(),
+                          child: Text('Tamam'),
+                        )
+                      ]
                     ).show();
                   }
                 }

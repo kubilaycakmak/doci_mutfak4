@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:doci_mutfak4/Model/order.dart';
 import 'package:doci_mutfak4/Model/user.dart';
-import 'package:doci_mutfak4/Routes.dart';
 import 'package:doci_mutfak4/Screens/Account/login_register.dart';
 import 'package:doci_mutfak4/Screens/Home/menu.dart';
 import 'package:doci_mutfak4/Screens/Profile/profile.dart';
@@ -14,6 +13,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
 var keyShared;
+bool isOpened = false;
 
 Future<http.Response> postUpdate(BuildContext context) async {
   Map data = {
@@ -374,4 +374,10 @@ getKey() async{
       throw Exception('Failed to fetch sendOrders');
     } 
     return response;
+  }
+  Future<bool> storeOpenorNot() async{
+    var response = await http.get(isOpen);
+    var body = json.decode(response.body);
+    isOpened = body;
+    return isOpened;
   }
